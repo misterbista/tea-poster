@@ -1,6 +1,6 @@
 "use client";
 
-import { WORD_PAIRS, type WordPair } from "./words";
+import { isSingleWord, WORD_PAIRS, type WordPair } from "./words";
 import { randomIndex } from "./random";
 
 const STORAGE_KEY = "tea-poster-store";
@@ -73,7 +73,10 @@ function normalizeWordPair(value: unknown): WordPair | null {
     imposterHint: pair.imposterHint.trim(),
   };
 
-  if (Object.values(normalized).some((value) => value.length === 0)) {
+  if (
+    Object.values(normalized).some((value) => value.length === 0) ||
+    !isSingleWord(normalized.word)
+  ) {
     return null;
   }
 

@@ -11,7 +11,9 @@ for (const { category, words } of deck.categories) {
     const { word, citizenHint, imposterHint } = entry;
     if (typeof citizenHint !== "string" || !citizenHint.trim() ||
         typeof imposterHint !== "string" || !imposterHint.trim()) throw new Error("Missing hints for: " + word);
-    if (typeof word !== "string" || !word.trim()) throw new Error("Empty or invalid word");
+    if (typeof word !== "string" || !word.trim() || /\s/u.test(word.trim())) {
+      throw new Error("Every word must be a single word: " + word);
+    }
     const key = word.trim().normalize("NFC").toLowerCase();
     if (seen.has(key)) throw new Error("Duplicate word: " + word);
     seen.add(key);

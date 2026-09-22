@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import type { WordPair } from "@/lib/words";
+import { isSingleWord, type WordPair } from "@/lib/words";
 import {
   appendSharedWordPairs,
   readSharedWordDeck,
@@ -30,7 +30,7 @@ const responseSchema = {
     type: "object",
     properties: {
       category: { type: "string" },
-      word: { type: "string" },
+      word: { type: "string", pattern: "^\\S+$" },
       citizenHint: { type: "string" },
       imposterHint: { type: "string" },
     },
@@ -72,6 +72,7 @@ function makeGeneratedPair(
   const wordKey = normalize(word);
 
   if (
+    !isSingleWord(word) ||
     word.length < 2 ||
     word.length > 64 ||
     category.length < 2 ||
@@ -107,6 +108,7 @@ function buildPrompt(knownWordIds: string[], existingPairs: WordPair[]) {
 
   return [
     `Generate exactly ${WORDS_TO_GENERATE} original word pairs for the tea-posters pass-and-play imposter game.`,
+    "Every word field must be exactly one word with no spaces: use \"bottle\", never \"water bottle\". Do not use multi-word phrases.",
     "The players are mostly Nepali friends and coworkers, so use familiar South Asian, Nepali, workplace, internet, relationship, travel, food, entertainment, technology, or everyday-life topics.",
     "Keep the tone playful, recognizable, and safe for a casual group game.",
     "For each pair, citizenHint should identify the exact word without saying it. imposterHint should be a broader clue that helps the imposter blend in, but must not reveal or repeat the exact word.",
@@ -283,9 +285,9 @@ async function generateDailyWords(request: Request) {
         : [];
 
       if (generated.length >= 3) {
-        let savedDeck;
+        let savedWords;
         try {
-          savedDeck = await appendSharedWordPairs(generated, now);
+          savedWords = await appendSharedWordPairs(generated, now);
         } catch (error) {
           console.error("Generated words could not be saved.", error);
           return NextResponse.json(
@@ -294,9 +296,9 @@ async function generateDailyWords(request: Request) {
           );
         }
         return NextResponse.json({
-          pairs: generated,
-          allPairs: savedDeck.pairs,
-          generatedAt: savedDeck.generatedAt,
+          pairs: savedWords.addedPairs,
+          allPairs: savedWords.deck.pairs,
+          generatedAt: savedWords.deck.generatedAt,
         });
       }
     } catch (error) {

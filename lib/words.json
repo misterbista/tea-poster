@@ -5,12 +5,12 @@
       "category": "Food and drinks",
       "words": [
         {
-          "word": "Bubble Tea",
+          "word": "Boba",
           "citizenHint": "A sweet drink usually served with chewy pearls",
           "imposterHint": "A popular drink"
         },
         {
-          "word": "Cold Coffee",
+          "word": "Frappe",
           "citizenHint": "A chilled caffeinated drink",
           "imposterHint": "A common cafe drink"
         },
@@ -25,7 +25,7 @@
           "imposterHint": "A popular dessert"
         },
         {
-          "word": "Fried Chicken",
+          "word": "Chicken",
           "citizenHint": "Chicken cooked with a crispy coating",
           "imposterHint": "A popular fast food"
         },
@@ -40,7 +40,7 @@
           "imposterHint": "A popular fast food"
         },
         {
-          "word": "Milk Tea",
+          "word": "Chai",
           "citizenHint": "Tea commonly prepared with milk and sugar",
           "imposterHint": "A hot drink"
         }
@@ -80,12 +80,12 @@
           "imposterHint": "A Nepali digital service"
         },
         {
-          "word": "Ring Road",
+          "word": "Ringroad",
           "citizenHint": "A major road circling much of Kathmandu Valley",
           "imposterHint": "Something related to Kathmandu travel"
         },
         {
-          "word": "Load Shedding",
+          "word": "Blackout",
           "citizenHint": "Scheduled periods when electricity is unavailable",
           "imposterHint": "Something Nepalis strongly remember"
         }
@@ -95,12 +95,12 @@
       "category": "Office life",
       "words": [
         {
-          "word": "Standup Meeting",
+          "word": "Standup",
           "citizenHint": "A short meeting where everyone gives updates",
           "imposterHint": "A workplace meeting"
         },
         {
-          "word": "Work From Home",
+          "word": "Remote",
           "citizenHint": "Doing your job without going to the office",
           "imposterHint": "A way of working"
         },
@@ -110,27 +110,27 @@
           "imposterHint": "Something employees may experience"
         },
         {
-          "word": "Office Gossip",
+          "word": "Gossip",
           "citizenHint": "Informal talk about coworkers or workplace drama",
           "imposterHint": "Something involving coworkers"
         },
         {
-          "word": "Sick Leave",
+          "word": "Absence",
           "citizenHint": "Time away from work because you're unwell",
           "imposterHint": "Something related to taking time off"
         },
         {
-          "word": "Performance Review",
+          "word": "Appraisal",
           "citizenHint": "A formal discussion about how well someone is doing at work",
           "imposterHint": "A workplace evaluation"
         },
         {
-          "word": "Team Lunch",
+          "word": "Lunch",
           "citizenHint": "Coworkers eating together outside normal work",
           "imposterHint": "A workplace social activity"
         },
         {
-          "word": "Group Chat",
+          "word": "Chat",
           "citizenHint": "A shared conversation between several people",
           "imposterHint": "A communication space"
         }
@@ -140,7 +140,7 @@
       "category": "Internet culture",
       "words": [
         {
-          "word": "Instagram Reel",
+          "word": "Reel",
           "citizenHint": "A short vertical video on Instagram",
           "imposterHint": "Social media content"
         },
@@ -160,7 +160,7 @@
           "imposterHint": "Something used to attract attention online"
         },
         {
-          "word": "Going Viral",
+          "word": "Viral",
           "citizenHint": "When content suddenly gets huge attention online",
           "imposterHint": "Something that happens on social media"
         },
@@ -175,7 +175,7 @@
           "imposterHint": "Something people frequently share digitally"
         },
         {
-          "word": "Voice Note",
+          "word": "Audio",
           "citizenHint": "A recorded audio message sent through chat",
           "imposterHint": "A type of digital message"
         }
@@ -185,17 +185,17 @@
       "category": "Relationships and social life",
       "words": [
         {
-          "word": "First Date",
+          "word": "Date",
           "citizenHint": "The first romantic outing between two people",
           "imposterHint": "Something related to dating"
         },
         {
-          "word": "Friend Zone",
+          "word": "Platonic",
           "citizenHint": "When one person wants romance but the other sees friendship",
           "imposterHint": "A relationship situation"
         },
         {
-          "word": "Blind Date",
+          "word": "Mystery",
           "citizenHint": "Meeting someone romantically without knowing them beforehand",
           "imposterHint": "A dating situation"
         },
@@ -210,7 +210,7 @@
           "imposterHint": "A romantic feeling"
         },
         {
-          "word": "Red Flag",
+          "word": "Warning",
           "citizenHint": "A warning sign about someone's behavior",
           "imposterHint": "Something people notice in relationships"
         },
@@ -220,7 +220,7 @@
           "imposterHint": "A modern relationship situation"
         },
         {
-          "word": "Double Date",
+          "word": "Couples",
           "citizenHint": "Two couples going out together",
           "imposterHint": "A social dating activity"
         }
@@ -230,7 +230,7 @@
       "category": "Travel and outings",
       "words": [
         {
-          "word": "Road Trip",
+          "word": "Journey",
           "citizenHint": "A long journey mainly made by road",
           "imposterHint": "A type of trip"
         },
@@ -240,7 +240,7 @@
           "imposterHint": "A type of holiday"
         },
         {
-          "word": "Night Out",
+          "word": "Outing",
           "citizenHint": "Going out in the evening for entertainment",
           "imposterHint": "A social activity"
         },
@@ -265,7 +265,7 @@
           "imposterHint": "Something associated with travel"
         },
         {
-          "word": "Window Seat",
+          "word": "Window",
           "citizenHint": "A seat beside the window while traveling",
           "imposterHint": "Something related to transportation"
         }
@@ -275,7 +275,7 @@
       "category": "Movies and entertainment",
       "words": [
         {
-          "word": "Plot Twist",
+          "word": "Twist",
           "citizenHint": "An unexpected change in a story",
           "imposterHint": "Something found in movies or stories"
         },
@@ -290,7 +290,7 @@
           "imposterHint": "Something related to movies or shows"
         },
         {
-          "word": "Horror Movie",
+          "word": "Horror",
           "citizenHint": "A film designed to scare its audience",
           "imposterHint": "A movie genre"
         },
@@ -300,17 +300,17 @@
           "imposterHint": "A movie genre"
         },
         {
-          "word": "Binge Watching",
+          "word": "Marathon",
           "citizenHint": "Watching many episodes one after another",
           "imposterHint": "Something people do with TV shows"
         },
         {
-          "word": "Movie Trailer",
+          "word": "Trailer",
           "citizenHint": "A short preview shown before a movie is released",
           "imposterHint": "Promotional entertainment content"
         },
         {
-          "word": "Post-Credit Scene",
+          "word": "Stinger",
           "citizenHint": "An extra scene shown after the credits",
           "imposterHint": "Something connected to movies"
         }
@@ -320,7 +320,7 @@
       "category": "Technology and apps",
       "words": [
         {
-          "word": "Incognito Mode",
+          "word": "Incognito",
           "citizenHint": "A browser mode that doesn't keep normal browsing history",
           "imposterHint": "A browser feature"
         },
@@ -330,22 +330,22 @@
           "imposterHint": "A file-sharing feature"
         },
         {
-          "word": "Face ID",
+          "word": "Biometric",
           "citizenHint": "Unlocking a device by recognizing your face",
           "imposterHint": "A security feature"
         },
         {
-          "word": "Two-Factor Authentication",
+          "word": "2FA",
           "citizenHint": "Logging in using an additional verification step",
           "imposterHint": "An account security feature"
         },
         {
-          "word": "QR Code",
+          "word": "Barcode",
           "citizenHint": "A square pattern scanned using a camera",
           "imposterHint": "Something you scan with a phone"
         },
         {
-          "word": "Dark Mode",
+          "word": "Night",
           "citizenHint": "A darker interface theme used by apps and devices",
           "imposterHint": "A display setting"
         },
@@ -355,7 +355,7 @@
           "imposterHint": "Something related to internet connectivity"
         },
         {
-          "word": "Low Battery",
+          "word": "Battery",
           "citizenHint": "When your device is almost out of power",
           "imposterHint": "A common device problem"
         }
@@ -365,42 +365,42 @@
       "category": "Common situations",
       "words": [
         {
-          "word": "Traffic Jam",
+          "word": "Gridlock",
           "citizenHint": "Vehicles moving very slowly because the road is crowded",
           "imposterHint": "A road problem"
         },
         {
-          "word": "Power Cut",
+          "word": "Outage",
           "citizenHint": "Electricity suddenly becoming unavailable",
           "imposterHint": "A household inconvenience"
         },
         {
-          "word": "Missed Call",
+          "word": "Callback",
           "citizenHint": "Someone called but you didn't answer",
           "imposterHint": "Something involving a phone"
         },
         {
-          "word": "Wrong Number",
+          "word": "Misdial",
           "citizenHint": "Calling or messaging someone you didn't intend to contact",
           "imposterHint": "A communication mistake"
         },
         {
-          "word": "Awkward Silence",
+          "word": "Silence",
           "citizenHint": "When nobody speaks and the situation feels uncomfortable",
           "imposterHint": "An uncomfortable social situation"
         },
         {
-          "word": "Late Arrival",
+          "word": "Tardiness",
           "citizenHint": "Reaching somewhere after the expected time",
           "imposterHint": "A timing problem"
         },
         {
-          "word": "Forgotten Password",
+          "word": "Password",
           "citizenHint": "Being unable to remember your login secret",
           "imposterHint": "An account problem"
         },
         {
-          "word": "Cancelled Plan",
+          "word": "Cancellation",
           "citizenHint": "An arranged activity that no longer happens",
           "imposterHint": "A change in social plans"
         }

@@ -1,11 +1,19 @@
 /// <reference lib="webworker" />
 /* Simple offline-first service worker for tea-posters */
 
-const CACHE = "tea-posters-v5";
+const CACHE = "tea-posters-v6";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(["/"]))
+    caches.open(CACHE).then((cache) =>
+      cache.addAll([
+        "/",
+        "/manifest.webmanifest",
+        "/icons/icon-192.png",
+        "/icons/icon-512.png",
+        "/icons/apple-touch-icon.png",
+      ])
+    )
   );
   self.skipWaiting();
 });

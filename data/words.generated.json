@@ -3,43 +3,43 @@
   "generatedAt": 1790089827616,
   "pairs": [
     {
-      "id": "generated:sel roti",
-      "word": "Sel Roti",
+      "id": "generated:selroti",
+      "word": "Selroti",
       "category": "Food and drinks",
       "citizenHint": "A ring-shaped rice bread often made at home during Nepali celebrations",
       "imposterHint": "A familiar Nepali snack"
     },
     {
-      "id": "generated:printer jam",
-      "word": "Printer Jam",
+      "id": "generated:paperjam",
+      "word": "Paperjam",
       "category": "Office life",
       "citizenHint": "An office machine problem that leaves pages stuck or only partly printed",
       "imposterHint": "An annoying workplace technology problem"
     },
     {
-      "id": "generated:unread message",
-      "word": "Unread Message",
+      "id": "generated:unread",
+      "word": "Unread",
       "category": "Internet culture",
       "citizenHint": "A notification you deliberately leave unopened for later",
       "imposterHint": "A common phone notification"
     },
     {
-      "id": "generated:green flag",
-      "word": "Green Flag",
+      "id": "generated:positive",
+      "word": "Positive",
       "category": "Relationships and social life",
       "citizenHint": "A reassuring sign that someone is respectful and emotionally mature",
       "imposterHint": "A positive dating clue"
     },
     {
-      "id": "generated:local bus",
-      "word": "Local Bus",
+      "id": "generated:bus",
+      "word": "Bus",
       "category": "Travel and outings",
       "citizenHint": "Crowded public transport where a conductor often calls out destinations",
       "imposterHint": "A common way to get around town"
     },
     {
-      "id": "generated:karaoke night",
-      "word": "Karaoke Night",
+      "id": "generated:karaoke",
+      "word": "Karaoke",
       "category": "Movies and entertainment",
       "citizenHint": "An outing where friends sing along to backing tracks",
       "imposterHint": "A lively group activity"

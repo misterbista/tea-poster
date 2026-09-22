@@ -2,7 +2,7 @@ import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { BlobPreconditionFailedError, get, put } from "@vercel/blob";
 
-import { WORD_PAIRS, type WordPair } from "@/lib/words";
+import { isSingleWord, WORD_PAIRS, type WordPair } from "@/lib/words";
 
 const GENERATED_DECK_PATH = path.join(
   process.cwd(),
@@ -30,6 +30,11 @@ export type SharedWordDeck = {
   generatedAt: number | null;
 };
 
+export type AppendSharedWordPairsResult = {
+  deck: SharedWordDeck;
+  addedPairs: WordPair[];
+};
+
 function normalizePair(value: unknown): WordPair | null {
   if (!value || typeof value !== "object") return null;
 
@@ -52,7 +57,9 @@ function normalizePair(value: unknown): WordPair | null {
     imposterHint: pair.imposterHint.trim(),
   };
 
-  return Object.values(normalized).every(Boolean) ? normalized : null;
+  return Object.values(normalized).every(Boolean) && isSingleWord(normalized.word)
+    ? normalized
+    : null;
 }
 
 function emptyPersistedDeck(): PersistedWordDeck {
@@ -141,44 +148,53 @@ export async function readSharedWordDeck(): Promise<SharedWordDeck> {
   return toSharedDeck(deck);
 }
 
-let writeQueue: Promise<SharedWordDeck> = Promise.resolve({
-  pairs: WORD_PAIRS,
-  generatedAt: null,
+let writeQueue: Promise<AppendSharedWordPairsResult> = Promise.resolve({
+  deck: { pairs: WORD_PAIRS, generatedAt: null },
+  addedPairs: [],
 });
+
+function waitForWriteTurn(milliseconds: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, milliseconds);
+  });
+}
 
 export function appendSharedWordPairs(
   additions: WordPair[],
   generatedAt = Date.now()
-): Promise<SharedWordDeck> {
+): Promise<AppendSharedWordPairsResult> {
   const nextWrite = writeQueue.then(async () => {
-    for (let attempt = 0; attempt < 3; attempt += 1) {
-      const current = await readPersistedDeck();
-      const persisted: PersistedWordDeck = {
-        version: 1,
-        generatedAt,
-        pairs: uniquePairs([...current.deck.pairs, ...additions]),
-      };
+    const current = await readPersistedDeck();
+    const existingIds = new Set(current.deck.pairs.map((pair) => pair.id));
+    const addedPairs = uniquePairs(additions).filter(
+      (pair) => !existingIds.has(pair.id)
+    );
+    const persisted: PersistedWordDeck = {
+      version: 1,
+      generatedAt,
+      pairs: uniquePairs([...current.deck.pairs, ...addedPairs]),
+    };
 
-      try {
-        await writePersistedDeck(persisted, current.etag);
-        return toSharedDeck(persisted);
-      } catch (error) {
-        if (
-          !usesVercelBlob ||
-          !(error instanceof BlobPreconditionFailedError) ||
-          attempt === 2
-        ) {
-          throw error;
-        }
+    try {
+      await writePersistedDeck(persisted, current.etag);
+      return { deck: toSharedDeck(persisted), addedPairs };
+    } catch (error) {
+      if (
+        !usesVercelBlob ||
+        !(error instanceof BlobPreconditionFailedError)
+      ) {
+        throw error;
       }
-    }
 
-    throw new Error("The shared word deck could not be saved.");
+      await waitForWriteTurn(100);
+      const winner = await readPersistedDeck();
+      return { deck: toSharedDeck(winner.deck), addedPairs: [] };
+    }
   });
 
   writeQueue = nextWrite.catch(() => ({
-    pairs: WORD_PAIRS,
-    generatedAt: null,
+    deck: { pairs: WORD_PAIRS, generatedAt: null },
+    addedPairs: [],
   }));
 
   return nextWrite;
