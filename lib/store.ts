@@ -1,6 +1,7 @@
 "use client";
 
 import type { WordPair } from "./words";
+import { randomIndex } from "./random";
 
 const STORAGE_KEY = "tea-poster-store";
 
@@ -66,7 +67,7 @@ export function claimLocalWord(pairs: WordPair[]): WordPair {
     fresh = pairs;
   }
 
-  const pair = fresh[Math.floor(Math.random() * fresh.length)];
+  const pair = fresh[randomIndex(fresh.length)];
   used.add(pair.id);
   store.tracker = { usedWordIds: Array.from(used) };
   writeStore(store);

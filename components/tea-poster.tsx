@@ -43,6 +43,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { TeaPosterSplash } from "@/components/tea-poster-splash";
 
+import { randomIndex } from "@/lib/random";
 import { claimLocalWord } from "@/lib/store";
 import { WORD_PAIRS, type WordPair } from "@/lib/words";
 
@@ -143,10 +144,6 @@ function PhaseSteps({ phase }: { phase: Phase }) {
       </ol>
     </nav>
   );
-}
-
-function randomIndex(length: number) {
-  return Math.floor(Math.random() * length);
 }
 
 export function TeaPoster() {

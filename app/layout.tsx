@@ -18,15 +18,21 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-const logoIcon = "/ChatGPT%20Image%20Sep%2022%2C%202026%20at%2006_55_47%20PM.png?v=4";
+const icon192 = "/icons/icon-192.png";
+const icon512 = "/icons/icon-512.png";
+const appleTouchIcon = "/icons/apple-touch-icon.png";
 
 export const metadata: Metadata = {
   title: "tea-posters | Spot the imposter. Spill the tea.",
   description: "A local pass-and-play imposter game for tea breaks.",
   applicationName: "tea-posters",
+  manifest: "/manifest.webmanifest",
   icons: {
-    icon: [{ url: logoIcon, type: "image/png", sizes: "1254x1254" }],
-    apple: [{ url: logoIcon, type: "image/png", sizes: "1254x1254" }],
+    icon: [
+      { url: icon192, type: "image/png", sizes: "192x192" },
+      { url: icon512, type: "image/png", sizes: "512x512" },
+    ],
+    apple: [{ url: appleTouchIcon, type: "image/png", sizes: "180x180" }],
   },
 };
 
