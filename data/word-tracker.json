@@ -1,16 +1,6 @@
 {
-  "version": 0,
+  "version": 9,
   "usedWordIds": [
-    "objects-binary",
-    "places-leg",
-    "sports-olympics",
-    "objects-analog",
-    "nature-reservoir",
-    "places-cliff",
-    "places-mall",
-    "sports-play",
-    "nature-density",
-    "sports-golf",
-    "sports-stadium"
+    "nepal:cancelled plan"
   ]
 }

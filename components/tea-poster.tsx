@@ -595,7 +595,11 @@ export function TeaPoster() {
                     aria-label={`Drag ${name} to reorder`}
                     className="tea-order-grip grid size-10 shrink-0 place-items-center rounded-xl disabled:pointer-events-none disabled:opacity-35"
                     onPointerDown={(event) => {
-                      if (event.pointerType === "mouse" && event.button !== 0) return;
+                      if (
+                        !event.isPrimary ||
+                        dragPointerIdRef.current !== null ||
+                        (event.pointerType === "mouse" && event.button !== 0)
+                      ) return;
                       event.preventDefault();
                       event.currentTarget.setPointerCapture(event.pointerId);
                       dragPointerIdRef.current = event.pointerId;
@@ -611,6 +615,7 @@ export function TeaPoster() {
                     }}
                     onPointerUp={(event) => endPlayerDrag(event, true)}
                     onPointerCancel={(event) => endPlayerDrag(event, false)}
+                    onLostPointerCapture={(event) => endPlayerDrag(event, false)}
                   >
                     <GripVerticalIcon className="size-4.5" />
                   </button>

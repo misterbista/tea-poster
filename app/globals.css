@@ -450,12 +450,16 @@
     margin-left: auto;
   }
 
-  .tea-player-row button:not([role="checkbox"]) {
+  .tea-player-row button:not([role="checkbox"]):not(.tea-order-grip) {
     display: grid;
     place-items: center;
     width: 2.75rem;
     height: 2.75rem;
     touch-action: manipulation;
+  }
+
+  .tea-player-row .tea-order-grip {
+    touch-action: none;
   }
 
   .tea-shell button:focus-visible,
