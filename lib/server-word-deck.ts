@@ -1,5 +1,6 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { BlobPreconditionFailedError, get, put } from "@vercel/blob";
 
 import { WORD_PAIRS, type WordPair } from "@/lib/words";
 
@@ -8,11 +9,20 @@ const GENERATED_DECK_PATH = path.join(
   "data",
   "words.generated.json"
 );
+const GENERATED_DECK_BLOB_PATH = "tea-posters/words.generated.json";
+
+const usesVercelBlob =
+  process.env.VERCEL === "1" || Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 
 type PersistedWordDeck = {
   version: 1;
   generatedAt: number | null;
   pairs: WordPair[];
+};
+
+type PersistedDeckRead = {
+  deck: PersistedWordDeck;
+  etag: string | null;
 };
 
 export type SharedWordDeck = {
@@ -45,6 +55,20 @@ function normalizePair(value: unknown): WordPair | null {
   return Object.values(normalized).every(Boolean) ? normalized : null;
 }
 
+function emptyPersistedDeck(): PersistedWordDeck {
+  return { version: 1, generatedAt: null, pairs: [] };
+}
+
+function parsePersistedDeck(raw: string): PersistedWordDeck {
+  const parsed = JSON.parse(raw) as Partial<PersistedWordDeck>;
+  return {
+    version: 1,
+    generatedAt:
+      typeof parsed.generatedAt === "number" ? parsed.generatedAt : null,
+    pairs: Array.isArray(parsed.pairs) ? uniquePairs(parsed.pairs) : [],
+  };
+}
+
 function uniquePairs(values: unknown[]): WordPair[] {
   const pairs = new Map<string, WordPair>();
   for (const value of values) {
@@ -54,22 +78,55 @@ function uniquePairs(values: unknown[]): WordPair[] {
   return Array.from(pairs.values());
 }
 
-async function readPersistedDeck(): Promise<PersistedWordDeck> {
+async function readPersistedDeck(): Promise<PersistedDeckRead> {
+  if (usesVercelBlob) {
+    const blob = await get(GENERATED_DECK_BLOB_PATH, {
+      access: "private",
+      useCache: false,
+    });
+
+    if (!blob) return { deck: emptyPersistedDeck(), etag: null };
+    if (blob.statusCode !== 200) {
+      throw new Error("The shared word deck returned an unexpected response.");
+    }
+
+    const raw = await new Response(blob.stream).text();
+    return { deck: parsePersistedDeck(raw), etag: blob.blob.etag };
+  }
+
   try {
     const raw = await readFile(GENERATED_DECK_PATH, "utf8");
-    const parsed = JSON.parse(raw) as Partial<PersistedWordDeck>;
-    return {
-      version: 1,
-      generatedAt:
-        typeof parsed.generatedAt === "number" ? parsed.generatedAt : null,
-      pairs: Array.isArray(parsed.pairs) ? uniquePairs(parsed.pairs) : [],
-    };
+    return { deck: parsePersistedDeck(raw), etag: null };
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
       console.error("Shared word deck could not be read.", error);
     }
-    return { version: 1, generatedAt: null, pairs: [] };
+    return { deck: emptyPersistedDeck(), etag: null };
   }
+}
+
+async function writePersistedDeck(
+  deck: PersistedWordDeck,
+  etag: string | null
+) {
+  const body = `${JSON.stringify(deck, null, 2)}\n`;
+
+  if (usesVercelBlob) {
+    await put(GENERATED_DECK_BLOB_PATH, body, {
+      access: "private",
+      addRandomSuffix: false,
+      allowOverwrite: true,
+      contentType: "application/json",
+      cacheControlMaxAge: 60,
+      ...(etag ? { ifMatch: etag } : {}),
+    });
+    return;
+  }
+
+  await mkdir(path.dirname(GENERATED_DECK_PATH), { recursive: true });
+  const temporaryPath = `${GENERATED_DECK_PATH}.${process.pid}.tmp`;
+  await writeFile(temporaryPath, body, "utf8");
+  await rename(temporaryPath, GENERATED_DECK_PATH);
 }
 
 function toSharedDeck(deck: PersistedWordDeck): SharedWordDeck {
@@ -80,7 +137,8 @@ function toSharedDeck(deck: PersistedWordDeck): SharedWordDeck {
 }
 
 export async function readSharedWordDeck(): Promise<SharedWordDeck> {
-  return toSharedDeck(await readPersistedDeck());
+  const { deck } = await readPersistedDeck();
+  return toSharedDeck(deck);
 }
 
 let writeQueue: Promise<SharedWordDeck> = Promise.resolve({
@@ -93,19 +151,29 @@ export function appendSharedWordPairs(
   generatedAt = Date.now()
 ): Promise<SharedWordDeck> {
   const nextWrite = writeQueue.then(async () => {
-    const current = await readPersistedDeck();
-    const persisted: PersistedWordDeck = {
-      version: 1,
-      generatedAt,
-      pairs: uniquePairs([...current.pairs, ...additions]),
-    };
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const current = await readPersistedDeck();
+      const persisted: PersistedWordDeck = {
+        version: 1,
+        generatedAt,
+        pairs: uniquePairs([...current.deck.pairs, ...additions]),
+      };
 
-    await mkdir(path.dirname(GENERATED_DECK_PATH), { recursive: true });
-    const temporaryPath = `${GENERATED_DECK_PATH}.${process.pid}.tmp`;
-    await writeFile(temporaryPath, `${JSON.stringify(persisted, null, 2)}\n`, "utf8");
-    await rename(temporaryPath, GENERATED_DECK_PATH);
+      try {
+        await writePersistedDeck(persisted, current.etag);
+        return toSharedDeck(persisted);
+      } catch (error) {
+        if (
+          !usesVercelBlob ||
+          !(error instanceof BlobPreconditionFailedError) ||
+          attempt === 2
+        ) {
+          throw error;
+        }
+      }
+    }
 
-    return toSharedDeck(persisted);
+    throw new Error("The shared word deck could not be saved.");
   });
 
   writeQueue = nextWrite.catch(() => ({

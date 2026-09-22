@@ -7,6 +7,7 @@ import {
 } from "@/lib/server-word-deck";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 const MODEL =
   process.env.OPENROUTER_MODEL?.trim() || "nex-agi/nex-n2.5-pro:free";
@@ -161,7 +162,7 @@ function shouldTryAnotherModel(error: unknown) {
   );
 }
 
-export async function POST(request: Request) {
+async function generateDailyWords(request: Request) {
   const apiKey = process.env.OPENROUTER_API_KEY?.trim();
   if (!apiKey) {
     return NextResponse.json(
@@ -183,7 +184,16 @@ export async function POST(request: Request) {
         .slice(0, MAX_KNOWN_WORD_IDS)
     : [];
   const force = body.force === true;
-  const sharedDeck = await readSharedWordDeck();
+  let sharedDeck;
+  try {
+    sharedDeck = await readSharedWordDeck();
+  } catch (error) {
+    console.error("Shared word deck could not be loaded for generation.", error);
+    return NextResponse.json(
+      { error: "The shared word deck is temporarily unavailable." },
+      { status: 503 }
+    );
+  }
   const now = Date.now();
   const needsDailyGeneration =
     force ||
@@ -273,7 +283,16 @@ export async function POST(request: Request) {
         : [];
 
       if (generated.length >= 3) {
-        const savedDeck = await appendSharedWordPairs(generated, now);
+        let savedDeck;
+        try {
+          savedDeck = await appendSharedWordPairs(generated, now);
+        } catch (error) {
+          console.error("Generated words could not be saved.", error);
+          return NextResponse.json(
+            { error: "The generated words could not be saved." },
+            { status: 503 }
+          );
+        }
         return NextResponse.json({
           pairs: generated,
           allPairs: savedDeck.pairs,
@@ -292,5 +311,26 @@ export async function POST(request: Request) {
   return NextResponse.json(
     { error: "The daily word generator could not create new words." },
     { status: 502 }
+  );
+}
+
+export async function POST(request: Request) {
+  return generateDailyWords(request);
+}
+
+export async function GET(request: Request) {
+  const cronSecret = process.env.CRON_SECRET?.trim();
+  const authorization = request.headers.get("authorization");
+
+  if (!cronSecret || authorization !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
+  return generateDailyWords(
+    new Request(request.url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    })
   );
 }
