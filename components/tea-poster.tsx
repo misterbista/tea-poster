@@ -57,7 +57,7 @@ import {
     getServerWordTracker,
     syncServerWordTracker,
 } from "@/lib/word-tracker-client";
-import { WORD_PAIRS, type WordPair } from "@/lib/words";
+import { WORD_PAIRS, WORDS_VERSION, type WordPair } from "@/lib/words";
 
 const DEFAULT_PLAYERS = [
   "Sannish",
@@ -180,9 +180,10 @@ export function TeaPoster() {
 
   // On mount: load whatever was synced previously (works offline).
   useEffect(() => {
-    getCachedWordPairs()
-      .then((pairs) => {
-        if (pairs.length > 0) setWordList(pairs);
+    Promise.all([getCachedWordPairs(), getCachedWordsVersion()])
+      .then(([pairs, version]) => {
+        if (pairs.length > 0 && version >= WORDS_VERSION) setWordList(pairs);
+        else return cacheWordPairs(WORD_PAIRS, WORDS_VERSION);
       })
       .catch(() => {});
   }, []);
@@ -673,11 +674,16 @@ export function TeaPoster() {
               {revealed ? (
                 <>
                   {isImposter && (
-                    <span className="tea-secret-label">your category hint</span>
+                    <span className="tea-secret-label">your hint</span>
                   )}
-                  <span className="tea-display text-4xl font-bold tracking-tight">
-                    {isImposter ? round.pair.category : round.pair.word}
+                  <span className={isImposter ? "text-xl font-medium leading-relaxed" : "tea-display text-4xl font-bold tracking-tight"}>
+                    {isImposter ? round.pair.imposterHint : round.pair.word}
                   </span>
+                  {!isImposter && (
+                    <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+                      {round.pair.citizenHint}
+                    </p>
+                  )}
                   {isImposter && (
                     <Badge variant="destructive" className="mt-2 border border-destructive/30 bg-destructive/15">
                       You are the imposter — blend in!
@@ -712,7 +718,7 @@ export function TeaPoster() {
             </div>
             <CardTitle className="tea-display text-3xl font-bold">Time to talk</CardTitle>
             <CardDescription>
-              One of you only knows the category.
+              One of you only has a hint.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-4 text-center">
@@ -765,8 +771,8 @@ export function TeaPoster() {
                 <dd className="mt-1 break-words text-2xl font-semibold">{round.pair.word}</dd>
               </div>
               <div className="py-4">
-                <dt className="text-xs text-muted-foreground">Their category hint</dt>
-                <dd className="mt-1 font-medium">{round.pair.category}</dd>
+                <dt className="text-xs text-muted-foreground">Their hint</dt>
+                <dd className="mt-1 font-medium">{round.pair.imposterHint}</dd>
               </div>
             </dl>
           </CardContent>

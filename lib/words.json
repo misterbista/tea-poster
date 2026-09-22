@@ -1,725 +1,660 @@
 {
-  "version": 3,
-  "pairs": [
-    {
-      "id": "that",
-      "word": "That",
-      "hint": "Who",
-      "category": "General"
-    },
-    {
-      "id": "this",
-      "word": "This",
-      "hint": "Now",
-      "category": "General"
-    },
-    {
-      "id": "with",
-      "word": "With",
-      "hint": "Amid",
-      "category": "General"
-    },
-    {
-      "id": "have",
-      "word": "Have",
-      "hint": "Need",
-      "category": "General"
-    },
-    {
-      "id": "more",
-      "word": "More",
-      "hint": "Maximum",
-      "category": "General"
-    },
-    {
-      "id": "will",
-      "word": "Will",
-      "hint": "Wish",
-      "category": "General"
-    },
-    {
-      "id": "home",
-      "word": "Home",
-      "hint": "Domestic",
-      "category": "General"
-    },
-    {
-      "id": "page",
-      "word": "Page",
-      "hint": "Folio",
-      "category": "General"
-    },
-    {
-      "id": "search",
-      "word": "Search",
-      "hint": "Explore",
-      "category": "General"
-    },
-    {
-      "id": "free",
-      "word": "Free",
-      "hint": "Unbound",
-      "category": "General"
-    },
-    {
-      "id": "time",
-      "word": "Time",
-      "hint": "Meter",
-      "category": "General"
-    },
-    {
-      "id": "site",
-      "word": "Site",
-      "hint": "Place",
-      "category": "General"
-    },
-    {
-      "id": "what",
-      "word": "What",
-      "hint": "Anything",
-      "category": "General"
-    },
-    {
-      "id": "news",
-      "word": "News",
-      "hint": "Intelligence",
-      "category": "General"
-    },
-    {
-      "id": "there",
-      "word": "There",
-      "hint": "Meanwhile",
-      "category": "General"
-    },
-    {
-      "id": "only",
-      "word": "Only",
-      "hint": "Lone",
-      "category": "General"
-    },
-    {
-      "id": "when",
-      "word": "When",
-      "hint": "After",
-      "category": "General"
-    },
-    {
-      "id": "contact",
-      "word": "Contact",
-      "hint": "Impinging",
-      "category": "General"
-    },
-    {
-      "id": "here",
-      "word": "Here",
-      "hint": "Hera",
-      "category": "General"
-    },
-    {
-      "id": "business",
-      "word": "Business",
-      "hint": "Occupation",
-      "category": "General"
-    },
-    {
-      "id": "help",
-      "word": "Help",
-      "hint": "Assistance",
-      "category": "General"
-    },
-    {
-      "id": "view",
-      "word": "View",
-      "hint": "Prospect",
-      "category": "General"
-    },
-    {
-      "id": "first",
-      "word": "First",
-      "hint": "Number One",
-      "category": "General"
-    },
-    {
-      "id": "would",
-      "word": "Would",
-      "hint": "Association",
-      "category": "General"
-    },
-    {
-      "id": "were",
-      "word": "Were",
-      "hint": "Said",
-      "category": "General"
-    },
-    {
-      "id": "services",
-      "word": "Services",
-      "hint": "Serving",
-      "category": "General"
-    },
-    {
-      "id": "click",
-      "word": "Click",
-      "hint": "Flick",
-      "category": "General"
-    },
-    {
-      "id": "like",
-      "word": "Like",
-      "hint": "Corresponding",
-      "category": "General"
-    },
-    {
-      "id": "service",
-      "word": "Service",
-      "hint": "Overhaul",
-      "category": "General"
-    },
-    {
-      "id": "than",
-      "word": "Than",
-      "hint": "Rather",
-      "category": "General"
-    },
-    {
-      "id": "find",
-      "word": "Find",
-      "hint": "Encounter",
-      "category": "General"
-    },
-    {
-      "id": "price",
-      "word": "Price",
-      "hint": "Damage",
-      "category": "General"
-    },
-    {
-      "id": "date",
-      "word": "Date",
-      "hint": "Engagement",
-      "category": "General"
-    },
-    {
-      "id": "back",
-      "word": "Back",
-      "hint": "Rearwards",
-      "category": "General"
-    },
-    {
-      "id": "people",
-      "word": "People",
-      "hint": "Masses",
-      "category": "General"
-    },
-    {
-      "id": "list",
-      "word": "List",
-      "hint": "Lean",
-      "category": "General"
-    },
-    {
-      "id": "name",
-      "word": "Name",
-      "hint": "Refer",
-      "category": "General"
-    },
-    {
-      "id": "just",
-      "word": "Just",
-      "hint": "Fitting",
-      "category": "General"
-    },
-    {
-      "id": "over",
-      "word": "Over",
-      "hint": "Complete",
-      "category": "General"
-    },
-    {
-      "id": "state",
-      "word": "State",
-      "hint": "Country",
-      "category": "General"
-    },
-    {
-      "id": "year",
-      "word": "Year",
-      "hint": "Class",
-      "category": "General"
-    },
-    {
-      "id": "into",
-      "word": "Into",
-      "hint": "South",
-      "category": "General"
-    },
-    {
-      "id": "email",
-      "word": "Email",
-      "hint": "Post",
-      "category": "General"
-    },
-    {
-      "id": "health",
-      "word": "Health",
-      "hint": "Wholesomeness",
-      "category": "General"
-    },
-    {
-      "id": "world",
-      "word": "World",
-      "hint": "Reality",
-      "category": "General"
-    },
-    {
-      "id": "next",
-      "word": "Next",
-      "hint": "Future",
-      "category": "General"
-    },
-    {
-      "id": "work",
-      "word": "Work",
-      "hint": "Airt",
-      "category": "General"
-    },
-    {
-      "id": "last",
-      "word": "Last",
-      "hint": "Conclusion",
-      "category": "General"
-    },
-    {
-      "id": "most",
-      "word": "Most",
-      "hint": "Nigh",
-      "category": "General"
-    },
-    {
-      "id": "products",
-      "word": "Products",
-      "hint": "Production",
-      "category": "General"
-    },
-    {
-      "id": "music",
-      "word": "Music",
-      "hint": "Medicine",
-      "category": "General"
-    },
-    {
-      "id": "data",
-      "word": "Data",
-      "hint": "Computer",
-      "category": "General"
-    },
-    {
-      "id": "make",
-      "word": "Make",
-      "hint": "Form",
-      "category": "General"
-    },
-    {
-      "id": "product",
-      "word": "Product",
-      "hint": "Intersection",
-      "category": "General"
-    },
-    {
-      "id": "system",
-      "word": "System",
-      "hint": "Arrangement",
-      "category": "General"
-    },
-    {
-      "id": "post",
-      "word": "Post",
-      "hint": "Base",
-      "category": "General"
-    },
-    {
-      "id": "city",
-      "word": "City",
-      "hint": "Conurbation",
-      "category": "General"
-    },
-    {
-      "id": "policy",
-      "word": "Policy",
-      "hint": "Legislation",
-      "category": "General"
-    },
-    {
-      "id": "number",
-      "word": "Number",
-      "hint": "Total",
-      "category": "General"
-    },
-    {
-      "id": "such",
-      "word": "Such",
-      "hint": "Nature",
-      "category": "General"
-    },
-    {
-      "id": "copyright",
-      "word": "Copyright",
-      "hint": "Sponsor",
-      "category": "General"
-    },
-    {
-      "id": "support",
-      "word": "Support",
-      "hint": "Stand",
-      "category": "General"
-    },
-    {
-      "id": "message",
-      "word": "Message",
-      "hint": "Content",
-      "category": "General"
-    },
-    {
-      "id": "after",
-      "word": "After",
-      "hint": "Subsequent",
-      "category": "General"
-    },
-    {
-      "id": "best",
-      "word": "Best",
-      "hint": "Optimum",
-      "category": "General"
-    },
-    {
-      "id": "software",
-      "word": "Software",
-      "hint": "Courseware",
-      "category": "General"
-    },
-    {
-      "id": "video",
-      "word": "Video",
-      "hint": "Picture",
-      "category": "General"
-    },
-    {
-      "id": "well",
-      "word": "Well",
-      "hint": "Good",
-      "category": "General"
-    },
-    {
-      "id": "where",
-      "word": "Where",
-      "hint": "Someplace",
-      "category": "General"
-    },
-    {
-      "id": "info",
-      "word": "Info",
-      "hint": "Learn",
-      "category": "General"
-    },
-    {
-      "id": "public",
-      "word": "Public",
-      "hint": "Common",
-      "category": "General"
-    },
-    {
-      "id": "books",
-      "word": "Books",
-      "hint": "Script",
-      "category": "General"
-    },
-    {
-      "id": "high",
-      "word": "High",
-      "hint": "Overflowing",
-      "category": "General"
-    },
-    {
-      "id": "school",
-      "word": "School",
-      "hint": "Shoal",
-      "category": "General"
-    },
-    {
-      "id": "through",
-      "word": "Through",
-      "hint": "Pass",
-      "category": "General"
-    },
-    {
-      "id": "each",
-      "word": "Each",
-      "hint": "Particular",
-      "category": "General"
-    },
-    {
-      "id": "links",
-      "word": "Links",
-      "hint": "Lanes",
-      "category": "General"
-    },
-    {
-      "id": "review",
-      "word": "Review",
-      "hint": "Reexamination",
-      "category": "General"
-    },
-    {
-      "id": "years",
-      "word": "Years",
-      "hint": "Old Age",
-      "category": "General"
-    },
-    {
-      "id": "order",
-      "word": "Order",
-      "hint": "Put",
-      "category": "General"
-    },
-    {
-      "id": "very",
-      "word": "Very",
-      "hint": "Actual",
-      "category": "General"
-    },
-    {
-      "id": "privacy",
-      "word": "Privacy",
-      "hint": "Secrecy",
-      "category": "General"
-    },
-    {
-      "id": "book",
-      "word": "Book",
-      "hint": "Playscript",
-      "category": "General"
-    },
-    {
-      "id": "items",
-      "word": "Items",
-      "hint": "Token",
-      "category": "General"
-    },
-    {
-      "id": "company",
-      "word": "Company",
-      "hint": "Fellowship",
-      "category": "General"
-    },
-    {
-      "id": "read",
-      "word": "Read",
-      "hint": "Scan",
-      "category": "General"
-    },
-    {
-      "id": "group",
-      "word": "Group",
-      "hint": "Radical",
-      "category": "General"
-    },
-    {
-      "id": "need",
-      "word": "Need",
-      "hint": "Have",
-      "category": "General"
-    },
-    {
-      "id": "many",
-      "word": "Many",
-      "hint": "Amount",
-      "category": "General"
-    },
-    {
-      "id": "user",
-      "word": "User",
-      "hint": "Customer",
-      "category": "General"
-    },
-    {
-      "id": "said",
-      "word": "Said",
-      "hint": "Same",
-      "category": "General"
-    },
-    {
-      "id": "under",
-      "word": "Under",
-      "hint": "Subordinate",
-      "category": "General"
-    },
-    {
-      "id": "research",
-      "word": "Research",
-      "hint": "Investigation",
-      "category": "General"
-    },
-    {
-      "id": "university",
-      "word": "University",
-      "hint": "Degree",
-      "category": "General"
-    },
-    {
-      "id": "mail",
-      "word": "Mail",
-      "hint": "Chain Armour",
-      "category": "General"
-    },
-    {
-      "id": "full",
-      "word": "Full",
-      "hint": "Brimful",
-      "category": "General"
-    },
-    {
-      "id": "reviews",
-      "word": "Reviews",
-      "hint": "Survey",
-      "category": "General"
-    },
-    {
-      "id": "program",
-      "word": "Program",
-      "hint": "Broadcast",
-      "category": "General"
-    },
-    {
-      "id": "life",
-      "word": "Life",
-      "hint": "Animation",
-      "category": "General"
-    },
-    {
-      "id": "know",
-      "word": "Know",
-      "hint": "Enlightened",
-      "category": "General"
-    },
-    {
-      "id": "games",
-      "word": "Games",
-      "hint": "Brave",
-      "category": "General"
-    },
-    {
-      "id": "days",
-      "word": "Days",
-      "hint": "Period",
-      "category": "General"
-    },
-    {
-      "id": "management",
-      "word": "Management",
-      "hint": "Business",
-      "category": "General"
-    },
-    {
-      "id": "part",
-      "word": "Part",
-      "hint": "Division",
-      "category": "General"
-    },
-    {
-      "id": "could",
-      "word": "Could",
-      "hint": "Likely",
-      "category": "General"
-    },
-    {
-      "id": "hotel",
-      "word": "Hotel",
-      "hint": "Inn",
-      "category": "General"
-    },
-    {
-      "id": "real",
-      "word": "Real",
-      "hint": "Concrete",
-      "category": "General"
-    },
-    {
-      "id": "item",
-      "word": "Item",
-      "hint": "Detail",
-      "category": "General"
-    },
-    {
-      "id": "center",
-      "word": "Center",
-      "hint": "Nerve Centre",
-      "category": "General"
-    },
-    {
-      "id": "must",
-      "word": "Must",
-      "hint": "Should",
-      "category": "General"
-    },
-    {
-      "id": "store",
-      "word": "Store",
-      "hint": "Storage",
-      "category": "General"
-    },
-    {
-      "id": "travel",
-      "word": "Travel",
-      "hint": "Move",
-      "category": "General"
-    },
-    {
-      "id": "comments",
-      "word": "Comments",
-      "hint": "Commentary",
-      "category": "General"
-    },
-    {
-      "id": "report",
-      "word": "Report",
-      "hint": "Story",
-      "category": "General"
-    },
-    {
-      "id": "member",
-      "word": "Member",
-      "hint": "Appendage",
-      "category": "General"
-    },
-    {
-      "id": "details",
-      "word": "Details",
-      "hint": "Accuracies",
-      "category": "General"
-    },
-    {
-      "id": "line",
-      "word": "Line",
-      "hint": "Draw",
-      "category": "General"
-    },
-    {
-      "id": "before",
-      "word": "Before",
-      "hint": "Former",
-      "category": "General"
-    },
-    {
-      "id": "send",
-      "word": "Send",
-      "hint": "Mail",
-      "category": "General"
-    },
-    {
-      "id": "right",
-      "word": "Right",
-      "hint": "Satisfactory",
-      "category": "General"
+  "version": 8,
+  "categories": [
+    {
+      "category": "Nepali food",
+      "words": [
+        {
+          "word": "Momo",
+          "citizenHint": "A very popular steamed or fried snack",
+          "imposterHint": "Something commonly associated with Nepali food"
+        },
+        {
+          "word": "Dal Bhat",
+          "citizenHint": "A staple everyday Nepali meal",
+          "imposterHint": "A traditional Nepali meal"
+        },
+        {
+          "word": "Sel Roti",
+          "citizenHint": "A traditional ring-shaped festive food",
+          "imposterHint": "Something commonly prepared during festivals"
+        },
+        {
+          "word": "Yomari",
+          "citizenHint": "A sweet Newari delicacy with a distinctive shape",
+          "imposterHint": "A traditional Newari food"
+        },
+        {
+          "word": "Chatamari",
+          "citizenHint": "A Newari dish sometimes compared to pizza",
+          "imposterHint": "A traditional dish from Kathmandu Valley"
+        },
+        {
+          "word": "Dhido",
+          "citizenHint": "A traditional thick staple eaten with curry",
+          "imposterHint": "A traditional Nepali staple food"
+        },
+        {
+          "word": "Gundruk",
+          "citizenHint": "A fermented leafy vegetable",
+          "imposterHint": "A traditional preserved Nepali food"
+        },
+        {
+          "word": "Sukuti",
+          "citizenHint": "Dried meat commonly eaten as a snack",
+          "imposterHint": "A popular meat-based Nepali food"
+        },
+        {
+          "word": "Choila",
+          "citizenHint": "A spicy Newari meat dish",
+          "imposterHint": "A flavorful Newari dish"
+        },
+        {
+          "word": "Bara",
+          "citizenHint": "A Newari lentil-based dish",
+          "imposterHint": "A traditional Newari snack"
+        },
+        {
+          "word": "Samay Baji",
+          "citizenHint": "A traditional Newari platter containing several foods",
+          "imposterHint": "Something served during Newari gatherings"
+        },
+        {
+          "word": "Juju Dhau",
+          "citizenHint": "A famous sweet dairy specialty from Bhaktapur",
+          "imposterHint": "A famous food associated with Bhaktapur"
+        },
+        {
+          "word": "Aloo Tama",
+          "citizenHint": "A curry combining potato and bamboo shoots",
+          "imposterHint": "A traditional Nepali curry"
+        },
+        {
+          "word": "Kwati",
+          "citizenHint": "A soup traditionally made from several sprouted beans",
+          "imposterHint": "A traditional healthy Nepali dish"
+        },
+        {
+          "word": "Thukpa",
+          "citizenHint": "A warm noodle soup popular in Himalayan regions",
+          "imposterHint": "A warm dish popular in colder areas"
+        },
+        {
+          "word": "Chatpate",
+          "citizenHint": "A spicy street snack mixed in a bowl",
+          "imposterHint": "A popular Nepali street food"
+        },
+        {
+          "word": "Pani Puri",
+          "citizenHint": "A crunchy street snack filled before eating",
+          "imposterHint": "A popular street snack"
+        },
+        {
+          "word": "Samosa",
+          "citizenHint": "A triangular fried snack usually containing a savory filling",
+          "imposterHint": "A commonly eaten fried snack"
+        },
+        {
+          "word": "Sekuwa",
+          "citizenHint": "Meat traditionally cooked over an open fire",
+          "imposterHint": "A popular Nepali meat dish"
+        },
+        {
+          "word": "Puwa",
+          "citizenHint": "A sweet dish often made from semolina or flour",
+          "imposterHint": "A traditional sweet food"
+        },
+        {
+          "word": "Kheer",
+          "citizenHint": "A sweet milk-and-rice dessert",
+          "imposterHint": "A dessert commonly served on special occasions"
+        },
+        {
+          "word": "Laphing",
+          "citizenHint": "A spicy cold noodle-like snack",
+          "imposterHint": "A popular spicy street food"
+        },
+        {
+          "word": "Wai Wai",
+          "citizenHint": "A famous instant noodle brand commonly eaten dry too",
+          "imposterHint": "A very common packaged snack in Nepal"
+        },
+        {
+          "word": "Achar",
+          "citizenHint": "A spicy or tangy side served with meals",
+          "imposterHint": "Something commonly served beside Nepali food"
+        },
+        {
+          "word": "Chiura",
+          "citizenHint": "Flattened rice commonly paired with other foods",
+          "imposterHint": "A common rice-based Nepali food"
+        }
+      ]
+    },
+    {
+      "category": "Places in Nepal",
+      "words": [
+        {
+          "word": "Kathmandu",
+          "citizenHint": "Nepal's capital city",
+          "imposterHint": "A major city in Nepal"
+        },
+        {
+          "word": "Pokhara",
+          "citizenHint": "A tourist city famous for lakes and mountain views",
+          "imposterHint": "A very popular tourist destination in Nepal"
+        },
+        {
+          "word": "Lalitpur",
+          "citizenHint": "A historic city known for Patan Durbar Square",
+          "imposterHint": "A historic city in Kathmandu Valley"
+        },
+        {
+          "word": "Bhaktapur",
+          "citizenHint": "A historic valley city famous for temples and pottery",
+          "imposterHint": "A heritage-rich city in Kathmandu Valley"
+        },
+        {
+          "word": "Lumbini",
+          "citizenHint": "Known worldwide as the birthplace of Buddha",
+          "imposterHint": "A globally important religious destination in Nepal"
+        },
+        {
+          "word": "Chitwan",
+          "citizenHint": "Famous for its national park and wildlife",
+          "imposterHint": "A popular destination in southern Nepal"
+        },
+        {
+          "word": "Janakpur",
+          "citizenHint": "A city strongly associated with Goddess Sita",
+          "imposterHint": "An important religious city in the Terai"
+        },
+        {
+          "word": "Biratnagar",
+          "citizenHint": "A major industrial city in eastern Nepal",
+          "imposterHint": "A major city in eastern Nepal"
+        },
+        {
+          "word": "Dharan",
+          "citizenHint": "An eastern city near the hills with a strong food culture",
+          "imposterHint": "A well-known city in eastern Nepal"
+        },
+        {
+          "word": "Butwal",
+          "citizenHint": "A major commercial city near the hills and Terai",
+          "imposterHint": "A busy city in western Nepal"
+        },
+        {
+          "word": "Bhairahawa",
+          "citizenHint": "A city close to the Indian border and Lumbini",
+          "imposterHint": "A city in Nepal's southern plains"
+        },
+        {
+          "word": "Nepalgunj",
+          "citizenHint": "A major city in western Terai",
+          "imposterHint": "A major city in western Nepal"
+        },
+        {
+          "word": "Dhangadhi",
+          "citizenHint": "A major city in far-western Nepal",
+          "imposterHint": "A city in Nepal's far-western region"
+        },
+        {
+          "word": "Hetauda",
+          "citizenHint": "The capital city of Bagmati Province",
+          "imposterHint": "An important city south of Kathmandu"
+        },
+        {
+          "word": "Ilam",
+          "citizenHint": "Famous for green hills and tea gardens",
+          "imposterHint": "A scenic destination in eastern Nepal"
+        },
+        {
+          "word": "Bandipur",
+          "citizenHint": "A scenic hilltop town with preserved traditional architecture",
+          "imposterHint": "A popular hill destination"
+        },
+        {
+          "word": "Nagarkot",
+          "citizenHint": "A popular hill destination for sunrise and mountain views",
+          "imposterHint": "A tourist spot near Kathmandu"
+        },
+        {
+          "word": "Dhulikhel",
+          "citizenHint": "A hill town known for Himalayan views",
+          "imposterHint": "A scenic town near Kathmandu"
+        },
+        {
+          "word": "Mustang",
+          "citizenHint": "A dry Himalayan region with dramatic landscapes",
+          "imposterHint": "A famous Himalayan destination"
+        },
+        {
+          "word": "Manang",
+          "citizenHint": "A Himalayan district on a famous trekking route",
+          "imposterHint": "A high-altitude region popular with trekkers"
+        },
+        {
+          "word": "Namche Bazaar",
+          "citizenHint": "A famous mountain town used by Everest trekkers",
+          "imposterHint": "A settlement in Nepal's Himalayan trekking region"
+        },
+        {
+          "word": "Thamel",
+          "citizenHint": "Kathmandu's famous tourist district",
+          "imposterHint": "A busy tourist area"
+        },
+        {
+          "word": "Pashupatinath",
+          "citizenHint": "A major Hindu temple complex beside the Bagmati River",
+          "imposterHint": "An important religious place in Kathmandu"
+        },
+        {
+          "word": "Swayambhunath",
+          "citizenHint": "A hilltop Buddhist site famous for its monkeys",
+          "imposterHint": "A famous religious landmark in Kathmandu"
+        },
+        {
+          "word": "Boudhanath",
+          "citizenHint": "A massive Buddhist stupa in Kathmandu",
+          "imposterHint": "A famous Buddhist landmark"
+        },
+        {
+          "word": "Phewa Lake",
+          "citizenHint": "A famous lake beside Pokhara",
+          "imposterHint": "A popular tourist attraction involving water"
+        },
+        {
+          "word": "Rara Lake",
+          "citizenHint": "Nepal's largest lake",
+          "imposterHint": "A scenic natural attraction in Nepal"
+        },
+        {
+          "word": "Mount Everest",
+          "citizenHint": "The highest mountain on Earth",
+          "imposterHint": "A world-famous Himalayan landmark"
+        },
+        {
+          "word": "Annapurna",
+          "citizenHint": "A famous Himalayan mountain range and trekking region",
+          "imposterHint": "A famous mountain area in Nepal"
+        },
+        {
+          "word": "Machhapuchhre",
+          "citizenHint": "A sacred mountain famous for its fishtail-shaped peak",
+          "imposterHint": "A famous Himalayan mountain"
+        }
+      ]
+    },
+    {
+      "category": "Nepali castes and communities",
+      "words": [
+        {
+          "word": "Bahun",
+          "citizenHint": "One of Nepal's traditionally recognized hill communities",
+          "imposterHint": "A Nepali community"
+        },
+        {
+          "word": "Chhetri",
+          "citizenHint": "One of Nepal's largest hill communities",
+          "imposterHint": "A major Nepali community"
+        },
+        {
+          "word": "Thakuri",
+          "citizenHint": "A historically recognized hill community",
+          "imposterHint": "A Nepali hill community"
+        },
+        {
+          "word": "Newar",
+          "citizenHint": "An indigenous community strongly associated with Kathmandu Valley",
+          "imposterHint": "A community with a rich cultural tradition"
+        },
+        {
+          "word": "Tamang",
+          "citizenHint": "A community with strong cultural presence around central Nepal",
+          "imposterHint": "An indigenous Nepali community"
+        },
+        {
+          "word": "Gurung",
+          "citizenHint": "A hill community strongly associated with central Nepal",
+          "imposterHint": "An indigenous hill community"
+        },
+        {
+          "word": "Magar",
+          "citizenHint": "One of Nepal's major indigenous communities",
+          "imposterHint": "A large indigenous Nepali community"
+        },
+        {
+          "word": "Rai",
+          "citizenHint": "A Kirati community primarily associated with eastern Nepal",
+          "imposterHint": "A community strongly associated with eastern Nepal"
+        },
+        {
+          "word": "Limbu",
+          "citizenHint": "A Kirati community with deep roots in eastern Nepal",
+          "imposterHint": "An indigenous community from eastern Nepal"
+        },
+        {
+          "word": "Sherpa",
+          "citizenHint": "A Himalayan community famous internationally for mountaineering",
+          "imposterHint": "A community associated with Nepal's Himalayan region"
+        },
+        {
+          "word": "Tharu",
+          "citizenHint": "An indigenous community traditionally associated with the Terai",
+          "imposterHint": "An indigenous community from Nepal's plains"
+        },
+        {
+          "word": "Sunuwar",
+          "citizenHint": "A Kirati community from eastern and central hills",
+          "imposterHint": "An indigenous hill community"
+        },
+        {
+          "word": "Thakali",
+          "citizenHint": "A Himalayan community famous for its cuisine",
+          "imposterHint": "A Nepali community from a Himalayan region"
+        },
+        {
+          "word": "Chepang",
+          "citizenHint": "An indigenous community associated with Nepal's central hills",
+          "imposterHint": "An indigenous Nepali hill community"
+        },
+        {
+          "word": "Kami",
+          "citizenHint": "A traditionally recognized Nepali artisan community",
+          "imposterHint": "A traditionally recognized Nepali community"
+        },
+        {
+          "word": "Damai",
+          "citizenHint": "A community historically associated with tailoring and music",
+          "imposterHint": "A traditionally recognized Nepali community"
+        },
+        {
+          "word": "Sarki",
+          "citizenHint": "A traditionally recognized Nepali artisan community",
+          "imposterHint": "A traditionally recognized Nepali community"
+        }
+      ]
+    },
+    {
+      "category": "Nepali actors",
+      "words": [
+        {
+          "word": "Rajesh Hamal",
+          "citizenHint": "A veteran superstar associated with classic Nepali cinema",
+          "imposterHint": "A famous veteran Nepali actor"
+        },
+        {
+          "word": "Dayahang Rai",
+          "citizenHint": "Known for natural acting and character-driven Nepali films",
+          "imposterHint": "A popular contemporary Nepali actor"
+        },
+        {
+          "word": "Saugat Malla",
+          "citizenHint": "Known for versatile roles and memorable characters",
+          "imposterHint": "A well-known Nepali actor"
+        },
+        {
+          "word": "Nischal Basnet",
+          "citizenHint": "An actor-director associated with modern Nepali cinema",
+          "imposterHint": "A Nepali film personality"
+        },
+        {
+          "word": "Bipin Karki",
+          "citizenHint": "Known for transforming himself into unusual movie characters",
+          "imposterHint": "A popular character actor"
+        },
+        {
+          "word": "Khagendra Lamichhane",
+          "citizenHint": "An actor and writer known for story-driven films",
+          "imposterHint": "A Nepali actor involved in storytelling and cinema"
+        },
+        {
+          "word": "Anmol KC",
+          "citizenHint": "A popular younger-generation Nepali movie star",
+          "imposterHint": "A young Nepali film actor"
+        },
+        {
+          "word": "Pradeep Khadka",
+          "citizenHint": "A popular leading actor in modern Nepali cinema",
+          "imposterHint": "A contemporary Nepali movie star"
+        },
+        {
+          "word": "Paul Shah",
+          "citizenHint": "Known for Nepali films and music videos",
+          "imposterHint": "A Nepali entertainment personality"
+        },
+        {
+          "word": "Aryan Sigdel",
+          "citizenHint": "A leading actor known especially for romantic films",
+          "imposterHint": "A popular Nepali leading actor"
+        },
+        {
+          "word": "Dhiraj Magar",
+          "citizenHint": "A younger-generation Nepali actor",
+          "imposterHint": "A contemporary Nepali actor"
+        },
+        {
+          "word": "Shiva Shrestha",
+          "citizenHint": "A veteran actor from Nepali cinema",
+          "imposterHint": "An actor from an older generation of Nepali cinema"
+        },
+        {
+          "word": "Bhuwan KC",
+          "citizenHint": "A veteran actor, producer and filmmaker",
+          "imposterHint": "A long-time Nepali film personality"
+        },
+        {
+          "word": "Nikhil Uprety",
+          "citizenHint": "An actor strongly associated with action movies",
+          "imposterHint": "A Nepali actor known for a particular film genre"
+        },
+        {
+          "word": "Biraj Bhatta",
+          "citizenHint": "Known especially for action-oriented films",
+          "imposterHint": "A Nepali film actor"
+        },
+        {
+          "word": "Rekha Thapa",
+          "citizenHint": "A prominent actress and filmmaker in Nepali cinema",
+          "imposterHint": "A famous Nepali actress"
+        },
+        {
+          "word": "Karishma Manandhar",
+          "citizenHint": "A veteran actress known across generations",
+          "imposterHint": "A veteran Nepali actress"
+        },
+        {
+          "word": "Manisha Koirala",
+          "citizenHint": "A Nepali-born actress with a major Bollywood career",
+          "imposterHint": "A famous actress with connections to Nepal"
+        },
+        {
+          "word": "Swastima Khadka",
+          "citizenHint": "A prominent actress from the newer generation",
+          "imposterHint": "A popular contemporary Nepali actress"
+        },
+        {
+          "word": "Surakshya Panta",
+          "citizenHint": "Known for critically recognized character roles",
+          "imposterHint": "A contemporary Nepali actress"
+        },
+        {
+          "word": "Miruna Magar",
+          "citizenHint": "An actress known for several recent popular Nepali films",
+          "imposterHint": "A popular actress from modern Nepali cinema"
+        },
+        {
+          "word": "Priyanka Karki",
+          "citizenHint": "An actress known across films, television and entertainment",
+          "imposterHint": "A well-known Nepali entertainment personality"
+        },
+        {
+          "word": "Keki Adhikari",
+          "citizenHint": "An actress known for films and television",
+          "imposterHint": "A popular Nepali actress"
+        },
+        {
+          "word": "Barsha Raut",
+          "citizenHint": "A popular actress from modern Nepali cinema",
+          "imposterHint": "A contemporary Nepali actress"
+        },
+        {
+          "word": "Pooja Sharma",
+          "citizenHint": "A popular actress and producer in Nepali films",
+          "imposterHint": "A Nepali film personality"
+        }
+      ]
+    },
+    {
+      "category": "Nepali festivals",
+      "words": [
+        {
+          "word": "Dashain",
+          "citizenHint": "Nepal's biggest Hindu festival, associated with tika and family gatherings",
+          "imposterHint": "One of Nepal's biggest annual celebrations"
+        },
+        {
+          "word": "Tihar",
+          "citizenHint": "A festival of lights celebrated over several days",
+          "imposterHint": "A major Nepali festival celebrated at home with family"
+        },
+        {
+          "word": "Holi",
+          "citizenHint": "A festival where people celebrate with colors and water",
+          "imposterHint": "A lively spring festival"
+        },
+        {
+          "word": "Teej",
+          "citizenHint": "A festival strongly associated with women, red clothing and fasting",
+          "imposterHint": "A major Hindu festival celebrated in Nepal"
+        },
+        {
+          "word": "Chhath",
+          "citizenHint": "A festival centered around worship of the Sun",
+          "imposterHint": "A religious festival especially important in the Terai"
+        },
+        {
+          "word": "Maghe Sankranti",
+          "citizenHint": "A winter festival associated with foods like sesame and yam",
+          "imposterHint": "A traditional festival occurring during winter"
+        },
+        {
+          "word": "Buddha Jayanti",
+          "citizenHint": "A day commemorating the birth of Buddha",
+          "imposterHint": "An important Buddhist celebration"
+        },
+        {
+          "word": "Indra Jatra",
+          "citizenHint": "A Kathmandu Valley festival featuring chariots and masked dances",
+          "imposterHint": "A traditional festival strongly associated with Kathmandu"
+        },
+        {
+          "word": "Bisket Jatra",
+          "citizenHint": "A famous Bhaktapur festival involving large chariots",
+          "imposterHint": "A traditional festival in Kathmandu Valley"
+        },
+        {
+          "word": "Gai Jatra",
+          "citizenHint": "A festival involving processions traditionally connected with remembrance",
+          "imposterHint": "A distinctive festival celebrated in Kathmandu Valley"
+        },
+        {
+          "word": "Shivaratri",
+          "citizenHint": "A major festival dedicated to Lord Shiva",
+          "imposterHint": "A major Hindu religious festival"
+        },
+        {
+          "word": "Janai Purnima",
+          "citizenHint": "A full-moon festival associated with sacred thread traditions",
+          "imposterHint": "A religious festival celebrated during a full moon"
+        },
+        {
+          "word": "Lhosar",
+          "citizenHint": "New Year celebrations observed by several Himalayan communities",
+          "imposterHint": "A New Year festival celebrated by some Nepali communities"
+        }
+      ]
+    },
+    {
+      "category": "Nepali everyday life",
+      "words": [
+        {
+          "word": "Dhaka Topi",
+          "citizenHint": "A traditional patterned Nepali cap",
+          "imposterHint": "A traditional item of Nepali clothing"
+        },
+        {
+          "word": "Daura Suruwal",
+          "citizenHint": "Traditional Nepali men's clothing",
+          "imposterHint": "Traditional Nepali attire"
+        },
+        {
+          "word": "Gunyu Cholo",
+          "citizenHint": "Traditional clothing associated with Nepali women",
+          "imposterHint": "Traditional Nepali attire"
+        },
+        {
+          "word": "Khukuri",
+          "citizenHint": "Nepal's famous curved traditional blade",
+          "imposterHint": "A famous traditional Nepali object"
+        },
+        {
+          "word": "Madal",
+          "citizenHint": "A traditional hand-played drum",
+          "imposterHint": "A traditional Nepali musical instrument"
+        },
+        {
+          "word": "Sarangi",
+          "citizenHint": "A traditional bowed string instrument",
+          "imposterHint": "A traditional Nepali musical instrument"
+        },
+        {
+          "word": "Doko",
+          "citizenHint": "A woven basket traditionally carried on the back",
+          "imposterHint": "A traditional object used for carrying things"
+        },
+        {
+          "word": "Namlo",
+          "citizenHint": "A strap used to carry loads with the forehead",
+          "imposterHint": "Something traditionally used when carrying heavy loads"
+        },
+        {
+          "word": "Nanglo",
+          "citizenHint": "A flat woven tray commonly used for sorting grains",
+          "imposterHint": "A traditional household farming item"
+        },
+        {
+          "word": "Dhiki",
+          "citizenHint": "A traditional foot-operated tool for processing grain",
+          "imposterHint": "An old-fashioned agricultural household tool"
+        },
+        {
+          "word": "Janto",
+          "citizenHint": "A traditional hand-operated stone grinder",
+          "imposterHint": "A traditional tool used for preparing food"
+        },
+        {
+          "word": "Khada",
+          "citizenHint": "A ceremonial scarf offered as a sign of respect",
+          "imposterHint": "An item commonly given during ceremonies"
+        },
+        {
+          "word": "Pote",
+          "citizenHint": "Traditional beads commonly worn as jewelry",
+          "imposterHint": "A traditional Nepali accessory"
+        },
+        {
+          "word": "Dhaka Shawl",
+          "citizenHint": "Traditional clothing made using distinctive Nepali patterned fabric",
+          "imposterHint": "A traditional patterned clothing item"
+        },
+        {
+          "word": "Tika",
+          "citizenHint": "A mark placed on the forehead during blessings and ceremonies",
+          "imposterHint": "Something commonly associated with Nepali ceremonies"
+        }
+      ]
     }
   ]
 }

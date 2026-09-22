@@ -1,5 +1,38 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Editing the game words
+
+Edit `lib/words.json`. This is the single source for both server and offline
+words; the game no longer downloads random word lists.
+
+Each category has a `category` label and a `words` array. Add a word object
+to an existing array, or add a category object:
+
+```json
+{
+  "category": "Nepali food",
+  "words": [
+    {
+      "word": "Momo",
+      "citizenHint": "A very popular steamed or fried snack",
+      "imposterHint": "Something commonly associated with Nepali food"
+    }
+  ]
+}
+```
+
+Imposters see only `imposterHint`. Citizens see `word` with `citizenHint`
+underneath. Category labels organize the deck.
+Romanized names and Devanagari are both supported. Avoid duplicate words
+across categories. IDs are generated automatically from the word.
+The caste/community category includes both caste and ethnic community names.
+
+Increment the top-level `version` after changing the deck (currently 8).
+Restart or rebuild/redeploy the app to distribute production updates.
+Connected clients sync the updated deck; offline clients retain their last copy.
+Run `node scripts/seed-words.mjs` to validate edits. Despite its legacy name,
+this command only validates the local JSON and never downloads or overwrites it.
+
 ## Getting Started
 
 First, run the development server:
