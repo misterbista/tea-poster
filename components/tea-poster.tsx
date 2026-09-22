@@ -1,19 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import Image from "next/image";
 import {
+  ArrowRightIcon,
   CheckIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
   EyeIcon,
+  LockKeyholeIcon,
   MoonIcon,
   PlusIcon,
   RotateCcwIcon,
+  SparklesIcon,
   ShuffleIcon,
   SunIcon,
   Trash2Icon,
-  WifiIcon,
-  WifiOffIcon,
 } from "lucide-react";
+import Image from "next/image";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -31,15 +34,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
-import { WORD_PAIRS, type WordPair } from "@/lib/words";
 import {
   cacheWordPairs,
+  claimOfflineWord,
   getCachedWordPairs,
   getCachedWordsVersion,
-  getUsedWordIds,
-  markWordsUsed,
-  resetUsedWords,
-} from "@/lib/db";
+  getPendingWordIds,
+  saveTrackerSnapshot,
+} from "@/lib/store";
+import {
+  claimServerWord,
+  getServerWordTracker,
+  syncServerWordTracker,
+} from "@/lib/word-tracker-client";
+import { WORD_PAIRS, type WordPair } from "@/lib/words";
 
 const DEFAULT_PLAYERS = [
   "Sannish",
@@ -50,12 +58,16 @@ const DEFAULT_PLAYERS = [
   "Sagun",
   "Aakash",
   "Samrat",
+  "Pooja",
+  "Sambriddhi",
+  "Zatil"
 ];
 
 type Phase = "setup" | "deal" | "discuss";
 
 type Round = {
   pair: WordPair;
+  players: string[];
   imposterIndex: number;
   starterIndex: number;
 };
@@ -75,7 +87,7 @@ function ThemeToggle() {
       type="button"
       variant="outline"
       size="icon"
-      className="rounded-full border-border/80 bg-card/60 text-primary hover:border-accent hover:bg-accent/10"
+      className="size-11 rounded-full border-border/70 bg-card/60 text-primary shadow-sm hover:border-accent hover:bg-accent/10"
       onClick={toggleTheme}
       aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
     >
@@ -86,14 +98,14 @@ function ThemeToggle() {
 
 function PhaseSteps({ phase }: { phase: Phase }) {
   const steps: { id: Phase; label: string }[] = [
-    { id: "setup", label: "Set the table" },
-    { id: "deal", label: "Reveal cards" },
-    { id: "discuss", label: "Spill the tea" },
+    { id: "setup", label: "Players" },
+    { id: "deal", label: "Peek" },
+    { id: "discuss", label: "Talk" },
   ];
   const currentIndex = steps.findIndex((step) => step.id === phase);
 
   return (
-    <nav aria-label="Game progress" className="mb-6 grid grid-cols-3 gap-2">
+    <nav aria-label="Game progress" className="mb-5 grid grid-cols-3 gap-2">
       {steps.map((step, index) => {
         const complete = index < currentIndex;
         const current = index === currentIndex;
@@ -102,7 +114,7 @@ function PhaseSteps({ phase }: { phase: Phase }) {
           <div
             key={step.id}
             aria-current={current ? "step" : undefined}
-            className={`flex items-center gap-2 rounded-xl border px-2.5 py-2 transition-colors ${
+            className={`flex items-center justify-center gap-1.5 rounded-2xl border px-2 py-2 transition-colors ${
               current
                 ? "border-accent/40 bg-accent/10 text-primary"
                 : complete
@@ -121,7 +133,7 @@ function PhaseSteps({ phase }: { phase: Phase }) {
             >
               {index + 1}
             </span>
-            <span className="truncate text-[0.61rem] font-semibold uppercase tracking-[0.08em]">
+            <span className="truncate text-[0.63rem] font-semibold uppercase tracking-[0.1em]">
               {step.label}
             </span>
           </div>
@@ -133,13 +145,6 @@ function PhaseSteps({ phase }: { phase: Phase }) {
 
 function randomIndex(length: number) {
   return Math.floor(Math.random() * length);
-}
-
-function pickWord(source: WordPair[], usedIds: string[]): WordPair {
-  const fresh = source.filter((p) => !usedIds.includes(p.id));
-  // If every word has been used, fall back to the full list.
-  const pool = fresh.length > 0 ? fresh : source;
-  return pool[randomIndex(pool.length)];
 }
 
 function subscribeOnline(callback: () => void) {
@@ -178,29 +183,45 @@ export function TeaPoster() {
 
   // Whenever we're online, pull the latest word list from the source.
   useEffect(() => {
-    if (!online || syncingRef.current) return;
+    if (!online) {
+      return;
+    }
+    if (syncingRef.current) return;
     syncingRef.current = true;
     (async () => {
       try {
-        const res = await fetch("/api/words", { cache: "no-store" });
-        if (!res.ok) return;
-        const data = (await res.json()) as {
-          version: number;
-          pairs: WordPair[];
-        };
-        if (!Array.isArray(data.pairs) || data.pairs.length === 0) return;
-        const cachedVersion = await getCachedWordsVersion();
-        if (data.version > cachedVersion) {
-          await cacheWordPairs(data.pairs, data.version);
-          setWordList(data.pairs);
-          toast.success(
-            `Word list synced — ${data.pairs.length} words ready for offline play.`
-          );
-        } else {
-          setWordList(data.pairs);
+        try {
+          const res = await fetch("/api/words", { cache: "no-store" });
+          if (res.ok) {
+            const data = (await res.json()) as {
+              version: number;
+              pairs: WordPair[];
+            };
+            if (Array.isArray(data.pairs) && data.pairs.length > 0) {
+              const cachedVersion = await getCachedWordsVersion();
+              if (data.version > cachedVersion) {
+                await cacheWordPairs(data.pairs, data.version);
+                toast.success(
+                  `Word list synced — ${data.pairs.length} words ready for offline play.`
+                );
+              }
+              setWordList(data.pairs);
+            }
+          }
+        } catch {
+          // Cached/bundled word list stays in play if this request fails.
         }
-      } catch {
-        // Offline or unreachable — cached/bundled list stays in play.
+
+        try {
+          const pendingWordIds = await getPendingWordIds();
+          const tracker =
+            pendingWordIds.length > 0
+              ? await syncServerWordTracker(pendingWordIds)
+              : await getServerWordTracker();
+          await saveTrackerSnapshot(tracker);
+        } catch {
+          // Keep the offline outbox until the backend is reachable.
+        }
       } finally {
         syncingRef.current = false;
       }
@@ -212,6 +233,7 @@ export function TeaPoster() {
     Object.fromEntries(DEFAULT_PLAYERS.map((p) => [p, true]))
   );
   const [newPlayer, setNewPlayer] = useState("");
+  const [draggedPlayer, setDraggedPlayer] = useState<string | null>(null);
 
   const [phase, setPhase] = useState<Phase>("setup");
   const [round, setRound] = useState<Round | null>(null);
@@ -229,20 +251,26 @@ export function TeaPoster() {
       toast.error("Pick at least 3 players to start.");
       return;
     }
-    let used: string[] = [];
+    let pair: WordPair;
     try {
-      used = await getUsedWordIds();
+      const pendingWordIds = await getPendingWordIds();
+      const result = await claimServerWord(pendingWordIds);
+      pair = result.pair;
+      try {
+        await saveTrackerSnapshot(result.tracker);
+      } catch {
+        // The round is already claimed on the backend; local cache can retry later.
+      }
+      if (result.cycleReset) {
+        toast.info("Fresh word cycle started — no repeats until this deck is used.");
+      }
     } catch {
-      // IndexedDB unavailable — still playable, just without history.
-    }
-    const pair = pickWord(wordList, used);
-    try {
-      await markWordsUsed([pair.id]);
-    } catch {
-      // ignore
+      pair = await claimOfflineWord(wordList);
+      toast.warning("Offline mode — this word will sync when you reconnect.");
     }
     setRound({
       pair,
+      players: [...activePlayers],
       imposterIndex: randomIndex(activePlayers.length),
       starterIndex: randomIndex(activePlayers.length),
     });
@@ -273,15 +301,43 @@ export function TeaPoster() {
     });
   }, []);
 
+  const movePlayer = useCallback((name: string, direction: -1 | 1) => {
+    setPlayers((current) => {
+      const fromIndex = current.indexOf(name);
+      const toIndex = fromIndex + direction;
+      if (fromIndex < 0 || toIndex < 0 || toIndex >= current.length) return current;
+
+      const next = [...current];
+      [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
+      return next;
+    });
+  }, []);
+
+  const reorderPlayer = useCallback((targetName: string) => {
+    if (!draggedPlayer || draggedPlayer === targetName) return;
+
+    setPlayers((current) => {
+      const fromIndex = current.indexOf(draggedPlayer);
+      const toIndex = current.indexOf(targetName);
+      if (fromIndex < 0 || toIndex < 0) return current;
+
+      const next = [...current];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
+    setDraggedPlayer(null);
+  }, [draggedPlayer]);
+
   const nextCard = useCallback(() => {
     setRevealed(false);
     if (!round) return;
-    if (dealIndex + 1 >= activePlayers.length) {
+    if (dealIndex + 1 >= round.players.length) {
       setPhase("discuss");
     } else {
       setDealIndex((i) => i + 1);
     }
-  }, [dealIndex, round, activePlayers.length]);
+  }, [dealIndex, round]);
 
   const backToSetup = useCallback(() => {
     setPhase("setup");
@@ -296,92 +352,48 @@ export function TeaPoster() {
     toast.success("Game reset — choose your players to start again.");
   }, [backToSetup]);
 
-  const onResetWords = useCallback(async () => {
-    try {
-      await resetUsedWords();
-      toast.success("Word history cleared — every word is back in play.");
-    } catch {
-      toast.error("Could not clear word history.");
-    }
-  }, []);
-
   const isImposter = round !== null && dealIndex === round.imposterIndex;
-  const starterName = round ? activePlayers[round.starterIndex] : "";
+  const starterName = round ? round.players[round.starterIndex] : "";
 
   return (
     <main className="tea-shell min-h-dvh">
-      <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 py-7 sm:py-12">
-      {/* Header */}
-      <header className="mb-8 flex items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="tea-logo-frame relative size-[4.25rem] shrink-0 overflow-hidden rounded-2xl border-2 border-accent/60 bg-[#fffaf0]">
+      <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] pt-[calc(env(safe-area-inset-top)+1rem)] sm:px-4 sm:py-12">
+      {/* Mobile app header */}
+      <header className="mb-5 flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <div className="tea-logo-frame relative size-11 shrink-0 overflow-hidden rounded-2xl border border-accent/45 bg-[#fffaf0]">
             <Image
               src="/ChatGPT Image Sep 22, 2026 at 11_38_07 AM.png"
               alt="Tea-Poster's logo"
               fill
-              sizes="68px"
+              sizes="44px"
               className="object-cover object-[50%_18%]"
               priority
             />
           </div>
-          <div className="min-w-0">
-            <p className="mb-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-accent">
-              Sip · suspect · repeat
-            </p>
-            <h1 className="tea-display truncate text-[2rem] leading-none font-bold text-primary">
-              tea<span className="text-accent">-</span>poster
-            </h1>
-            <p className="mt-1 text-[0.7rem] font-medium tracking-wide text-muted-foreground">
-              spot the imposter · spill the tea
-            </p>
-          </div>
+          <h1 className="tea-display truncate text-[1.6rem] leading-none font-bold text-primary">
+            tea<span className="text-accent">-</span>poster
+          </h1>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <Badge
-            variant={online ? "secondary" : "outline"}
-            className="hidden gap-1.5 border-accent/30 bg-accent/10 text-primary sm:inline-flex"
+        <div className="flex shrink-0 items-center gap-1.5">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-10 rounded-full text-muted-foreground hover:bg-accent/10 hover:text-primary"
+            onClick={resetGame}
+            aria-label="Reset game"
+            title="Reset game"
           >
-            {online ? <WifiIcon className="size-3.5" /> : <WifiOffIcon className="size-3.5" />}
-            {online ? "Online" : "Offline"}
-          </Badge>
+            <RotateCcwIcon />
+          </Button>
           <ThemeToggle />
         </div>
       </header>
 
-      <div className="mb-5 flex items-center gap-3 sm:hidden">
-        <div className="h-px flex-1 bg-accent/25" />
-        <Badge
-          variant={online ? "secondary" : "outline"}
-          className="gap-1.5 border-accent/30 bg-accent/10 text-primary"
-        >
-          {online ? <WifiIcon className="size-3.5" /> : <WifiOffIcon className="size-3.5" />}
-          {online ? "Online" : "Offline"}
-        </Badge>
-        <div className="h-px flex-1 bg-accent/25" />
-      </div>
-
       <PhaseSteps phase={phase} />
 
-      <div className="mb-5 flex items-center justify-between gap-3 px-1">
-        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-          {phase === "setup"
-            ? "Ready when you are"
-            : phase === "deal"
-              ? "Keep the cards secret"
-              : "Make your accusations"}
-        </p>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="h-8 rounded-full px-3 text-muted-foreground hover:bg-accent/10 hover:text-primary"
-          onClick={resetGame}
-        >
-          <RotateCcwIcon />
-          Reset game
-        </Button>
-      </div>
-
+      <div className="flex-1">
       {/* SETUP */}
       {phase === "setup" && (
         <Card className="tea-card">
@@ -392,15 +404,31 @@ export function TeaPoster() {
             </div>
             <CardTitle className="tea-display text-2xl font-bold">Who&apos;s playing?</CardTitle>
             <CardDescription className="leading-relaxed">
-              Tick everyone in the circle. Then pass the phone and keep your poker face.
+              Select the circle. The phone passes top to bottom.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-1.5">
-            {players.map((name) => (
+            {players.map((name, index) => (
               <div
                 key={name}
-                className="group flex items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 transition-colors hover:border-accent/20 hover:bg-accent/5"
+                draggable
+                onDragStart={(event) => {
+                  event.dataTransfer.effectAllowed = "move";
+                  setDraggedPlayer(name);
+                }}
+                onDragOver={(event) => event.preventDefault()}
+                onDrop={() => reorderPlayer(name)}
+                onDragEnd={() => setDraggedPlayer(null)}
+                className={`group flex min-h-12 items-center gap-2 rounded-2xl border border-transparent px-2.5 py-2 transition-colors hover:border-accent/25 hover:bg-accent/5 ${
+                  draggedPlayer === name ? "opacity-50" : ""
+                }`}
               >
+                <span
+                  aria-hidden="true"
+                  className="tea-order-grip grid size-7 shrink-0 cursor-grab place-items-center rounded-xl text-[0.65rem] font-bold active:cursor-grabbing"
+                >
+                  {String(index + 1).padStart(2, "0")}
+                </span>
                 <Checkbox
                   id={`player-${name}`}
                   checked={!!checked[name]}
@@ -410,20 +438,42 @@ export function TeaPoster() {
                 />
                 <Label
                   htmlFor={`player-${name}`}
-                  className="flex-1 cursor-pointer text-base font-medium"
+                  className="flex-1 cursor-pointer text-[0.95rem] font-semibold"
                 >
                   {name}
                 </Label>
-                {!DEFAULT_PLAYERS.includes(name) && (
+                <div className="flex shrink-0 items-center gap-0.5 opacity-100 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100">
                   <button
                     type="button"
-                    aria-label={`Remove ${name}`}
-                    onClick={() => removePlayer(name)}
-                    className="text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-destructive"
+                    aria-label={`Move ${name} up`}
+                    title={`Move ${name} up`}
+                    onClick={() => movePlayer(name, -1)}
+                    disabled={players.indexOf(name) === 0}
+                    className="rounded-full p-1.5 text-muted-foreground hover:bg-accent/10 hover:text-primary disabled:pointer-events-none disabled:opacity-25"
                   >
-                    <Trash2Icon className="size-4" />
+                    <ChevronUpIcon className="size-4" />
                   </button>
-                )}
+                  <button
+                    type="button"
+                    aria-label={`Move ${name} down`}
+                    title={`Move ${name} down`}
+                    onClick={() => movePlayer(name, 1)}
+                    disabled={players.indexOf(name) === players.length - 1}
+                    className="rounded-full p-1.5 text-muted-foreground hover:bg-accent/10 hover:text-primary disabled:pointer-events-none disabled:opacity-25"
+                  >
+                    <ChevronDownIcon className="size-4" />
+                  </button>
+                  {!DEFAULT_PLAYERS.includes(name) && (
+                    <button
+                      type="button"
+                      aria-label={`Remove ${name}`}
+                      onClick={() => removePlayer(name)}
+                      className="rounded-full p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      <Trash2Icon className="size-4" />
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
 
@@ -441,61 +491,57 @@ export function TeaPoster() {
                 onChange={(e) => setNewPlayer(e.target.value)}
                 placeholder="Add a player…"
                 maxLength={24}
-                className="h-10 rounded-xl border-border/80 bg-background/60"
+                className="h-11 rounded-xl border-border/80 bg-background/60"
               />
               <Button
                 type="submit"
                 variant="secondary"
                 size="icon"
-                className="size-10 rounded-xl border border-accent/25"
+                className="size-11 rounded-xl border border-accent/25"
                 aria-label="Add player"
               >
                 <PlusIcon />
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex-col gap-3 pt-4">
-            <Button
-              className="w-full rounded-xl border border-primary/20 bg-primary py-5 font-semibold shadow-lg shadow-primary/15 hover:bg-primary/90 dark:text-primary-foreground"
-              size="lg"
-              onClick={startRound}
-              disabled={activePlayers.length < 3}
-            >
-              <ShuffleIcon />
-              Start round · {activePlayers.length} players
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-primary"
-              onClick={onResetWords}
-            >
-              <RotateCcwIcon />
-              Reset word history
-            </Button>
-          </CardFooter>
         </Card>
       )}
 
       {/* DEAL — pass-and-play reveal */}
       {phase === "deal" && round && (
-        <Card className="tea-card flex-1">
+        <Card
+          className={`tea-card tea-round-card flex min-h-[31rem] flex-col ${
+            isImposter ? "tea-imposter-card" : ""
+          }`}
+        >
           <CardHeader className="items-center text-center">
-            <Badge variant="outline" className="border-accent/40 bg-accent/10 text-primary">
-              Card {dealIndex + 1} of {activePlayers.length}
-            </Badge>
-            <CardTitle className="tea-display mt-2 text-3xl font-bold">
-              {activePlayers[dealIndex]}
+            <div className="flex w-full items-center justify-between gap-3">
+              <span className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Pass to
+              </span>
+              <Badge variant="outline" className="border-accent/40 bg-accent/10 text-primary">
+                {dealIndex + 1} / {round.players.length}
+              </Badge>
+            </div>
+            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-accent transition-[width] duration-500"
+                style={{ width: `${((dealIndex + 1) / round.players.length) * 100}%` }}
+              />
+            </div>
+            <CardTitle className="tea-display mt-4 text-4xl font-bold">
+              {round.players[dealIndex]}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="max-w-[18rem] leading-relaxed">
               {revealed
-                ? "Memorize it, then tap this card for the next player."
-                : "Take the phone, then tap to peek."}
+                ? "Lock it in. One more tap passes the phone on."
+                : "Take the phone. No one else looks."}
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-1 flex-col items-center justify-center gap-4">
+          <CardContent className="flex flex-1 flex-col items-center justify-center py-3">
             <button
               type="button"
+              data-revealed={revealed}
               onClick={() => {
                 if (revealed) {
                   nextCard();
@@ -503,14 +549,14 @@ export function TeaPoster() {
                   setRevealed(true);
                 }
               }}
-              className="tea-reveal-card flex min-h-52 w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-accent/45 px-6 text-center transition-colors hover:border-accent hover:bg-accent/10"
+              className="tea-reveal-card flex min-h-60 w-full touch-manipulation flex-col items-center justify-center gap-3 rounded-[1.75rem] border border-dashed border-accent/45 px-6 text-center transition-all active:scale-[0.985] hover:border-accent"
             >
               {revealed ? (
                 <>
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground">
-                    {isImposter ? "your category hint" : round.pair.category}
-                  </span>
-                  <span className="tea-display text-3xl font-bold tracking-tight">
+                  {isImposter && (
+                    <span className="tea-secret-label">your category hint</span>
+                  )}
+                  <span className="tea-display text-4xl font-bold tracking-tight">
                     {isImposter ? round.pair.category : round.pair.word}
                   </span>
                   {isImposter && (
@@ -518,12 +564,21 @@ export function TeaPoster() {
                       You are the imposter — blend in!
                     </Badge>
                   )}
+                  <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+                    Tap to pass on <ArrowRightIcon className="size-3.5" />
+                  </span>
                 </>
               ) : (
                 <>
-                  <EyeIcon className="size-6 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    Tap to reveal your word
+                  <LockKeyholeIcon className="size-7 text-primary" />
+                  <span className="tea-display text-2xl font-bold text-primary">
+                    Private card
+                  </span>
+                  <span className="max-w-48 text-sm leading-relaxed text-muted-foreground">
+                    Tap once to reveal your secret word.
+                  </span>
+                  <span className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-xs font-bold text-primary">
+                    <EyeIcon className="size-3.5" /> Peek now
                   </span>
                 </>
               )}
@@ -536,8 +591,8 @@ export function TeaPoster() {
       {phase === "discuss" && round && (
         <Card className="tea-card">
           <CardHeader className="items-center text-center">
-            <div className="mb-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-accent">
-              Spill the tea
+            <div className="mb-1 flex items-center justify-center gap-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-accent">
+              <SparklesIcon className="size-3.5" /> Spill the tea
             </div>
             <CardTitle className="tea-display text-3xl font-bold">Time to talk</CardTitle>
             <CardDescription>
@@ -562,7 +617,7 @@ export function TeaPoster() {
                   the imposter was
                 </p>
                 <p className="tea-display text-3xl font-bold text-destructive">
-                  {activePlayers[round.imposterIndex]}
+                  {round.players[round.imposterIndex]}
                 </p>
                 <p className="mt-1 text-sm text-muted-foreground">
                   The word was <span className="font-medium">{round.pair.word}</span> ·
@@ -572,6 +627,7 @@ export function TeaPoster() {
             ) : (
               <Button
                 variant="outline"
+                className="min-h-11 rounded-2xl px-5"
                 onClick={() => setImposterShown(true)}
               >
                 <EyeIcon />
@@ -580,11 +636,11 @@ export function TeaPoster() {
             )}
           </CardContent>
           <CardFooter className="flex-col gap-2">
-            <Button className="w-full" size="lg" onClick={startRound}>
+            <Button className="min-h-12 w-full rounded-2xl" size="lg" onClick={startRound}>
               <ShuffleIcon />
               Same players, new round
             </Button>
-            <Button variant="ghost" className="w-full" onClick={backToSetup}>
+            <Button variant="ghost" className="min-h-11 w-full rounded-2xl" onClick={backToSetup}>
               <CheckIcon />
               Change players
             </Button>
@@ -592,8 +648,25 @@ export function TeaPoster() {
         </Card>
       )}
 
-      <footer className="mt-auto pt-8 text-center text-[0.65rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-        works offline · word history stored on this device
+      {phase === "setup" && (
+        <div className="mobile-dock pointer-events-none sticky bottom-4 z-20 mt-4">
+          <div className="pointer-events-auto rounded-[1.5rem] border border-primary/15 bg-background/85 p-2 shadow-2xl shadow-primary/15 backdrop-blur-xl">
+            <Button
+              className="min-h-12 w-full rounded-[1.15rem] border border-primary/20 bg-primary font-semibold shadow-lg shadow-primary/20 hover:bg-primary/90 dark:text-primary-foreground"
+              size="lg"
+              onClick={startRound}
+              disabled={activePlayers.length < 3}
+            >
+              <ShuffleIcon />
+              Start round · {activePlayers.length} players
+            </Button>
+          </div>
+        </div>
+      )}
+      </div>
+
+      <footer className="mt-6 pt-4 text-center text-[0.62rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+        works offline · word list cached · claims sync when online
       </footer>
       </div>
     </main>

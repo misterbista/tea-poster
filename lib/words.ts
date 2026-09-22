@@ -8,8 +8,8 @@ export type WordPair = {
   hint?: string;
 };
 
-/** Bump this whenever WORD_PAIRS changes so online clients re-sync. */
-export const WORDS_VERSION = 4;
+/** Bump this when the curated fallback or remote filtering changes. */
+export const WORDS_VERSION = 5;
 
 export const WORD_PAIRS: WordPair[] = [
   { id: "beach", word: "Beach", hint: "Island", category: "Places" },
