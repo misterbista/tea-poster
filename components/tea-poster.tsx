@@ -33,6 +33,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { TeaPosterSplash } from "@/components/tea-poster-splash";
 
 import {
     cacheWordPairs,
@@ -166,6 +167,12 @@ function useOnlineStatus() {
 
 export function TeaPoster() {
   const online = useOnlineStatus();
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShowSplash(false), 650);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   // Word list actually in play: synced from the online source when possible,
   // otherwise the list bundled with the app.
@@ -354,6 +361,8 @@ export function TeaPoster() {
 
   const isImposter = round !== null && dealIndex === round.imposterIndex;
   const starterName = round ? round.players[round.starterIndex] : "";
+
+  if (showSplash) return <TeaPosterSplash />;
 
   return (
     <main className="tea-shell min-h-dvh">
