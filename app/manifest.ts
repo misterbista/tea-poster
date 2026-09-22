@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "tea-poster",
-    short_name: "tea-poster",
+    name: "tea-posters",
+    short_name: "tea-posters",
     description: "A minimal offline imposter party game",
     start_url: "/",
     display: "standalone",

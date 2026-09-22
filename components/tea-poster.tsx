@@ -115,30 +115,27 @@ function PhaseSteps({ phase }: { phase: Phase }) {
   const currentIndex = steps.findIndex((step) => step.id === phase);
 
   return (
-    <nav aria-label="Game progress" className="mb-8 grid grid-cols-3 gap-3">
-      {steps.map((step, index) => {
-        const complete = index < currentIndex;
-        const current = index === currentIndex;
+    <nav aria-label="Game progress" className="tea-progress mb-7">
+      <span className="tea-progress-line" aria-hidden="true" />
+      <ol className="relative grid grid-cols-3 gap-2">
+        {steps.map((step, index) => {
+          const complete = index < currentIndex;
+          const current = index === currentIndex;
 
-        return (
-          <div
-            key={step.id}
-            aria-current={current ? "step" : undefined}
-            className={`flex items-center gap-2 border-t-2 pt-3 transition-colors ${
-              current
-                ? "border-primary text-primary"
-                : complete
-                  ? "border-primary/40 text-primary/70"
-                  : "border-border/40 text-muted-foreground"
-            }`}
-          >
-            <span className="text-xs tabular-nums opacity-50">0{index + 1}</span>
-            <span className="text-xs font-medium">
-              {step.label}
-            </span>
-          </div>
-        );
-      })}
+          return (
+            <li
+              key={step.id}
+              aria-current={current ? "step" : undefined}
+              className={`tea-progress-step ${current ? "is-current" : ""} ${complete ? "is-complete" : ""}`}
+            >
+              <span className="tea-progress-dot">
+                {complete ? <CheckIcon className="size-3" /> : `0${index + 1}`}
+              </span>
+              <span className="tea-progress-label">{step.label}</span>
+            </li>
+          );
+        })}
+      </ol>
     </nav>
   );
 }
@@ -240,9 +237,11 @@ export function TeaPoster() {
     Object.fromEntries(DEFAULT_PLAYERS.map((p) => [p, true]))
   );
   const [newPlayer, setNewPlayer] = useState("");
-  const [editingOrder, setEditingOrder] = useState(false);
   const [draggedPlayer, setDraggedPlayer] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<{ name: string; after: boolean } | null>(null);
+  const draggedPlayerRef = useRef<string | null>(null);
+  const dropTargetRef = useRef<{ name: string; after: boolean } | null>(null);
+  const dragPointerIdRef = useRef<number | null>(null);
   const playerRowRefs = useRef(new Map<string, HTMLDivElement>());
   const playerRowPositions = useRef(new Map<string, DOMRect>());
   const playerRowAnimations = useRef(new Map<string, Animation>());
@@ -370,13 +369,48 @@ export function TeaPoster() {
     });
   }, [capturePlayerPositions]);
 
+  const setCurrentDropTarget = useCallback(
+    (next: { name: string; after: boolean } | null) => {
+      const current = dropTargetRef.current;
+      if (
+        current?.name === next?.name &&
+        current?.after === next?.after
+      ) {
+        return;
+      }
+      dropTargetRef.current = next;
+      setDropTarget(next);
+    },
+    []
+  );
+
+  const getDropTargetAt = useCallback(
+    (clientY: number, draggedName: string) => {
+      let lastTarget: { name: string; after: boolean } | null = null;
+
+      for (const name of players) {
+        if (name === draggedName) continue;
+        const element = playerRowRefs.current.get(name);
+        if (!element) continue;
+
+        const bounds = element.getBoundingClientRect();
+        const midpoint = bounds.top + bounds.height / 2;
+        if (clientY < midpoint) return { name, after: false };
+        lastTarget = { name, after: true };
+      }
+
+      return lastTarget;
+    },
+    [players]
+  );
+
   const moveDraggedPlayer = useCallback(
-    (targetName: string, insertAfter: boolean) => {
-      if (!draggedPlayer || draggedPlayer === targetName) return;
+    (name: string, targetName: string, insertAfter: boolean) => {
+      if (name === targetName) return;
       capturePlayerPositions();
 
       setPlayers((current) => {
-        const fromIndex = current.indexOf(draggedPlayer);
+        const fromIndex = current.indexOf(name);
         const targetIndex = current.indexOf(targetName);
         if (fromIndex < 0 || targetIndex < 0) return current;
 
@@ -390,7 +424,29 @@ export function TeaPoster() {
         return next;
       });
     },
-    [draggedPlayer, capturePlayerPositions]
+    [capturePlayerPositions]
+  );
+
+  const endPlayerDrag = useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>, shouldMove: boolean) => {
+      if (dragPointerIdRef.current !== event.pointerId) return;
+
+      event.preventDefault();
+      const name = draggedPlayerRef.current;
+      const target = dropTargetRef.current;
+      if (shouldMove && name && target) {
+        moveDraggedPlayer(name, target.name, target.after);
+      }
+
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+      dragPointerIdRef.current = null;
+      draggedPlayerRef.current = null;
+      setDraggedPlayer(null);
+      setCurrentDropTarget(null);
+    },
+    [moveDraggedPlayer, setCurrentDropTarget]
   );
 
   const nextCard = useCallback(() => {
@@ -427,21 +483,27 @@ export function TeaPoster() {
       {/* Mobile app header */}
       <header className="mb-5 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
-          <div className="tea-logo-frame relative size-11 shrink-0 overflow-hidden rounded-2xl border border-accent/45 bg-[#fffaf0]">
+          <div className="tea-logo-frame relative size-11 shrink-0 overflow-hidden rounded-[1.15rem] border border-accent/45 bg-[#fffaf0]">
             <Image
               src="/ChatGPT Image Sep 22, 2026 at 11_38_07 AM.png"
-              alt="Tea-Poster's logo"
+              alt="tea-posters logo"
               fill
               sizes="44px"
               className="object-cover object-[50%_18%]"
               priority
             />
           </div>
-          <h1 className="tea-display truncate text-[1.6rem] leading-none font-bold text-primary">
-            tea<span className="text-accent">-</span>poster
-          </h1>
+          <div className="min-w-0">
+            <p className="tea-kicker mb-0.5">party game</p>
+            <h1 className="tea-display truncate text-[1.55rem] leading-none font-bold text-primary">
+              tea<span className="text-accent">-</span>posters
+            </h1>
+          </div>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
+          <span className="tea-status hidden min-[390px]:inline-flex">
+            <span className="tea-status-dot" /> ready
+          </span>
           <Button
             type="button"
             variant="ghost"
@@ -466,28 +528,23 @@ export function TeaPoster() {
       <div className="flex-1">
       {/* SETUP */}
       {phase === "setup" && (
-        <Card className="tea-card tea-setup">
-          <CardHeader>
-            <p className="mb-2 text-xs font-medium text-muted-foreground">A little tea. A little suspicion.</p>
-            <CardTitle className="text-[2rem] font-semibold leading-tight tracking-tight">Gather your people.</CardTitle>
+        <Card className="tea-flat-card tea-setup tea-scene">
+          <CardHeader className="tea-setup-header">
+            <div className="tea-eyebrow"><span>01</span> Setup</div>
+            <CardTitle className="tea-display text-[2.55rem] font-bold leading-[0.98] tracking-tight">Choose players.</CardTitle>
             <CardDescription className="leading-relaxed">
-              Pick at least three. Keep one secret.
+              Select at least three players. Each person will see a private card.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium">Players <span className="ml-1 text-muted-foreground">{activePlayers.length}</span></p>
-              <Button variant="ghost" className="min-h-11 rounded-full px-3 text-muted-foreground" aria-pressed={editingOrder} onClick={() => setEditingOrder((value) => !value)}>
-                {editingOrder ? "Done" : "Edit order"}
-              </Button>
+            <div className="tea-list-heading">
+              <div>
+                <p className="tea-section-kicker">Players</p>
+                <p className="tea-list-meta"><span>{activePlayers.length}</span> in this round</p>
+              </div>
             </div>
-            <div role="list" aria-label="Pass order" className="flex flex-col gap-2"
-              onDragLeave={(event) => {
-                const bounds = event.currentTarget.getBoundingClientRect();
-                if (event.clientX < bounds.left || event.clientX > bounds.right ||
-                    event.clientY < bounds.top || event.clientY > bounds.bottom) setDropTarget(null);
-              }}
-            >
+            <p className="tea-drag-help"><GripVerticalIcon className="size-3.5" /> Hold a grip and slide to set the pass order.</p>
+            <div role="list" aria-label="Pass order" className="tea-player-list">
               {players.map((name) => (
                 <div
                   key={name}
@@ -499,49 +556,34 @@ export function TeaPoster() {
                     }
                   }}
                   role="listitem"
-                  draggable
-                  onDragStart={(event) => {
-                    event.dataTransfer.effectAllowed = "move";
-                    event.dataTransfer.setData("text/plain", name);
-                    setDraggedPlayer(name);
-                    setDropTarget(null);
-                  }}
-                  onDragOver={(event) => {
-                    event.preventDefault();
-                    event.dataTransfer.dropEffect = "move";
-                    const bounds = event.currentTarget.getBoundingClientRect();
-                    if (!draggedPlayer || draggedPlayer === name) {
-                      setDropTarget(null);
-                      return;
-                    }
-                    const after = event.clientY > bounds.top + bounds.height / 2;
-                    setDropTarget((previous) => {
-                      if (previous?.name === name) {
-                        // Keep a small dead zone around the midpoint to avoid jitter.
-                        if (Math.abs(event.clientY - (bounds.top + bounds.height / 2)) < 6 ||
-                            previous.after === after) return previous;
-                      }
-                      return { name, after };
-                    });
-                  }}
-                  onDrop={(event) => {
-                    event.preventDefault();
-                    if (dropTarget) moveDraggedPlayer(dropTarget.name, dropTarget.after);
-                    setDraggedPlayer(null);
-                    setDropTarget(null);
-                  }}
-                  onDragEnd={() => { setDraggedPlayer(null); setDropTarget(null); }}
                   data-drop-position={dropTarget?.name === name ? (dropTarget.after ? "after" : "before") : undefined}
-                  className={`tea-player-row group flex min-h-[4.25rem] items-center gap-2.5 rounded-[1.2rem] border border-border/30 bg-card px-3 py-2.5 transition-colors hover:border-primary/30 ${
-                    draggedPlayer === name ? "opacity-50" : ""
-                  }`}
+                  data-dragging={draggedPlayer === name ? "true" : undefined}
+                  className="tea-player-row group flex min-h-[4.25rem] items-center gap-2.5 rounded-[1.2rem] border border-border/30 bg-card px-3 py-2.5 transition-colors hover:border-primary/30"
                 >
-                  <span
-                    aria-hidden="true"
-                    className="tea-order-grip grid size-8 shrink-0 cursor-grab place-items-center rounded-xl active:cursor-grabbing"
+                  <button
+                    type="button"
+                    aria-label={`Drag ${name} to reorder`}
+                    className="tea-order-grip grid size-10 shrink-0 place-items-center rounded-xl disabled:pointer-events-none disabled:opacity-35"
+                    onPointerDown={(event) => {
+                      if (event.pointerType === "mouse" && event.button !== 0) return;
+                      event.preventDefault();
+                      event.currentTarget.setPointerCapture(event.pointerId);
+                      dragPointerIdRef.current = event.pointerId;
+                      draggedPlayerRef.current = name;
+                      capturePlayerPositions();
+                      setDraggedPlayer(name);
+                      setCurrentDropTarget(null);
+                    }}
+                    onPointerMove={(event) => {
+                      if (dragPointerIdRef.current !== event.pointerId || !draggedPlayerRef.current) return;
+                      event.preventDefault();
+                      setCurrentDropTarget(getDropTargetAt(event.clientY, draggedPlayerRef.current));
+                    }}
+                    onPointerUp={(event) => endPlayerDrag(event, true)}
+                    onPointerCancel={(event) => endPlayerDrag(event, false)}
                   >
                     <GripVerticalIcon className="size-4.5" />
-                  </span>
+                  </button>
                   <Checkbox
                     id={`player-${name}`}
                     checked={!!checked[name]}
@@ -558,15 +600,15 @@ export function TeaPoster() {
                     </Label>
                     {!checked[name] && <p className="mt-0.5 text-xs text-muted-foreground">Sitting this one out</p>}
                   </div>
-                  {!editingOrder && checked[name] && <span className="pr-2 text-xs tabular-nums text-muted-foreground">{String(activePlayers.indexOf(name) + 1).padStart(2, "0")}</span>}
-                  {editingOrder && <div className="flex shrink-0 items-center">
+                  {checked[name] && <span className="pr-2 text-xs tabular-nums text-muted-foreground">{String(activePlayers.indexOf(name) + 1).padStart(2, "0")}</span>}
+                  <div className="flex shrink-0 items-center">
                     <button
                       type="button"
                       aria-label={`Move ${name} up`}
                       title={`Move ${name} up`}
                       onClick={() => movePlayer(name, -1)}
                       disabled={players.indexOf(name) === 0}
-                      className="rounded-full p-1.5 text-muted-foreground hover:bg-accent/10 hover:text-primary disabled:pointer-events-none disabled:opacity-25"
+                      className="rounded-xl p-1.5 text-muted-foreground hover:bg-accent/10 hover:text-primary disabled:pointer-events-none disabled:opacity-25"
                     >
                       <ChevronUpIcon className="size-4" />
                     </button>
@@ -576,7 +618,7 @@ export function TeaPoster() {
                       title={`Move ${name} down`}
                       onClick={() => movePlayer(name, 1)}
                       disabled={players.indexOf(name) === players.length - 1}
-                      className="rounded-full p-1.5 text-muted-foreground hover:bg-accent/10 hover:text-primary disabled:pointer-events-none disabled:opacity-25"
+                      className="rounded-xl p-1.5 text-muted-foreground hover:bg-accent/10 hover:text-primary disabled:pointer-events-none disabled:opacity-25"
                     >
                       <ChevronDownIcon className="size-4" />
                     </button>
@@ -585,12 +627,12 @@ export function TeaPoster() {
                         type="button"
                         aria-label={`Remove ${name}`}
                         onClick={() => removePlayer(name)}
-                        className="rounded-full p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                        className="rounded-xl p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                       >
                         <Trash2Icon className="size-4" />
                       </button>
                     )}
-                  </div>}
+                  </div>
                 </div>
               ))}
             </div>
@@ -598,13 +640,15 @@ export function TeaPoster() {
             <Separator className="my-4 bg-accent/20" />
 
             <form
-              className="flex gap-2 pb-2"
+              className="tea-add-player flex gap-2 pb-2"
               onSubmit={(e) => {
                 e.preventDefault();
                 addPlayer();
               }}
             >
+              <label className="sr-only" htmlFor="new-player">Add someone to the round</label>
               <Input
+                id="new-player"
                 aria-label="New player name"
                 value={newPlayer}
                 onChange={(e) => setNewPlayer(e.target.value)}
@@ -630,7 +674,7 @@ export function TeaPoster() {
       {/* DEAL — pass-and-play reveal */}
       {phase === "deal" && round && (
         <Card
-          className={`tea-card tea-round-card flex min-h-[31rem] flex-col ${
+          className={`tea-flat-card tea-round-card tea-scene flex min-h-[31rem] flex-col ${
             isImposter && revealed ? "tea-imposter-card" : ""
           }`}
         >
@@ -669,7 +713,7 @@ export function TeaPoster() {
                   setRevealed(true);
                 }
               }}
-              className="tea-reveal-card flex min-h-60 w-full touch-manipulation flex-col items-center justify-center gap-3 rounded-[1.75rem] border border-border/40 px-6 text-center transition-all active:scale-[0.985] hover:border-primary/40"
+              className="tea-reveal-card flex min-h-60 w-full touch-manipulation flex-col items-center justify-center gap-3 rounded-2xl border border-border/40 px-6 text-center transition-all active:scale-[0.985] hover:border-primary/40"
             >
               {revealed ? (
                 <>
@@ -711,18 +755,18 @@ export function TeaPoster() {
 
       {/* DISCUSS */}
       {phase === "discuss" && round && !imposterShown && (
-        <Card className="tea-card">
+        <Card className="tea-flat-card tea-scene">
           <CardHeader className="items-center text-center">
             <div className="mb-1 flex items-center justify-center gap-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-accent">
-              <SparklesIcon className="size-3.5" /> Spill the tea
+              <SparklesIcon className="size-3.5" /> Discussion
             </div>
-            <CardTitle className="tea-display text-3xl font-bold">Time to talk</CardTitle>
+            <CardTitle className="tea-display text-3xl font-bold">Discuss the clue</CardTitle>
             <CardDescription>
               One of you only has a hint.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-4 text-center">
-            <div className="w-full rounded-2xl border border-accent/30 bg-accent/10 px-6 py-5">
+            <div className="w-full border-y border-accent/30 bg-accent/5 px-1 py-5">
               <p className="text-xs uppercase tracking-widest text-muted-foreground">
                 first question goes to
               </p>
@@ -748,7 +792,7 @@ export function TeaPoster() {
       )}
 
       {phase === "discuss" && round && imposterShown && (
-        <Card className="tea-card">
+        <Card className="tea-flat-card tea-scene">
           <CardHeader className="justify-items-center gap-3 pb-3 pt-5 text-center">
             <span className="grid size-14 place-items-center rounded-full bg-destructive/10 text-destructive" aria-hidden="true">
               <EyeIcon className="size-6" />
@@ -765,7 +809,7 @@ export function TeaPoster() {
             </h2>
           </CardHeader>
           <CardContent>
-            <dl className="divide-y divide-border/50 rounded-2xl bg-muted/40 px-4">
+            <dl className="divide-y divide-border/50 border-y border-border/50 px-1">
               <div className="py-4">
                 <dt className="text-xs text-muted-foreground">The secret word</dt>
                 <dd className="mt-1 break-words text-2xl font-semibold">{round.pair.word}</dd>
@@ -791,7 +835,7 @@ export function TeaPoster() {
 
       {phase === "setup" && (
         <div className="mobile-dock pointer-events-none sticky bottom-4 z-20 mt-4">
-          <div className="pointer-events-auto rounded-[1.5rem] bg-background/95 p-2 shadow-lg backdrop-blur-xl">
+          <div className="pointer-events-auto">
             <Button
               className="min-h-14 w-full rounded-2xl bg-primary text-base font-semibold hover:bg-primary/90"
               size="lg"

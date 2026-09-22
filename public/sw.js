@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
-/* Simple offline-first service worker for tea-poster */
+/* Simple offline-first service worker for tea-posters */
 
-const CACHE = "tea-poster-v1";
+const CACHE = "tea-posters-v2";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

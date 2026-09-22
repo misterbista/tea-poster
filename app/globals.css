@@ -48,38 +48,40 @@
 }
 
 :root {
-  --background: oklch(0.963 0.018 87);
-  --foreground: oklch(0.24 0.04 166);
-  --card: oklch(0.992 0.008 88);
-  --card-foreground: oklch(0.24 0.04 166);
-  --popover: oklch(0.992 0.008 88);
-  --popover-foreground: oklch(0.24 0.04 166);
-  --primary: oklch(0.29 0.075 169);
-  --primary-foreground: oklch(0.98 0.015 88);
-  --secondary: oklch(0.9 0.055 82);
-  --secondary-foreground: oklch(0.3 0.055 160);
-  --muted: oklch(0.925 0.027 83);
-  --muted-foreground: oklch(0.5 0.04 159);
-  --accent: oklch(0.7 0.14 42);
-  --accent-foreground: oklch(0.2 0.045 165);
-  --destructive: oklch(0.62 0.16 35);
-  --border: oklch(0.82 0.055 82);
-  --input: oklch(0.84 0.045 83);
-  --ring: oklch(0.7 0.14 42);
-  --chart-1: oklch(0.29 0.075 169);
-  --chart-2: oklch(0.7 0.14 42);
-  --chart-3: oklch(0.68 0.14 37);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --background: oklch(0.968 0.014 91);
+  --foreground: oklch(0.23 0.038 166);
+  --card: oklch(0.995 0.006 93);
+  --card-foreground: oklch(0.23 0.038 166);
+  --popover: oklch(0.995 0.006 93);
+  --popover-foreground: oklch(0.23 0.038 166);
+  --primary: oklch(0.31 0.08 165);
+  --primary-foreground: oklch(0.985 0.012 93);
+  --secondary: oklch(0.91 0.048 86);
+  --secondary-foreground: oklch(0.3 0.05 160);
+  --muted: oklch(0.935 0.022 88);
+  --muted-foreground: oklch(0.5 0.038 160);
+  --accent: oklch(0.69 0.15 48);
+  --accent-foreground: oklch(0.22 0.045 165);
+  --destructive: oklch(0.59 0.17 32);
+  --border: oklch(0.84 0.04 87);
+  --input: oklch(0.85 0.035 87);
+  --ring: oklch(0.68 0.14 48);
+  --chart-1: oklch(0.31 0.08 165);
+  --chart-2: oklch(0.69 0.15 48);
+  --chart-3: oklch(0.63 0.14 34);
   --chart-4: oklch(0.45 0.08 163);
   --chart-5: oklch(0.36 0.065 168);
-  --radius: 1rem;
-  --sidebar: oklch(0.94 0.023 86);
-  --sidebar-foreground: oklch(0.24 0.04 166);
-  --sidebar-primary: oklch(0.29 0.075 169);
-  --sidebar-primary-foreground: oklch(0.98 0.015 88);
-  --sidebar-accent: oklch(0.9 0.055 82);
-  --sidebar-accent-foreground: oklch(0.3 0.055 160);
-  --sidebar-border: oklch(0.82 0.055 82);
-  --sidebar-ring: oklch(0.7 0.14 42);
+  --radius: 1.125rem;
+  --sidebar: oklch(0.945 0.02 89);
+  --sidebar-foreground: oklch(0.23 0.038 166);
+  --sidebar-primary: oklch(0.31 0.08 165);
+  --sidebar-primary-foreground: oklch(0.985 0.012 93);
+  --sidebar-accent: oklch(0.91 0.048 86);
+  --sidebar-accent-foreground: oklch(0.3 0.05 160);
+  --sidebar-border: oklch(0.84 0.04 87);
+  --sidebar-ring: oklch(0.68 0.14 48);
 }
 
 .dark {
@@ -89,31 +91,31 @@
   --card-foreground: oklch(0.95 0.025 88);
   --popover: oklch(0.22 0.045 166);
   --popover-foreground: oklch(0.95 0.025 88);
-  --primary: oklch(0.71 0.14 77);
+  --primary: oklch(0.72 0.14 80);
   --primary-foreground: oklch(0.2 0.045 165);
   --secondary: oklch(0.29 0.055 164);
   --secondary-foreground: oklch(0.94 0.02 88);
   --muted: oklch(0.25 0.045 165);
   --muted-foreground: oklch(0.72 0.035 87);
-  --accent: oklch(0.72 0.14 42);
+  --accent: oklch(0.72 0.15 48);
   --accent-foreground: oklch(0.2 0.045 165);
   --destructive: oklch(0.73 0.14 38);
   --border: oklch(0.38 0.05 164);
   --input: oklch(0.32 0.05 164);
-  --ring: oklch(0.71 0.14 77);
-  --chart-1: oklch(0.71 0.14 77);
-  --chart-2: oklch(0.72 0.14 42);
+  --ring: oklch(0.72 0.14 80);
+  --chart-1: oklch(0.72 0.14 80);
+  --chart-2: oklch(0.72 0.15 48);
   --chart-3: oklch(0.68 0.1 164);
   --chart-4: oklch(0.5 0.09 164);
   --chart-5: oklch(0.42 0.08 164);
   --sidebar: oklch(0.18 0.038 166);
   --sidebar-foreground: oklch(0.95 0.025 88);
-  --sidebar-primary: oklch(0.71 0.14 77);
+  --sidebar-primary: oklch(0.72 0.14 80);
   --sidebar-primary-foreground: oklch(0.2 0.045 165);
   --sidebar-accent: oklch(0.29 0.055 164);
   --sidebar-accent-foreground: oklch(0.94 0.02 88);
   --sidebar-border: oklch(0.38 0.05 164);
-  --sidebar-ring: oklch(0.71 0.14 77);
+  --sidebar-ring: oklch(0.72 0.14 80);
 }
 
 @layer base {
@@ -133,20 +135,30 @@
   body {
     @apply bg-background text-foreground;
     min-width: 320px;
-    background-image: radial-gradient(
-      circle at 12% 10%,
-      color-mix(in oklch, var(--accent) 10%, transparent),
-      transparent 28rem
-    );
+    background-image:
+      radial-gradient(circle at 8% 0%, color-mix(in oklch, var(--accent) 11%, transparent), transparent 24rem),
+      linear-gradient(180deg, color-mix(in oklch, var(--background) 76%, var(--card)), var(--background) 22rem);
   }
 }
 
 @layer components {
+  @keyframes tea-scene-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem) scale(0.99);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
   .tea-shell {
     position: relative;
     isolation: isolate;
     overflow-x: clip;
-    background: var(--background);
+    background: linear-gradient(180deg, color-mix(in oklch, var(--background) 82%, var(--card)), var(--background) 34rem);
   }
 
   .tea-shell::before,
@@ -157,8 +169,9 @@
     height: 16rem;
     border: 1px solid color-mix(in oklch, var(--accent) 22%, transparent);
     border-radius: 999px;
-    content: none;
+    content: "";
     pointer-events: none;
+    opacity: 0.7;
   }
 
   .tea-shell::before {
@@ -173,22 +186,85 @@
   }
 
   .tea-display {
-    font-family: Georgia, "Times New Roman", serif;
-    letter-spacing: -0.04em;
+    font-family: var(--font-geist-sans);
+    font-weight: 650;
+    letter-spacing: -0.045em;
   }
 
-  .tea-card {
-    border: 1px solid color-mix(in oklch, var(--border) 45%, transparent);
-    border-radius: 1.75rem;
-    background: var(--card);
-    box-shadow: 0 0.5rem 2rem color-mix(in oklch, var(--foreground) 4%, transparent);
-    --tw-ring-shadow: 0 0 transparent;
+  .tea-kicker,
+  .tea-eyebrow,
+  .tea-section-kicker,
+  .tea-secret-label {
+    color: var(--muted-foreground);
+    font-size: 0.66rem;
+    font-weight: 750;
+    letter-spacing: 0.15em;
+    line-height: 1.2;
+    text-transform: uppercase;
   }
 
-  .tea-card [data-slot="card-footer"] {
+  .tea-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent);
+  }
+
+  .tea-eyebrow span {
+    display: grid;
+    width: 1.45rem;
+    height: 1.45rem;
+    place-items: center;
+    border-radius: 999px;
+    background: color-mix(in oklch, var(--accent) 16%, transparent);
+    font-size: 0.6rem;
+    letter-spacing: 0;
+  }
+
+  .tea-status {
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid color-mix(in oklch, var(--primary) 16%, transparent);
+    border-radius: 999px;
+    padding: 0.45rem 0.65rem;
+    color: var(--muted-foreground);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .tea-status-dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: #62a873;
+    box-shadow: 0 0 0 0.2rem color-mix(in oklch, #62a873 15%, transparent);
+  }
+
+  .tea-flat-card {
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    --tw-ring-shadow: 0 0 transparent !important;
+  }
+
+  .tea-flat-card > [data-slot="card-header"],
+  .tea-flat-card > [data-slot="card-content"],
+  .tea-flat-card > [data-slot="card-footer"] {
+    padding-inline: 0;
+  }
+
+  .tea-flat-card [data-slot="card-footer"] {
     border-color: color-mix(in oklch, var(--accent) 17%, var(--border));
-    border-radius: 0 0 1.75rem 1.75rem;
+    border-radius: 0 !important;
     background: transparent;
+    padding-bottom: 0;
+  }
+
+  .tea-scene {
+    animation: tea-scene-in 460ms var(--ease-out) both;
   }
 
   .tea-setup {
@@ -196,13 +272,115 @@
     border-radius: 0;
     background: transparent;
     box-shadow: none;
-    padding: 0;
-    gap: 1.25rem;
+    gap: 1.5rem;
   }
 
-  .tea-setup > [data-slot="card-header"],
   .tea-setup > [data-slot="card-content"] {
     padding-inline: 0;
+  }
+
+  .tea-setup-header {
+    gap: 0.85rem;
+    padding: 0.5rem 0 0;
+  }
+
+  .tea-setup-header [data-slot="card-description"] {
+    max-width: 22rem;
+    font-size: 0.95rem;
+  }
+
+  .tea-progress {
+    position: relative;
+  }
+
+  .tea-progress-line {
+    position: absolute;
+    top: 1rem;
+    right: 16.66%;
+    left: 16.66%;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .tea-progress-step {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted-foreground);
+  }
+
+  .tea-progress-dot {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--background);
+    font-size: 0.63rem;
+    font-weight: 750;
+    letter-spacing: 0.02em;
+  }
+
+  .tea-progress-label {
+    font-size: 0.68rem;
+    font-weight: 650;
+  }
+
+  .tea-progress-step.is-current {
+    color: var(--primary);
+  }
+
+  .tea-progress-step.is-current .tea-progress-dot {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: var(--primary-foreground);
+    box-shadow: 0 0 0 0.25rem color-mix(in oklch, var(--primary) 12%, transparent);
+  }
+
+  .tea-progress-step.is-complete {
+    color: var(--primary);
+  }
+
+  .tea-progress-step.is-complete .tea-progress-dot {
+    border-color: color-mix(in oklch, var(--primary) 36%, var(--border));
+    background: color-mix(in oklch, var(--primary) 10%, var(--background));
+  }
+
+  .tea-list-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.4rem;
+  }
+
+  .tea-list-meta {
+    margin-top: 0.2rem;
+    color: var(--muted-foreground);
+    font-size: 0.78rem;
+  }
+
+  .tea-list-meta span {
+    color: var(--foreground);
+    font-weight: 700;
+  }
+
+  .tea-drag-help {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: -0.15rem 0 0.15rem;
+    color: var(--muted-foreground);
+    font-size: 0.72rem;
+  }
+
+  .tea-player-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
   }
 
   .tea-logo-frame {
@@ -213,20 +391,47 @@
     border: 0;
     background: transparent;
     color: var(--muted-foreground);
+    cursor: grab;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
     transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
   }
 
-  .group:hover .tea-order-grip {
+  .tea-order-grip:active {
+    cursor: grabbing;
+    transform: scale(0.94);
+  }
+
+  .group:hover .tea-order-grip:not(:disabled),
+  .tea-order-grip:focus-visible {
     background: var(--muted);
     color: var(--primary);
   }
 
   .tea-player-row {
-    will-change: transform;
     flex-wrap: wrap;
     gap: 0.5rem;
-    box-shadow: none;
     position: relative;
+    border-color: color-mix(in oklch, var(--border) 54%, transparent);
+    background: color-mix(in oklch, var(--card) 87%, var(--background));
+    box-shadow: 0 0.25rem 0.75rem color-mix(in oklch, var(--foreground) 3%, transparent);
+    transition: border-color 180ms ease, background-color 180ms ease, box-shadow 240ms var(--ease-out), opacity 180ms ease, transform 240ms var(--ease-out);
+  }
+
+  .tea-player-row[data-dragging="true"] {
+    z-index: 2;
+    border-color: color-mix(in oklch, var(--primary) 55%, var(--border));
+    background: color-mix(in oklch, var(--primary) 8%, var(--card));
+    box-shadow: 0 0.9rem 1.8rem color-mix(in oklch, var(--primary) 14%, transparent);
+    opacity: 0.92;
+    transform: scale(0.985);
+  }
+
+  .tea-player-row[data-dragging="true"] .tea-order-grip {
+    background: var(--primary);
+    color: var(--primary-foreground);
   }
 
   .tea-player-row > div.min-w-0 {
@@ -241,7 +446,13 @@
     height: 3px;
     border-radius: 999px;
     background: var(--primary);
+    box-shadow: 0 0 0 0.2rem color-mix(in oklch, var(--primary) 14%, transparent);
     pointer-events: none;
+  }
+
+  .tea-player-row[data-drop-position] {
+    border-color: color-mix(in oklch, var(--primary) 48%, var(--border));
+    background: color-mix(in oklch, var(--primary) 6%, var(--card));
   }
 
   .tea-player-row[data-drop-position="before"]::after {
@@ -271,17 +482,11 @@
   }
 
   .tea-round-card {
-    box-shadow: 0 0.5rem 2rem color-mix(in oklch, var(--foreground) 4%, transparent);
+    min-height: 0;
   }
 
   .tea-imposter-card {
-    border-color: color-mix(in oklch, var(--destructive) 65%, var(--border));
-    background: linear-gradient(
-      150deg,
-      color-mix(in oklch, var(--card) 78%, var(--destructive)),
-      color-mix(in oklch, var(--card) 58%, var(--destructive))
-    );
-    box-shadow: 0 1.75rem 4rem color-mix(in oklch, var(--destructive) 20%, transparent), 0 0.25rem 0.75rem color-mix(in oklch, var(--foreground) 8%, transparent);
+    border-top: 2px solid color-mix(in oklch, var(--destructive) 65%, var(--border)) !important;
   }
 
   .tea-imposter-card .tea-reveal-card {
@@ -311,6 +516,7 @@
       radial-gradient(circle at 50% -20%, color-mix(in oklch, var(--accent) 22%, transparent), transparent 58%),
       color-mix(in oklch, var(--muted) 56%, transparent);
     box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--background) 36%, transparent);
+    transition: border-color 220ms ease, box-shadow 280ms var(--ease-out), transform 280ms var(--ease-out), background 280ms var(--ease-out);
   }
 
   .tea-reveal-card::before {
@@ -323,7 +529,16 @@
     border: 1px solid color-mix(in oklch, var(--accent) 20%, transparent);
     border-radius: 999px;
     box-shadow: 0 0 0 1.5rem color-mix(in oklch, var(--accent) 4%, transparent);
-    content: none;
+    content: "";
+    opacity: 0.75;
+  }
+
+  .tea-reveal-card:hover {
+    transform: translateY(-0.15rem);
+  }
+
+  .tea-reveal-card:active {
+    transform: scale(0.985);
   }
 
   .tea-reveal-card[data-revealed="true"] {
@@ -335,21 +550,34 @@
 
   .tea-secret-label {
     color: var(--muted-foreground);
-    font-size: 0.68rem;
-    font-weight: 750;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
   }
 
   .mobile-dock {
     margin-left: -0.25rem;
     margin-right: -0.25rem;
     bottom: max(1rem, env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .mobile-dock > div {
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
   }
 
   @media (max-width: 420px) {
     .tea-display {
-      letter-spacing: -0.055em;
+      letter-spacing: -0.05em;
+    }
+
+    .tea-setup-header [data-slot="card-title"] {
+      font-size: 2.25rem;
+    }
+
+    .tea-progress-label {
+      font-size: 0.62rem;
     }
 
     [data-slot="card-header"],

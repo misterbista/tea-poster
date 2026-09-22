@@ -1,23 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/sonner";
 import { ServiceWorkerRegister } from "./sw-register";
 import "./globals.css";
 
-const geistSans = Geist({
+const geistSans = localFont({
+  src: "../node_modules/next/dist/next-devtools/server/font/geist-latin.woff2",
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  display: "swap",
+  weight: "100 900",
 });
 
-const geistMono = Geist_Mono({
+const geistMono = localFont({
+  src: "../node_modules/next/dist/next-devtools/server/font/geist-mono-latin.woff2",
   variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
+  weight: "100 900",
 });
 
 export const metadata: Metadata = {
-  title: "Tea-Poster | Spot the imposter. Spill the tea.",
+  title: "tea-posters | Spot the imposter. Spill the tea.",
   description: "A cozy offline imposter party game for your next tea break.",
-  applicationName: "Tea-Poster",
+  applicationName: "tea-posters",
 };
 
 export const viewport: Viewport = {
