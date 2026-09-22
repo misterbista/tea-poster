@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "tea-posters",
     short_name: "tea-posters",
-    description: "A minimal offline imposter party game",
+    description: "A minimal offline imposter game",
     start_url: "/",
     display: "standalone",
     background_color: "#0a0a0a",

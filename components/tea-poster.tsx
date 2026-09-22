@@ -84,12 +84,24 @@ type Round = {
 
 function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
+  const transitionTimeoutRef = useRef<number | null>(null);
 
   const toggleTheme = () => {
     const nextIsDark = !isDark;
+    const root = document.documentElement;
+    if (transitionTimeoutRef.current !== null) {
+      window.clearTimeout(transitionTimeoutRef.current);
+    }
+    root.classList.add("theme-transition");
     setIsDark(nextIsDark);
-    document.documentElement.classList.toggle("dark", nextIsDark);
-    document.documentElement.style.colorScheme = nextIsDark ? "dark" : "light";
+    window.requestAnimationFrame(() => {
+      root.classList.toggle("dark", nextIsDark);
+      root.style.colorScheme = nextIsDark ? "dark" : "light";
+    });
+    transitionTimeoutRef.current = window.setTimeout(() => {
+      root.classList.remove("theme-transition");
+      transitionTimeoutRef.current = null;
+    }, 240);
   };
 
   return (
@@ -245,6 +257,7 @@ export function TeaPoster() {
   const playerRowRefs = useRef(new Map<string, HTMLDivElement>());
   const playerRowPositions = useRef(new Map<string, DOMRect>());
   const playerRowAnimations = useRef(new Map<string, Animation>());
+  const animateReorderRef = useRef(false);
 
   const capturePlayerPositions = useCallback(() => {
     playerRowPositions.current.clear();
@@ -275,7 +288,9 @@ export function TeaPoster() {
     });
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!reduceMotion) {
+    const shouldAnimate = animateReorderRef.current;
+    animateReorderRef.current = false;
+    if (shouldAnimate && !reduceMotion) {
       nextPositions.forEach((nextPosition, name) => {
         const previousPosition = playerRowPositions.current.get(name);
         const element = playerRowRefs.current.get(name);
@@ -290,7 +305,7 @@ export function TeaPoster() {
             { transform: "translateY(0)" },
           ],
           {
-            duration: 320,
+            duration: 220,
             easing: "cubic-bezier(0.22, 1, 0.36, 1)",
           }
         );
@@ -356,18 +371,25 @@ export function TeaPoster() {
     });
   }, []);
 
-  const movePlayer = useCallback((name: string, direction: -1 | 1) => {
-    capturePlayerPositions();
+  const movePlayer = useCallback((name: string, direction: -1 | 1, animate: boolean) => {
+    const fromIndex = players.indexOf(name);
+    const toIndex = fromIndex + direction;
+    if (fromIndex < 0 || toIndex < 0 || toIndex >= players.length) return;
+
+    if (animate) {
+      animateReorderRef.current = true;
+      capturePlayerPositions();
+    }
     setPlayers((current) => {
-      const fromIndex = current.indexOf(name);
-      const toIndex = fromIndex + direction;
-      if (fromIndex < 0 || toIndex < 0 || toIndex >= current.length) return current;
+      const currentFromIndex = current.indexOf(name);
+      const currentToIndex = currentFromIndex + direction;
+      if (currentFromIndex < 0 || currentToIndex < 0 || currentToIndex >= current.length) return current;
 
       const next = [...current];
-      [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
+      [next[currentFromIndex], next[currentToIndex]] = [next[currentToIndex], next[currentFromIndex]];
       return next;
     });
-  }, [capturePlayerPositions]);
+  }, [capturePlayerPositions, players]);
 
   const setCurrentDropTarget = useCallback(
     (next: { name: string; after: boolean } | null) => {
@@ -407,24 +429,34 @@ export function TeaPoster() {
   const moveDraggedPlayer = useCallback(
     (name: string, targetName: string, insertAfter: boolean) => {
       if (name === targetName) return;
+
+      const fromIndex = players.indexOf(name);
+      const targetIndex = players.indexOf(targetName);
+      if (fromIndex < 0 || targetIndex < 0) return;
+
+      let destinationIndex = targetIndex + (insertAfter ? 1 : 0);
+      if (fromIndex < destinationIndex) destinationIndex -= 1;
+      if (fromIndex === destinationIndex) return;
+
+      animateReorderRef.current = true;
       capturePlayerPositions();
 
       setPlayers((current) => {
-        const fromIndex = current.indexOf(name);
-        const targetIndex = current.indexOf(targetName);
-        if (fromIndex < 0 || targetIndex < 0) return current;
+        const currentFromIndex = current.indexOf(name);
+        const currentTargetIndex = current.indexOf(targetName);
+        if (currentFromIndex < 0 || currentTargetIndex < 0) return current;
 
-        let destinationIndex = targetIndex + (insertAfter ? 1 : 0);
-        if (fromIndex < destinationIndex) destinationIndex -= 1;
-        if (fromIndex === destinationIndex) return current;
+        let currentDestinationIndex = currentTargetIndex + (insertAfter ? 1 : 0);
+        if (currentFromIndex < currentDestinationIndex) currentDestinationIndex -= 1;
+        if (currentFromIndex === currentDestinationIndex) return current;
 
         const next = [...current];
-        const [moved] = next.splice(fromIndex, 1);
-        next.splice(destinationIndex, 0, moved);
+        const [moved] = next.splice(currentFromIndex, 1);
+        next.splice(currentDestinationIndex, 0, moved);
         return next;
       });
     },
-    [capturePlayerPositions]
+    [capturePlayerPositions, players]
   );
 
   const endPlayerDrag = useCallback(
@@ -494,7 +526,6 @@ export function TeaPoster() {
             />
           </div>
           <div className="min-w-0">
-            <p className="tea-kicker mb-0.5">party game</p>
             <h1 className="tea-display truncate text-[1.55rem] leading-none font-bold text-primary">
               tea<span className="text-accent">-</span>posters
             </h1>
@@ -530,7 +561,6 @@ export function TeaPoster() {
       {phase === "setup" && (
         <Card className="tea-flat-card tea-setup tea-scene">
           <CardHeader className="tea-setup-header">
-            <div className="tea-eyebrow"><span>01</span> Setup</div>
             <CardTitle className="tea-display text-[2.55rem] font-bold leading-[0.98] tracking-tight">Choose players.</CardTitle>
             <CardDescription className="leading-relaxed">
               Select at least three players. Each person will see a private card.
@@ -606,7 +636,7 @@ export function TeaPoster() {
                       type="button"
                       aria-label={`Move ${name} up`}
                       title={`Move ${name} up`}
-                      onClick={() => movePlayer(name, -1)}
+                      onClick={(event) => movePlayer(name, -1, event.detail > 0)}
                       disabled={players.indexOf(name) === 0}
                       className="rounded-xl p-1.5 text-muted-foreground hover:bg-accent/10 hover:text-primary disabled:pointer-events-none disabled:opacity-25"
                     >
@@ -616,7 +646,7 @@ export function TeaPoster() {
                       type="button"
                       aria-label={`Move ${name} down`}
                       title={`Move ${name} down`}
-                      onClick={() => movePlayer(name, 1)}
+                      onClick={(event) => movePlayer(name, 1, event.detail > 0)}
                       disabled={players.indexOf(name) === players.length - 1}
                       className="rounded-xl p-1.5 text-muted-foreground hover:bg-accent/10 hover:text-primary disabled:pointer-events-none disabled:opacity-25"
                     >
@@ -689,7 +719,7 @@ export function TeaPoster() {
             </div>
             <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
               <div
-                className="h-full rounded-full bg-accent transition-[width] duration-500"
+                className="h-full rounded-full bg-accent transition-[width] duration-200 ease-out"
                 style={{ width: `${((dealIndex + 1) / round.players.length) * 100}%` }}
               />
             </div>
@@ -713,7 +743,7 @@ export function TeaPoster() {
                   setRevealed(true);
                 }
               }}
-              className="tea-reveal-card flex min-h-60 w-full touch-manipulation flex-col items-center justify-center gap-3 rounded-2xl border border-border/40 px-6 text-center transition-all active:scale-[0.985] hover:border-primary/40"
+              className="tea-reveal-card flex min-h-60 w-full touch-manipulation flex-col items-center justify-center gap-3 rounded-2xl border border-border/40 px-6 text-center active:scale-[0.985] hover:border-primary/40"
             >
               {revealed ? (
                 <>

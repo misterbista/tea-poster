@@ -20,7 +20,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "tea-posters | Spot the imposter. Spill the tea.",
-  description: "A cozy offline imposter party game for your next tea break.",
+  description: "A cozy offline imposter game for your next tea break.",
   applicationName: "tea-posters",
 };
 
