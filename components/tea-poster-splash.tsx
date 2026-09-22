@@ -14,8 +14,8 @@ export function TeaPosterSplash() {
             priority
           />
         </div>
-        <p className="mt-7 text-xs font-medium tracking-wide text-muted-foreground">
-          steeping the tea
+        <p className="tea-brand-subline mt-7 text-xs text-muted-foreground">
+          online / offline
         </p>
         <div className="mt-5 flex items-center gap-1.5" role="status" aria-label="Loading tea-posters">
           <span className="size-1.5 animate-pulse rounded-full bg-accent" />

@@ -22,7 +22,7 @@ const logoIcon = "/ChatGPT%20Image%20Sep%2022%2C%202026%20at%2011_38_07%20AM.png
 
 export const metadata: Metadata = {
   title: "tea-posters | Spot the imposter. Spill the tea.",
-  description: "A cozy offline imposter game for your next tea break.",
+  description: "A pass-and-play imposter game for tea breaks, online or offline.",
   applicationName: "tea-posters",
   icons: {
     icon: [{ url: logoIcon, type: "image/png", sizes: "1254x1254" }],

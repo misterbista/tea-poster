@@ -521,7 +521,7 @@ export function TeaPoster() {
       {/* Mobile app header */}
       <header className="mb-5 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
-          <div className="tea-logo-frame relative size-11 shrink-0 overflow-hidden rounded-[1.15rem] border border-accent/45 bg-[#fffaf0]">
+          <div className="tea-logo-frame relative size-11 shrink-0 overflow-hidden rounded-[0.9rem] border border-accent/45 bg-[#fffaf0]">
             <Image
               src="/ChatGPT Image Sep 22, 2026 at 11_38_07 AM.png"
               alt="tea-posters logo"
@@ -532,9 +532,10 @@ export function TeaPoster() {
             />
           </div>
           <div className="min-w-0">
-            <h1 className="tea-display truncate text-[1.55rem] leading-none font-bold text-primary">
+            <h1 className="tea-brand-name tea-display truncate text-[1.55rem] leading-none font-bold text-primary">
               tea<span className="text-accent">-</span>posters
             </h1>
+            <p className="tea-brand-subline">spot the imposter</p>
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
@@ -571,9 +572,9 @@ export function TeaPoster() {
       {phase === "setup" && (
         <Card className="tea-flat-card tea-setup tea-scene">
           <CardHeader className="tea-setup-header">
-            <CardTitle className="tea-display text-[2.55rem] font-bold leading-[0.98] tracking-tight">Choose players.</CardTitle>
+            <CardTitle className="tea-display text-[2.4rem] font-bold leading-[0.98] tracking-tight">Build your round.</CardTitle>
             <CardDescription className="leading-relaxed">
-              Select at least three players. Each person will see a private card.
+              Choose who is playing, then hold the grip to set the pass order.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
@@ -598,7 +599,7 @@ export function TeaPoster() {
                   role="listitem"
                   data-drop-position={dropTarget?.name === name ? (dropTarget.after ? "after" : "before") : undefined}
                   data-dragging={draggedPlayer === name ? "true" : undefined}
-                  className="tea-player-row group flex min-h-[4.25rem] items-center gap-2.5 rounded-[1.2rem] border border-border/30 bg-card px-3 py-2.5 transition-colors hover:border-primary/30"
+                  className="tea-player-row group flex min-h-[4.25rem] items-center gap-2.5 border-b border-border/30 px-3 py-2.5 transition-colors hover:border-primary/30"
                 >
                   <button
                     type="button"
@@ -699,13 +700,13 @@ export function TeaPoster() {
                 onChange={(e) => setNewPlayer(e.target.value)}
                 placeholder="Add a player…"
                 maxLength={24}
-                className="h-12 rounded-2xl border-border/60 bg-background/60 text-base"
+                className="h-12 rounded-xl border-border/60 bg-background/60 text-base"
               />
               <Button
                 type="submit"
                 variant="secondary"
                 size="icon"
-                className="size-12 rounded-2xl"
+                className="size-12 rounded-xl"
                 aria-label="Add player"
                 disabled={!newPlayer.trim()}
               >
@@ -758,7 +759,7 @@ export function TeaPoster() {
                   setRevealed(true);
                 }
               }}
-              className="tea-reveal-card flex min-h-60 w-full touch-manipulation flex-col items-center justify-center gap-3 rounded-2xl border border-border/40 px-6 text-center active:scale-[0.985] hover:border-primary/40"
+              className="tea-reveal-card flex min-h-60 w-full touch-manipulation flex-col items-center justify-center gap-3 rounded-xl border border-border/40 px-6 text-center active:scale-[0.985] hover:border-primary/40"
             >
               {revealed ? (
                 <>
@@ -825,7 +826,7 @@ export function TeaPoster() {
           </CardContent>
           <CardFooter className="flex-col gap-2">
               <Button
-                className="min-h-14 w-full rounded-2xl text-base"
+                className="min-h-14 w-full rounded-xl text-base"
                 onClick={() => setImposterShown(true)}
               >
                 <EyeIcon />
@@ -866,11 +867,11 @@ export function TeaPoster() {
             </dl>
           </CardContent>
           <CardFooter className="flex-col gap-2">
-            <Button className="min-h-12 w-full rounded-2xl" size="lg" onClick={startRound}>
+            <Button className="min-h-12 w-full rounded-xl" size="lg" onClick={startRound}>
               <ShuffleIcon />
               Play another round
             </Button>
-            <Button variant="ghost" className="min-h-11 w-full rounded-2xl" onClick={backToSetup}>
+            <Button variant="ghost" className="min-h-11 w-full rounded-xl" onClick={backToSetup}>
               <CheckIcon />
               Change players
             </Button>
@@ -882,7 +883,7 @@ export function TeaPoster() {
         <div className="mobile-dock pointer-events-none sticky bottom-4 z-20 mt-4">
           <div className="pointer-events-auto">
             <Button
-              className="min-h-14 w-full rounded-2xl bg-primary text-base font-semibold hover:bg-primary/90"
+              className="min-h-14 w-full rounded-xl bg-primary text-base font-semibold hover:bg-primary/90"
               size="lg"
               onClick={startRound}
               disabled={activePlayers.length < 3}
