@@ -1,5 +1,5 @@
 {
-  "version": 9,
+  "version": 11,
   "categories": [
     {
       "category": "Food and drinks",
@@ -43,6 +43,36 @@
           "word": "Chai",
           "citizenHint": "Tea commonly prepared with milk and sugar",
           "imposterHint": "A hot drink"
+        },
+        {
+          "word": "Donut",
+          "citizenHint": "A ring-shaped sweet often covered with glaze",
+          "imposterHint": "A casual sweet snack"
+        },
+        {
+          "word": "Samosa",
+          "citizenHint": "A crisp triangular pastry with savory filling",
+          "imposterHint": "A popular snack"
+        },
+        {
+          "word": "Noodles",
+          "citizenHint": "Long strands cooked and served with sauce or seasoning",
+          "imposterHint": "A familiar meal"
+        },
+        {
+          "word": "Smoothie",
+          "citizenHint": "A thick blended drink made from fruit or other ingredients",
+          "imposterHint": "A cold drink"
+        },
+        {
+          "word": "Brownie",
+          "citizenHint": "A dense square chocolate dessert",
+          "imposterHint": "A baked treat"
+        },
+        {
+          "word": "Pickle",
+          "citizenHint": "Vegetables or fruit preserved in a tangy seasoned mixture",
+          "imposterHint": "A condiment or side"
         }
       ]
     },
@@ -88,6 +118,36 @@
           "word": "Blackout",
           "citizenHint": "Scheduled periods when electricity is unavailable",
           "imposterHint": "Something Nepalis strongly remember"
+        },
+        {
+          "word": "Tihar",
+          "citizenHint": "A Nepali festival known for lights, decorations, and honoring animals",
+          "imposterHint": "A cultural celebration"
+        },
+        {
+          "word": "Patan",
+          "citizenHint": "A historic city area known for traditional architecture and crafts",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Dharan",
+          "citizenHint": "A city in eastern Nepal near the hills",
+          "imposterHint": "A Nepali city"
+        },
+        {
+          "word": "Microbus",
+          "citizenHint": "A small public vehicle used on busy urban routes",
+          "imposterHint": "A local transport option"
+        },
+        {
+          "word": "eSewa",
+          "citizenHint": "A phone-based service used to send money and pay bills",
+          "imposterHint": "A digital service in Nepal"
+        },
+        {
+          "word": "Chowk",
+          "citizenHint": "A public square or busy junction in a town",
+          "imposterHint": "A familiar local place"
         }
       ]
     },
@@ -133,6 +193,36 @@
           "word": "Chat",
           "citizenHint": "A shared conversation between several people",
           "imposterHint": "A communication space"
+        },
+        {
+          "word": "Deadline",
+          "citizenHint": "The latest time work must be finished",
+          "imposterHint": "A workplace time pressure"
+        },
+        {
+          "word": "Agenda",
+          "citizenHint": "A list of topics planned for a meeting",
+          "imposterHint": "Something used in meetings"
+        },
+        {
+          "word": "Meeting",
+          "citizenHint": "A scheduled conversation for a group to discuss work",
+          "imposterHint": "A workplace activity"
+        },
+        {
+          "word": "Inbox",
+          "citizenHint": "The place where incoming messages wait in an email app",
+          "imposterHint": "A place for digital messages"
+        },
+        {
+          "word": "Printer",
+          "citizenHint": "A machine that puts digital documents onto paper",
+          "imposterHint": "An office machine"
+        },
+        {
+          "word": "Internship",
+          "citizenHint": "A temporary learning role in a workplace",
+          "imposterHint": "A work experience"
         }
       ]
     },
@@ -178,6 +268,36 @@
           "word": "Audio",
           "citizenHint": "A recorded audio message sent through chat",
           "imposterHint": "A type of digital message"
+        },
+        {
+          "word": "Hashtag",
+          "citizenHint": "A word or phrase marked with a hash to organize posts",
+          "imposterHint": "A way to organize online content"
+        },
+        {
+          "word": "Podcast",
+          "citizenHint": "An episodic show people listen to online",
+          "imposterHint": "Digital entertainment"
+        },
+        {
+          "word": "Streamer",
+          "citizenHint": "A person who broadcasts live content online",
+          "imposterHint": "An online creator"
+        },
+        {
+          "word": "Trending",
+          "citizenHint": "Getting unusual attention across social platforms",
+          "imposterHint": "A pattern of online attention"
+        },
+        {
+          "word": "Notification",
+          "citizenHint": "A message that alerts you about activity in an app",
+          "imposterHint": "A phone feature"
+        },
+        {
+          "word": "Username",
+          "citizenHint": "The name identifying someone on an online service",
+          "imposterHint": "An online account detail"
         }
       ]
     },
@@ -223,6 +343,36 @@
           "word": "Couples",
           "citizenHint": "Two couples going out together",
           "imposterHint": "A social dating activity"
+        },
+        {
+          "word": "Friendship",
+          "citizenHint": "A close bond between people who care about each other",
+          "imposterHint": "A social connection"
+        },
+        {
+          "word": "Flirting",
+          "citizenHint": "Playful behavior that can suggest romantic interest",
+          "imposterHint": "A social behavior"
+        },
+        {
+          "word": "Wedding",
+          "citizenHint": "A ceremony celebrating a couple's marriage",
+          "imposterHint": "A major social event"
+        },
+        {
+          "word": "Jealousy",
+          "citizenHint": "An uneasy feeling when attention or affection seems threatened",
+          "imposterHint": "A strong emotion"
+        },
+        {
+          "word": "Reunion",
+          "citizenHint": "A meeting with people after being apart for a long time",
+          "imposterHint": "A social gathering"
+        },
+        {
+          "word": "Neighbor",
+          "citizenHint": "A person who lives nearby",
+          "imposterHint": "Someone in your community"
         }
       ]
     },
@@ -268,6 +418,36 @@
           "word": "Window",
           "citizenHint": "A seat beside the window while traveling",
           "imposterHint": "Something related to transportation"
+        },
+        {
+          "word": "Backpack",
+          "citizenHint": "A bag carried on your back for personal items",
+          "imposterHint": "A travel item"
+        },
+        {
+          "word": "Passport",
+          "citizenHint": "An official booklet used for international travel",
+          "imposterHint": "A travel document"
+        },
+        {
+          "word": "Ticket",
+          "citizenHint": "Proof that lets you enter or board something",
+          "imposterHint": "Something needed for an outing"
+        },
+        {
+          "word": "Luggage",
+          "citizenHint": "Bags packed for a journey",
+          "imposterHint": "Travel belongings"
+        },
+        {
+          "word": "Traffic",
+          "citizenHint": "A large flow of vehicles on roads",
+          "imposterHint": "A travel delay"
+        },
+        {
+          "word": "Souvenir",
+          "citizenHint": "An object kept to remember a place visited",
+          "imposterHint": "A travel keepsake"
         }
       ]
     },
@@ -313,6 +493,36 @@
           "word": "Stinger",
           "citizenHint": "An extra scene shown after the credits",
           "imposterHint": "Something connected to movies"
+        },
+        {
+          "word": "Sequel",
+          "citizenHint": "A later film that continues an earlier story",
+          "imposterHint": "A type of movie"
+        },
+        {
+          "word": "Villain",
+          "citizenHint": "The character whose goals oppose the hero",
+          "imposterHint": "A story character"
+        },
+        {
+          "word": "Director",
+          "citizenHint": "The person guiding how a film is made",
+          "imposterHint": "Someone in filmmaking"
+        },
+        {
+          "word": "Subtitles",
+          "citizenHint": "Written dialogue shown while a film plays",
+          "imposterHint": "A viewing aid"
+        },
+        {
+          "word": "Premiere",
+          "citizenHint": "The first public showing of a film",
+          "imposterHint": "A film event"
+        },
+        {
+          "word": "Finale",
+          "citizenHint": "The concluding part of a show or story",
+          "imposterHint": "An ending in entertainment"
         }
       ]
     },
@@ -358,6 +568,36 @@
           "word": "Battery",
           "citizenHint": "When your device is almost out of power",
           "imposterHint": "A common device problem"
+        },
+        {
+          "word": "Bluetooth",
+          "citizenHint": "A short-range wireless connection between devices",
+          "imposterHint": "A device connection"
+        },
+        {
+          "word": "Charger",
+          "citizenHint": "A device used to restore a battery's power",
+          "imposterHint": "A phone accessory"
+        },
+        {
+          "word": "Browser",
+          "citizenHint": "A program used to visit websites",
+          "imposterHint": "A common computer app"
+        },
+        {
+          "word": "Update",
+          "citizenHint": "A newer software version with changes or fixes",
+          "imposterHint": "A software change"
+        },
+        {
+          "word": "Upload",
+          "citizenHint": "Sending a file from your device to an online service",
+          "imposterHint": "An online file action"
+        },
+        {
+          "word": "Download",
+          "citizenHint": "Copying a file from an online service to your device",
+          "imposterHint": "An online file action"
         }
       ]
     },
@@ -403,6 +643,471 @@
           "word": "Cancellation",
           "citizenHint": "An arranged activity that no longer happens",
           "imposterHint": "A change in social plans"
+        },
+        {
+          "word": "Queue",
+          "citizenHint": "A line of people or vehicles waiting their turn",
+          "imposterHint": "A waiting situation"
+        },
+        {
+          "word": "Shortcut",
+          "citizenHint": "A faster route or way to do something",
+          "imposterHint": "A useful convenience"
+        },
+        {
+          "word": "Spill",
+          "citizenHint": "Accidentally letting liquid fall out of a container",
+          "imposterHint": "A small accident"
+        },
+        {
+          "word": "Detour",
+          "citizenHint": "A different route taken because the normal one is blocked",
+          "imposterHint": "A change in travel plans"
+        },
+        {
+          "word": "Surprise",
+          "citizenHint": "Something unexpected that creates a sudden reaction",
+          "imposterHint": "An unexpected event"
+        },
+        {
+          "word": "Excuse",
+          "citizenHint": "A reason given to explain a mistake or absence",
+          "imposterHint": "Something people say in awkward situations"
+        }
+      ]
+    },
+    {
+      "category": "More food and cooking",
+      "words": [
+        {
+          "word": "Porridge",
+          "citizenHint": "A warm soft dish made by cooking grains",
+          "imposterHint": "A simple breakfast"
+        },
+        {
+          "word": "Pancake",
+          "citizenHint": "A round flat cake cooked in a pan",
+          "imposterHint": "A breakfast food"
+        },
+        {
+          "word": "Waffle",
+          "citizenHint": "A crisp cake with a square pattern",
+          "imposterHint": "A sweet breakfast"
+        },
+        {
+          "word": "Muffin",
+          "citizenHint": "A small baked cake served as a snack",
+          "imposterHint": "A baked treat"
+        },
+        {
+          "word": "Omelette",
+          "citizenHint": "Beaten eggs cooked as a folded dish",
+          "imposterHint": "A breakfast food"
+        },
+        {
+          "word": "Sausage",
+          "citizenHint": "Seasoned meat shaped into a long portion",
+          "imposterHint": "A cooked food"
+        },
+        {
+          "word": "Bacon",
+          "citizenHint": "Thin salty strips usually fried before eating",
+          "imposterHint": "A breakfast food"
+        },
+        {
+          "word": "Cereal",
+          "citizenHint": "A dry grain food commonly eaten with milk",
+          "imposterHint": "A breakfast food"
+        },
+        {
+          "word": "Yogurt",
+          "citizenHint": "A thick soft food made from cultured milk",
+          "imposterHint": "A chilled food"
+        },
+        {
+          "word": "Pudding",
+          "citizenHint": "A soft sweet dish eaten with a spoon",
+          "imposterHint": "A dessert"
+        },
+        {
+          "word": "Custard",
+          "citizenHint": "A smooth sweet mixture made with milk and eggs",
+          "imposterHint": "A dessert"
+        },
+        {
+          "word": "Popcorn",
+          "citizenHint": "Light fluffy pieces made from heated corn kernels",
+          "imposterHint": "A movie snack"
+        },
+        {
+          "word": "Cracker",
+          "citizenHint": "A thin crisp baked food often served with toppings",
+          "imposterHint": "A snack food"
+        },
+        {
+          "word": "Biscuit",
+          "citizenHint": "A small baked food that can be sweet or savory",
+          "imposterHint": "A baked snack"
+        },
+        {
+          "word": "Cookie",
+          "citizenHint": "A small sweet baked snack",
+          "imposterHint": "A baked treat"
+        },
+        {
+          "word": "Cupcake",
+          "citizenHint": "A small cake baked in an individual paper case",
+          "imposterHint": "A sweet dessert"
+        },
+        {
+          "word": "Honey",
+          "citizenHint": "A thick sweet substance made by bees",
+          "imposterHint": "A sweet food"
+        },
+        {
+          "word": "Jam",
+          "citizenHint": "A sweet fruit spread used on bread",
+          "imposterHint": "A breakfast spread"
+        },
+        {
+          "word": "Butter",
+          "citizenHint": "A soft spread made from milk fat",
+          "imposterHint": "A kitchen ingredient"
+        },
+        {
+          "word": "Cheese",
+          "citizenHint": "A solid food made from milk",
+          "imposterHint": "A common food"
+        },
+        {
+          "word": "Garlic",
+          "citizenHint": "A strongly flavored bulb used to season food",
+          "imposterHint": "A cooking ingredient"
+        },
+        {
+          "word": "Ginger",
+          "citizenHint": "A spicy root used in cooking and drinks",
+          "imposterHint": "A cooking ingredient"
+        },
+        {
+          "word": "Cinnamon",
+          "citizenHint": "A sweet smelling spice made from tree bark",
+          "imposterHint": "A cooking ingredient"
+        },
+        {
+          "word": "Basil",
+          "citizenHint": "A fragrant green herb used in cooking",
+          "imposterHint": "A cooking ingredient"
+        },
+        {
+          "word": "Tomato",
+          "citizenHint": "A soft red fruit often used in savory dishes",
+          "imposterHint": "A common food"
+        },
+        {
+          "word": "Potato",
+          "citizenHint": "A starchy underground vegetable",
+          "imposterHint": "A common food"
+        },
+        {
+          "word": "Carrot",
+          "citizenHint": "A long orange root vegetable",
+          "imposterHint": "A common vegetable"
+        },
+        {
+          "word": "Spinach",
+          "citizenHint": "A leafy green vegetable",
+          "imposterHint": "A common vegetable"
+        },
+        {
+          "word": "Cabbage",
+          "citizenHint": "A round leafy vegetable with tightly packed leaves",
+          "imposterHint": "A common vegetable"
+        },
+        {
+          "word": "Lemon",
+          "citizenHint": "A yellow citrus fruit with a sour taste",
+          "imposterHint": "A common fruit"
+        },
+        {
+          "word": "Mango",
+          "citizenHint": "A sweet tropical fruit with soft yellow flesh",
+          "imposterHint": "A common fruit"
+        },
+        {
+          "word": "Ketchup",
+          "citizenHint": "A sweet red sauce commonly served with fast food",
+          "imposterHint": "A condiment"
+        },
+        {
+          "word": "Mustard",
+          "citizenHint": "A sharp yellow sauce often put on sandwiches",
+          "imposterHint": "A condiment"
+        },
+        {
+          "word": "Vinegar",
+          "citizenHint": "A sour liquid used in cooking and dressings",
+          "imposterHint": "A kitchen ingredient"
+        }
+      ]
+    },
+    {
+      "category": "More home and objects",
+      "words": [
+        {
+          "word": "Doorknob",
+          "citizenHint": "A round handle used to open a door",
+          "imposterHint": "A household object"
+        },
+        {
+          "word": "Doormat",
+          "citizenHint": "A mat placed at the entrance of a home",
+          "imposterHint": "A household item"
+        },
+        {
+          "word": "Bookshelf",
+          "citizenHint": "Furniture used to store books",
+          "imposterHint": "A piece of furniture"
+        },
+        {
+          "word": "Cupboard",
+          "citizenHint": "A cabinet used to store household items",
+          "imposterHint": "A piece of furniture"
+        },
+        {
+          "word": "Wardrobe",
+          "citizenHint": "A tall piece of furniture for storing clothes",
+          "imposterHint": "A household item"
+        },
+        {
+          "word": "Nightstand",
+          "citizenHint": "A small table kept beside a bed",
+          "imposterHint": "A piece of furniture"
+        },
+        {
+          "word": "Armchair",
+          "citizenHint": "A comfortable chair with side supports for the arms",
+          "imposterHint": "A piece of furniture"
+        },
+        {
+          "word": "Footstool",
+          "citizenHint": "A low seat or support for resting your feet",
+          "imposterHint": "A household object"
+        },
+        {
+          "word": "Coatstand",
+          "citizenHint": "A stand used for hanging coats and hats",
+          "imposterHint": "A household object"
+        },
+        {
+          "word": "Curtain",
+          "citizenHint": "A piece of fabric used to cover a window",
+          "imposterHint": "A household item"
+        },
+        {
+          "word": "Blinds",
+          "citizenHint": "A window covering made of adjustable strips",
+          "imposterHint": "A household item"
+        },
+        {
+          "word": "Doorkey",
+          "citizenHint": "A small object used to unlock a door",
+          "imposterHint": "A common object"
+        },
+        {
+          "word": "Hinges",
+          "citizenHint": "Joints that let a door or lid swing open",
+          "imposterHint": "A household fitting"
+        },
+        {
+          "word": "Lampshade",
+          "citizenHint": "A cover fitted around a lamp to soften its light",
+          "imposterHint": "A household item"
+        },
+        {
+          "word": "Lightbulb",
+          "citizenHint": "A glass object that produces light in a lamp",
+          "imposterHint": "A household object"
+        },
+        {
+          "word": "Books",
+          "citizenHint": "Bound pages that people read for information or stories",
+          "imposterHint": "A familiar item"
+        },
+        {
+          "word": "Bookmark",
+          "citizenHint": "A strip or object used to mark a page in a book",
+          "imposterHint": "A reading item"
+        },
+        {
+          "word": "Notepad",
+          "citizenHint": "A small pad of paper for writing notes",
+          "imposterHint": "A writing item"
+        },
+        {
+          "word": "Clipboard",
+          "citizenHint": "A flat board with a clip for holding papers",
+          "imposterHint": "An office item"
+        },
+        {
+          "word": "Envelope",
+          "citizenHint": "A paper holder used for sending a letter",
+          "imposterHint": "A paper item"
+        },
+        {
+          "word": "Postcard",
+          "citizenHint": "A card sent through the mail without an envelope",
+          "imposterHint": "A paper message"
+        },
+        {
+          "word": "Calendar",
+          "citizenHint": "A chart used to show days, weeks, and months",
+          "imposterHint": "A time-related item"
+        },
+        {
+          "word": "Notebook",
+          "citizenHint": "A book of blank pages used for writing",
+          "imposterHint": "A school or office item"
+        },
+        {
+          "word": "Pencilcase",
+          "citizenHint": "A small container for pens and pencils",
+          "imposterHint": "A school item"
+        },
+        {
+          "word": "Sharpener",
+          "citizenHint": "A tool that makes a pencil point sharp",
+          "imposterHint": "A school item"
+        },
+        {
+          "word": "Stapler",
+          "citizenHint": "A tool that joins sheets of paper with metal pins",
+          "imposterHint": "An office item"
+        },
+        {
+          "word": "Holepunch",
+          "citizenHint": "A tool that makes holes through paper",
+          "imposterHint": "An office item"
+        },
+        {
+          "word": "Calculator",
+          "citizenHint": "A device used to work out numbers",
+          "imposterHint": "A school or office item"
+        },
+        {
+          "word": "Rucksack",
+          "citizenHint": "A bag carried on the back with shoulder straps",
+          "imposterHint": "A common bag"
+        },
+        {
+          "word": "Handbag",
+          "citizenHint": "A small bag carried by hand or over a shoulder",
+          "imposterHint": "A personal item"
+        },
+        {
+          "word": "Briefcase",
+          "citizenHint": "A flat case used for carrying work papers",
+          "imposterHint": "A work item"
+        },
+        {
+          "word": "Raincoat",
+          "citizenHint": "A coat made to keep rain off the body",
+          "imposterHint": "A piece of clothing"
+        },
+        {
+          "word": "Sunglasses",
+          "citizenHint": "Glasses worn to protect the eyes from bright sunlight",
+          "imposterHint": "A personal item"
+        },
+        {
+          "word": "Headband",
+          "citizenHint": "A band worn around the head or hair",
+          "imposterHint": "A clothing item"
+        },
+        {
+          "word": "Hairpin",
+          "citizenHint": "A small pin used to hold hair in place",
+          "imposterHint": "A personal item"
+        },
+        {
+          "word": "Shoelace",
+          "citizenHint": "A cord used to tie a shoe closed",
+          "imposterHint": "A clothing detail"
+        },
+        {
+          "word": "Rainboot",
+          "citizenHint": "A waterproof boot worn in wet weather",
+          "imposterHint": "A piece of clothing"
+        },
+        {
+          "word": "Slipper",
+          "citizenHint": "A soft shoe worn inside the home",
+          "imposterHint": "A piece of clothing"
+        },
+        {
+          "word": "Bathrobe",
+          "citizenHint": "A loose garment worn after bathing",
+          "imposterHint": "A piece of clothing"
+        },
+        {
+          "word": "Pajamas",
+          "citizenHint": "Clothes worn for sleeping",
+          "imposterHint": "A piece of clothing"
+        },
+        {
+          "word": "Trousers",
+          "citizenHint": "Clothing that covers both legs separately",
+          "imposterHint": "A piece of clothing"
+        },
+        {
+          "word": "Sweatshirt",
+          "citizenHint": "A warm casual top usually made from soft fabric",
+          "imposterHint": "A piece of clothing"
+        },
+        {
+          "word": "Towelrack",
+          "citizenHint": "A bar or stand used for hanging towels",
+          "imposterHint": "A bathroom item"
+        },
+        {
+          "word": "Toothbrush",
+          "citizenHint": "A small brush used to clean teeth",
+          "imposterHint": "A bathroom item"
+        },
+        {
+          "word": "Toothpaste",
+          "citizenHint": "A paste used with a brush to clean teeth",
+          "imposterHint": "A bathroom item"
+        },
+        {
+          "word": "Shampoo",
+          "citizenHint": "A liquid or cream used to wash hair",
+          "imposterHint": "A bathroom item"
+        },
+        {
+          "word": "Conditioner",
+          "citizenHint": "A hair product used after shampoo",
+          "imposterHint": "A bathroom item"
+        },
+        {
+          "word": "Washcloth",
+          "citizenHint": "A small cloth used for washing the body",
+          "imposterHint": "A bathroom item"
+        },
+        {
+          "word": "Laundry",
+          "citizenHint": "Clothes and other fabric items waiting to be washed",
+          "imposterHint": "A household chore"
+        },
+        {
+          "word": "Hanger",
+          "citizenHint": "A shaped frame used to hang clothes",
+          "imposterHint": "A household item"
+        },
+        {
+          "word": "Ironing",
+          "citizenHint": "The act of removing creases from clothes with heat",
+          "imposterHint": "A household chore"
         }
       ]
     }

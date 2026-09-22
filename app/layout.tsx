@@ -23,9 +23,9 @@ const icon512 = "/icons/icon-512.png";
 const appleTouchIcon = "/icons/apple-touch-icon.png";
 
 export const metadata: Metadata = {
-  title: "tea-posters | Spot the imposter. Spill the tea.",
+  title: "TeaPosters | Spot the imposter. Spill the tea.",
   description: "A local pass-and-play imposter game for tea breaks.",
-  applicationName: "tea-posters",
+  applicationName: "TeaPosters",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [

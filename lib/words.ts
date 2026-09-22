@@ -14,7 +14,7 @@ export function isSingleWord(value: string) {
 }
 
 // Derive stable IDs from the word, so moving it to another category preserves history.
-export const WORD_PAIRS: WordPair[] = deck.categories.flatMap(({ category, words }) =>
+const BUNDLED_WORD_PAIRS: WordPair[] = deck.categories.flatMap(({ category, words }) =>
   words.map(({ word, citizenHint, imposterHint }) => ({
     id: `nepal:${word.trim().normalize("NFC").toLowerCase()}`,
     word: word.trim(),
@@ -23,6 +23,8 @@ export const WORD_PAIRS: WordPair[] = deck.categories.flatMap(({ category, words
     imposterHint: imposterHint.trim(),
   }))
 );
+
+export const WORD_PAIRS: WordPair[] = BUNDLED_WORD_PAIRS;
 
 const ids = new Set<string>();
 for (const pair of WORD_PAIRS) {

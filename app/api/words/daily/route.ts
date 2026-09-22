@@ -107,11 +107,11 @@ function buildPrompt(knownWordIds: string[], existingPairs: WordPair[]) {
   }));
 
   return [
-    `Generate exactly ${WORDS_TO_GENERATE} original word pairs for the tea-posters pass-and-play imposter game.`,
+    `Generate exactly ${WORDS_TO_GENERATE} original word pairs for the TeaPosters pass-and-play imposter game.`,
     "Every word field must be exactly one word with no spaces: use \"bottle\", never \"water bottle\". Do not use multi-word phrases.",
     "The players are mostly Nepali friends and coworkers, so use familiar South Asian, Nepali, workplace, internet, relationship, travel, food, entertainment, technology, or everyday-life topics.",
     "Keep the tone playful, recognizable, and safe for a casual group game.",
-    "For each pair, citizenHint should identify the exact word without saying it. imposterHint should be a broader clue that helps the imposter blend in, but must not reveal or repeat the exact word.",
+    "For each pair, citizenHint should identify the exact word without saying it. imposterHint should be one level broader: describe only a loose category or context that helps the imposter blend in. Do not use a synonym, defining trait, direct use, near-answer, or wording that makes the citizen word easy to guess, and never reveal or repeat the exact word.",
     `Use categories similar to: ${categories.join(", ")}.`,
     `Do not repeat any existing word IDs: ${knownWordIds.join(", ") || "none"}.`,
     `Style examples only; do not copy them: ${JSON.stringify(examples)}.`,
@@ -228,7 +228,7 @@ async function generateDailyWords(request: Request) {
           authorization: `Bearer ${apiKey}`,
           "content-type": "application/json",
           "http-referer": "https://tea-posters.local",
-          "x-title": "tea-posters",
+          "x-title": "TeaPosters",
         },
         body: JSON.stringify({
           model,

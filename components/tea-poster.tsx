@@ -187,7 +187,7 @@ function PwaInstallButton() {
 
   const install = async () => {
     if (isIos) {
-      toast.message("Install tea-posters from Safari", {
+      toast.message("Install TeaPosters from Safari", {
         description: "Tap Share, then choose Add to Home Screen.",
       });
       return;
@@ -202,7 +202,7 @@ function PwaInstallButton() {
         setInstallPrompt(null);
       }
     } catch (error) {
-      console.error("tea-posters install prompt failed.", error);
+      console.error("TeaPosters install prompt failed.", error);
       toast.error("Your browser could not show the install prompt.");
     }
   };
@@ -214,8 +214,8 @@ function PwaInstallButton() {
       size="icon"
       className="size-11 rounded-full text-muted-foreground hover:bg-muted hover:text-primary"
       onClick={() => void install()}
-      aria-label="Install tea-posters"
-      title="Install tea-posters"
+      aria-label="Install TeaPosters"
+      title="Install TeaPosters"
     >
       <DownloadIcon />
     </Button>
@@ -578,7 +578,7 @@ export function TeaPoster() {
           <div className="tea-logo-frame relative size-13 shrink-0 overflow-hidden rounded-[0.9rem]">
             <Image
               src="/ChatGPT Image Sep 22, 2026 at 06_55_47 PM.png"
-              alt="tea-posters logo"
+              alt="TeaPosters logo"
               fill
               sizes="52px"
               className="scale-[1.1] object-contain"
@@ -587,7 +587,7 @@ export function TeaPoster() {
           </div>
           <div className="min-w-0">
             <h1 className="tea-brand-name tea-display truncate text-[1.55rem] leading-none font-bold text-primary">
-              tea<span className="text-accent">-</span>posters
+              TeaPosters
             </h1>
             <p className="tea-brand-subline">spot the imposter</p>
           </div>
@@ -784,11 +784,7 @@ export function TeaPoster() {
 
       {/* DEAL — pass-and-play reveal */}
       {phase === "deal" && round && (
-        <Card
-          className={`tea-flat-card tea-round-card tea-scene flex min-h-[31rem] flex-col ${
-            isImposter && revealed ? "tea-imposter-card" : ""
-          }`}
-        >
+        <Card className="tea-flat-card tea-round-card tea-scene flex min-h-[31rem] flex-col">
           <CardHeader className="items-center text-center">
             <div className="flex w-full items-center justify-between gap-3">
               <span className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
@@ -828,22 +824,14 @@ export function TeaPoster() {
             >
               {revealed ? (
                 <>
-                  {isImposter && (
-                    <span className="tea-secret-label">your hint</span>
-                  )}
-                  <span className={isImposter ? "text-xl font-medium leading-relaxed" : "tea-display text-4xl font-bold tracking-tight"}>
-                    {isImposter ? round.pair.imposterHint : round.pair.word}
+                  <span className={`tea-display max-w-[17rem] text-4xl font-bold leading-tight tracking-tight ${
+                    isImposter ? "text-destructive" : ""
+                  }`}>
+                    {isImposter ? "You are the imposter" : round.pair.word}
                   </span>
-                  {!isImposter && (
-                    <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-                      {round.pair.citizenHint}
-                    </p>
-                  )}
-                  {isImposter && (
-                    <Badge variant="destructive" className="mt-2 border border-destructive/30 bg-destructive/15">
-                      You are the imposter — blend in!
-                    </Badge>
-                  )}
+                  <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+                    {isImposter ? round.pair.imposterHint : round.pair.citizenHint}
+                  </p>
                   <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
                     {dealIndex === round.players.length - 1 ? "Tap to start talking" : "Tap for the next player"} <ArrowRightIcon className="size-3.5" />
                   </span>

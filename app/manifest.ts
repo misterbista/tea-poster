@@ -5,8 +5,8 @@ const icon512 = "/icons/icon-512.png";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "tea-posters",
-    short_name: "tea-posters",
+    name: "TeaPosters",
+    short_name: "TeaPosters",
     description: "A local pass-and-play imposter game for tea breaks.",
     id: "/",
     start_url: "/",

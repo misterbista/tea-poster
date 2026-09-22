@@ -9,7 +9,7 @@ export function ServiceWorkerRegister() {
     navigator.serviceWorker
       .register("/sw.js", { scope: "/", updateViaCache: "none" })
       .catch((error: unknown) => {
-        console.error("tea-posters could not register its service worker.", error);
+        console.error("TeaPosters could not register its service worker.", error);
       });
   }, []);
 
