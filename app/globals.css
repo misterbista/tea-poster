@@ -145,10 +145,8 @@
   .tea-shell {
     position: relative;
     isolation: isolate;
-    overflow: hidden;
-    background:
-      linear-gradient(145deg, color-mix(in oklch, var(--background) 90%, var(--accent)), transparent 58%),
-      var(--background);
+    overflow-x: clip;
+    background: var(--background);
   }
 
   .tea-shell::before,
@@ -159,7 +157,7 @@
     height: 16rem;
     border: 1px solid color-mix(in oklch, var(--accent) 22%, transparent);
     border-radius: 999px;
-    content: "";
+    content: none;
     pointer-events: none;
   }
 
@@ -180,40 +178,100 @@
   }
 
   .tea-card {
-    border: 1px solid color-mix(in oklch, var(--accent) 16%, var(--border));
+    border: 1px solid color-mix(in oklch, var(--border) 45%, transparent);
     border-radius: 1.75rem;
-    background: linear-gradient(
-      150deg,
-      color-mix(in oklch, var(--card) 98%, var(--accent)),
-      color-mix(in oklch, var(--card) 93%, var(--muted))
-    );
-    box-shadow: 0 1.5rem 3rem color-mix(in oklch, var(--foreground) 7%, transparent), 0 0.25rem 0.75rem color-mix(in oklch, var(--accent) 6%, transparent);
+    background: var(--card);
+    box-shadow: 0 0.5rem 2rem color-mix(in oklch, var(--foreground) 4%, transparent);
+    --tw-ring-shadow: 0 0 transparent;
   }
 
   .tea-card [data-slot="card-footer"] {
     border-color: color-mix(in oklch, var(--accent) 17%, var(--border));
     border-radius: 0 0 1.75rem 1.75rem;
-    background: color-mix(in oklch, var(--muted) 65%, transparent);
+    background: transparent;
+  }
+
+  .tea-setup {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    gap: 1.25rem;
+  }
+
+  .tea-setup > [data-slot="card-header"],
+  .tea-setup > [data-slot="card-content"] {
+    padding-inline: 0;
   }
 
   .tea-logo-frame {
-    box-shadow: 0 0.75rem 1.5rem color-mix(in oklch, var(--foreground) 13%, transparent);
+    box-shadow: none;
   }
 
   .tea-order-grip {
-    border: 1px solid color-mix(in oklch, var(--accent) 21%, transparent);
-    background: color-mix(in oklch, var(--accent) 8%, transparent);
-    color: var(--accent);
+    border: 0;
+    background: transparent;
+    color: var(--muted-foreground);
     transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
   }
 
   .group:hover .tea-order-grip {
-    background: var(--accent);
-    color: var(--accent-foreground);
+    background: var(--muted);
+    color: var(--primary);
+  }
+
+  .tea-player-row {
+    will-change: transform;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    box-shadow: none;
+    position: relative;
+  }
+
+  .tea-player-row > div.min-w-0 {
+    min-width: 5rem;
+  }
+
+  .tea-player-row[data-drop-position]::after {
+    content: "";
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    height: 3px;
+    border-radius: 999px;
+    background: var(--primary);
+    pointer-events: none;
+  }
+
+  .tea-player-row[data-drop-position="before"]::after {
+    top: -6px;
+  }
+
+  .tea-player-row[data-drop-position="after"]::after {
+    bottom: -6px;
+  }
+
+  .tea-player-row > div:last-child {
+    margin-left: auto;
+  }
+
+  .tea-player-row button:not([role="checkbox"]) {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    touch-action: manipulation;
+  }
+
+  .tea-shell button:focus-visible,
+  .tea-shell input:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
   }
 
   .tea-round-card {
-    box-shadow: 0 1.75rem 4rem color-mix(in oklch, var(--foreground) 9%, transparent), 0 0.25rem 0.75rem color-mix(in oklch, var(--accent) 8%, transparent);
+    box-shadow: 0 0.5rem 2rem color-mix(in oklch, var(--foreground) 4%, transparent);
   }
 
   .tea-imposter-card {
@@ -265,7 +323,7 @@
     border: 1px solid color-mix(in oklch, var(--accent) 20%, transparent);
     border-radius: 999px;
     box-shadow: 0 0 0 1.5rem color-mix(in oklch, var(--accent) 4%, transparent);
-    content: "";
+    content: none;
   }
 
   .tea-reveal-card[data-revealed="true"] {
@@ -286,6 +344,7 @@
   .mobile-dock {
     margin-left: -0.25rem;
     margin-right: -0.25rem;
+    bottom: max(1rem, env(safe-area-inset-bottom));
   }
 
   @media (max-width: 420px) {
@@ -303,6 +362,15 @@
     .tea-round-card [data-slot="card-header"] {
       padding-top: 1.25rem;
     }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tea-shell *,
+  .tea-shell *::before,
+  .tea-shell *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }
 

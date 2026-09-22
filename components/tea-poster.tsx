@@ -3,10 +3,11 @@
 import {
     ArrowRightIcon,
     CheckIcon,
-    ChevronDownIcon,
-    ChevronUpIcon,
-    EyeIcon,
-    LockKeyholeIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  EyeIcon,
+  GripVerticalIcon,
+  LockKeyholeIcon,
     MoonIcon,
     PlusIcon,
     RotateCcwIcon,
@@ -16,7 +17,15 @@ import {
     Trash2Icon,
 } from "lucide-react";
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -88,7 +97,7 @@ function ThemeToggle() {
       type="button"
       variant="outline"
       size="icon"
-      className="size-11 rounded-full border-border/70 bg-card/60 text-primary shadow-sm hover:border-accent hover:bg-accent/10"
+      className="size-11 rounded-full border-transparent bg-transparent text-muted-foreground hover:bg-muted hover:text-primary"
       onClick={toggleTheme}
       aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
     >
@@ -106,7 +115,7 @@ function PhaseSteps({ phase }: { phase: Phase }) {
   const currentIndex = steps.findIndex((step) => step.id === phase);
 
   return (
-    <nav aria-label="Game progress" className="mb-5 grid grid-cols-3 gap-2">
+    <nav aria-label="Game progress" className="mb-8 grid grid-cols-3 gap-3">
       {steps.map((step, index) => {
         const complete = index < currentIndex;
         const current = index === currentIndex;
@@ -115,26 +124,16 @@ function PhaseSteps({ phase }: { phase: Phase }) {
           <div
             key={step.id}
             aria-current={current ? "step" : undefined}
-            className={`flex items-center justify-center gap-1.5 rounded-2xl border px-2 py-2 transition-colors ${
+            className={`flex items-center gap-2 border-t-2 pt-3 transition-colors ${
               current
-                ? "border-accent/40 bg-accent/10 text-primary"
+                ? "border-primary text-primary"
                 : complete
-                  ? "border-primary/15 bg-primary/5 text-primary/70"
-                  : "border-border/50 bg-card/35 text-muted-foreground"
+                  ? "border-primary/40 text-primary/70"
+                  : "border-border/40 text-muted-foreground"
             }`}
           >
-            <span
-              className={`grid size-5 shrink-0 place-items-center rounded-full text-[0.6rem] font-bold ${
-                current
-                  ? "bg-primary text-primary-foreground"
-                  : complete
-                    ? "bg-accent text-accent-foreground"
-                    : "border border-border/70"
-              }`}
-            >
-              {index + 1}
-            </span>
-            <span className="truncate text-[0.63rem] font-semibold uppercase tracking-[0.1em]">
+            <span className="text-xs tabular-nums opacity-50">0{index + 1}</span>
+            <span className="text-xs font-medium">
               {step.label}
             </span>
           </div>
@@ -170,7 +169,7 @@ export function TeaPoster() {
   const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setShowSplash(false), 650);
+    const timer = window.setTimeout(() => setShowSplash(false), 2000);
     return () => window.clearTimeout(timer);
   }, []);
 
@@ -240,7 +239,19 @@ export function TeaPoster() {
     Object.fromEntries(DEFAULT_PLAYERS.map((p) => [p, true]))
   );
   const [newPlayer, setNewPlayer] = useState("");
+  const [editingOrder, setEditingOrder] = useState(false);
   const [draggedPlayer, setDraggedPlayer] = useState<string | null>(null);
+  const [dropTarget, setDropTarget] = useState<{ name: string; after: boolean } | null>(null);
+  const playerRowRefs = useRef(new Map<string, HTMLDivElement>());
+  const playerRowPositions = useRef(new Map<string, DOMRect>());
+  const playerRowAnimations = useRef(new Map<string, Animation>());
+
+  const capturePlayerPositions = useCallback(() => {
+    playerRowPositions.current.clear();
+    playerRowRefs.current.forEach((element, name) => {
+      playerRowPositions.current.set(name, element.getBoundingClientRect());
+    });
+  }, []);
 
   const [phase, setPhase] = useState<Phase>("setup");
   const [round, setRound] = useState<Round | null>(null);
@@ -252,6 +263,43 @@ export function TeaPoster() {
     () => players.filter((p) => checked[p]),
     [players, checked]
   );
+
+  useLayoutEffect(() => {
+    // Cancel only our layout animations before measuring the new layout.
+    // The previous positions were captured visually just before the reorder.
+    playerRowAnimations.current.forEach((animation) => animation.cancel());
+    playerRowAnimations.current.clear();
+    const nextPositions = new Map<string, DOMRect>();
+    playerRowRefs.current.forEach((element, name) => {
+      nextPositions.set(name, element.getBoundingClientRect());
+    });
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduceMotion) {
+      nextPositions.forEach((nextPosition, name) => {
+        const previousPosition = playerRowPositions.current.get(name);
+        const element = playerRowRefs.current.get(name);
+        if (!previousPosition || !element) return;
+
+        const distance = previousPosition.top - nextPosition.top;
+        if (Math.abs(distance) < 1) return;
+
+        const animation = element.animate(
+          [
+            { transform: `translateY(${distance}px)` },
+            { transform: "translateY(0)" },
+          ],
+          {
+            duration: 320,
+            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+          }
+        );
+        playerRowAnimations.current.set(name, animation);
+      });
+    }
+
+    playerRowPositions.current.clear();
+  }, [players, showSplash]);
 
   const startRound = useCallback(async () => {
     if (activePlayers.length < 3) {
@@ -309,6 +357,7 @@ export function TeaPoster() {
   }, []);
 
   const movePlayer = useCallback((name: string, direction: -1 | 1) => {
+    capturePlayerPositions();
     setPlayers((current) => {
       const fromIndex = current.indexOf(name);
       const toIndex = fromIndex + direction;
@@ -318,23 +367,30 @@ export function TeaPoster() {
       [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
       return next;
     });
-  }, []);
+  }, [capturePlayerPositions]);
 
-  const reorderPlayer = useCallback((targetName: string) => {
-    if (!draggedPlayer || draggedPlayer === targetName) return;
+  const moveDraggedPlayer = useCallback(
+    (targetName: string, insertAfter: boolean) => {
+      if (!draggedPlayer || draggedPlayer === targetName) return;
+      capturePlayerPositions();
 
-    setPlayers((current) => {
-      const fromIndex = current.indexOf(draggedPlayer);
-      const toIndex = current.indexOf(targetName);
-      if (fromIndex < 0 || toIndex < 0) return current;
+      setPlayers((current) => {
+        const fromIndex = current.indexOf(draggedPlayer);
+        const targetIndex = current.indexOf(targetName);
+        if (fromIndex < 0 || targetIndex < 0) return current;
 
-      const next = [...current];
-      const [moved] = next.splice(fromIndex, 1);
-      next.splice(toIndex, 0, moved);
-      return next;
-    });
-    setDraggedPlayer(null);
-  }, [draggedPlayer]);
+        let destinationIndex = targetIndex + (insertAfter ? 1 : 0);
+        if (fromIndex < destinationIndex) destinationIndex -= 1;
+        if (fromIndex === destinationIndex) return current;
+
+        const next = [...current];
+        const [moved] = next.splice(fromIndex, 1);
+        next.splice(destinationIndex, 0, moved);
+        return next;
+      });
+    },
+    [draggedPlayer, capturePlayerPositions]
+  );
 
   const nextCard = useCallback(() => {
     setRevealed(false);
@@ -389,7 +445,7 @@ export function TeaPoster() {
             type="button"
             variant="ghost"
             size="icon"
-            className="size-10 rounded-full text-muted-foreground hover:bg-accent/10 hover:text-primary"
+            className="size-11 rounded-full text-muted-foreground hover:bg-muted hover:text-primary"
             onClick={resetGame}
             aria-label="Reset game"
             title="Reset game"
@@ -400,114 +456,168 @@ export function TeaPoster() {
         </div>
       </header>
 
-      <PhaseSteps phase={phase} />
+      {imposterShown ? (
+        <p className="mb-5 text-center text-xs font-medium text-muted-foreground">Round complete</p>
+      ) : (
+        <PhaseSteps phase={phase} />
+      )}
 
       <div className="flex-1">
       {/* SETUP */}
       {phase === "setup" && (
-        <Card className="tea-card">
+        <Card className="tea-card tea-setup">
           <CardHeader>
-            <div className="mb-1 flex items-center gap-2 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-accent">
-              <span className="size-1.5 rounded-full bg-accent" />
-              Set the table
-            </div>
-            <CardTitle className="tea-display text-2xl font-bold">Who&apos;s playing?</CardTitle>
+            <p className="mb-2 text-xs font-medium text-muted-foreground">A little tea. A little suspicion.</p>
+            <CardTitle className="text-[2rem] font-semibold leading-tight tracking-tight">Gather your people.</CardTitle>
             <CardDescription className="leading-relaxed">
-              Select the circle. The phone passes top to bottom.
+              Pick at least three. Keep one secret.
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-col gap-1.5">
-            {players.map((name, index) => (
-              <div
-                key={name}
-                draggable
-                onDragStart={(event) => {
-                  event.dataTransfer.effectAllowed = "move";
-                  setDraggedPlayer(name);
-                }}
-                onDragOver={(event) => event.preventDefault()}
-                onDrop={() => reorderPlayer(name)}
-                onDragEnd={() => setDraggedPlayer(null)}
-                className={`group flex min-h-12 items-center gap-2 rounded-2xl border border-transparent px-2.5 py-2 transition-colors hover:border-accent/25 hover:bg-accent/5 ${
-                  draggedPlayer === name ? "opacity-50" : ""
-                }`}
-              >
-                <span
-                  aria-hidden="true"
-                  className="tea-order-grip grid size-7 shrink-0 cursor-grab place-items-center rounded-xl text-[0.65rem] font-bold active:cursor-grabbing"
+          <CardContent className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium">Players <span className="ml-1 text-muted-foreground">{activePlayers.length}</span></p>
+              <Button variant="ghost" className="min-h-11 rounded-full px-3 text-muted-foreground" aria-pressed={editingOrder} onClick={() => setEditingOrder((value) => !value)}>
+                {editingOrder ? "Done" : "Edit order"}
+              </Button>
+            </div>
+            <div role="list" aria-label="Pass order" className="flex flex-col gap-2"
+              onDragLeave={(event) => {
+                const bounds = event.currentTarget.getBoundingClientRect();
+                if (event.clientX < bounds.left || event.clientX > bounds.right ||
+                    event.clientY < bounds.top || event.clientY > bounds.bottom) setDropTarget(null);
+              }}
+            >
+              {players.map((name) => (
+                <div
+                  key={name}
+                  ref={(element) => {
+                    if (element) {
+                      playerRowRefs.current.set(name, element);
+                    } else {
+                      playerRowRefs.current.delete(name);
+                    }
+                  }}
+                  role="listitem"
+                  draggable
+                  onDragStart={(event) => {
+                    event.dataTransfer.effectAllowed = "move";
+                    event.dataTransfer.setData("text/plain", name);
+                    setDraggedPlayer(name);
+                    setDropTarget(null);
+                  }}
+                  onDragOver={(event) => {
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = "move";
+                    const bounds = event.currentTarget.getBoundingClientRect();
+                    if (!draggedPlayer || draggedPlayer === name) {
+                      setDropTarget(null);
+                      return;
+                    }
+                    const after = event.clientY > bounds.top + bounds.height / 2;
+                    setDropTarget((previous) => {
+                      if (previous?.name === name) {
+                        // Keep a small dead zone around the midpoint to avoid jitter.
+                        if (Math.abs(event.clientY - (bounds.top + bounds.height / 2)) < 6 ||
+                            previous.after === after) return previous;
+                      }
+                      return { name, after };
+                    });
+                  }}
+                  onDrop={(event) => {
+                    event.preventDefault();
+                    if (dropTarget) moveDraggedPlayer(dropTarget.name, dropTarget.after);
+                    setDraggedPlayer(null);
+                    setDropTarget(null);
+                  }}
+                  onDragEnd={() => { setDraggedPlayer(null); setDropTarget(null); }}
+                  data-drop-position={dropTarget?.name === name ? (dropTarget.after ? "after" : "before") : undefined}
+                  className={`tea-player-row group flex min-h-[4.25rem] items-center gap-2.5 rounded-[1.2rem] border border-border/30 bg-card px-3 py-2.5 transition-colors hover:border-primary/30 ${
+                    draggedPlayer === name ? "opacity-50" : ""
+                  }`}
                 >
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <Checkbox
-                  id={`player-${name}`}
-                  checked={!!checked[name]}
-                  onCheckedChange={(v) =>
-                    setChecked((prev) => ({ ...prev, [name]: v === true }))
-                  }
-                />
-                <Label
-                  htmlFor={`player-${name}`}
-                  className="flex-1 cursor-pointer text-[0.95rem] font-semibold"
-                >
-                  {name}
-                </Label>
-                <div className="flex shrink-0 items-center gap-0.5 opacity-100 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100">
-                  <button
-                    type="button"
-                    aria-label={`Move ${name} up`}
-                    title={`Move ${name} up`}
-                    onClick={() => movePlayer(name, -1)}
-                    disabled={players.indexOf(name) === 0}
-                    className="rounded-full p-1.5 text-muted-foreground hover:bg-accent/10 hover:text-primary disabled:pointer-events-none disabled:opacity-25"
+                  <span
+                    aria-hidden="true"
+                    className="tea-order-grip grid size-8 shrink-0 cursor-grab place-items-center rounded-xl active:cursor-grabbing"
                   >
-                    <ChevronUpIcon className="size-4" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label={`Move ${name} down`}
-                    title={`Move ${name} down`}
-                    onClick={() => movePlayer(name, 1)}
-                    disabled={players.indexOf(name) === players.length - 1}
-                    className="rounded-full p-1.5 text-muted-foreground hover:bg-accent/10 hover:text-primary disabled:pointer-events-none disabled:opacity-25"
-                  >
-                    <ChevronDownIcon className="size-4" />
-                  </button>
-                  {!DEFAULT_PLAYERS.includes(name) && (
+                    <GripVerticalIcon className="size-4.5" />
+                  </span>
+                  <Checkbox
+                    id={`player-${name}`}
+                    checked={!!checked[name]}
+                    onCheckedChange={(v) =>
+                      setChecked((prev) => ({ ...prev, [name]: v === true }))
+                    }
+                  />
+                  <div className="min-w-0 flex-1">
+                    <Label
+                      htmlFor={`player-${name}`}
+                      className="block cursor-pointer break-words text-[0.95rem] font-medium"
+                    >
+                      {name}
+                    </Label>
+                    {!checked[name] && <p className="mt-0.5 text-xs text-muted-foreground">Sitting this one out</p>}
+                  </div>
+                  {!editingOrder && checked[name] && <span className="pr-2 text-xs tabular-nums text-muted-foreground">{String(activePlayers.indexOf(name) + 1).padStart(2, "0")}</span>}
+                  {editingOrder && <div className="flex shrink-0 items-center">
                     <button
                       type="button"
-                      aria-label={`Remove ${name}`}
-                      onClick={() => removePlayer(name)}
-                      className="rounded-full p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      aria-label={`Move ${name} up`}
+                      title={`Move ${name} up`}
+                      onClick={() => movePlayer(name, -1)}
+                      disabled={players.indexOf(name) === 0}
+                      className="rounded-full p-1.5 text-muted-foreground hover:bg-accent/10 hover:text-primary disabled:pointer-events-none disabled:opacity-25"
                     >
-                      <Trash2Icon className="size-4" />
+                      <ChevronUpIcon className="size-4" />
                     </button>
-                  )}
+                    <button
+                      type="button"
+                      aria-label={`Move ${name} down`}
+                      title={`Move ${name} down`}
+                      onClick={() => movePlayer(name, 1)}
+                      disabled={players.indexOf(name) === players.length - 1}
+                      className="rounded-full p-1.5 text-muted-foreground hover:bg-accent/10 hover:text-primary disabled:pointer-events-none disabled:opacity-25"
+                    >
+                      <ChevronDownIcon className="size-4" />
+                    </button>
+                    {!DEFAULT_PLAYERS.includes(name) && (
+                      <button
+                        type="button"
+                        aria-label={`Remove ${name}`}
+                        onClick={() => removePlayer(name)}
+                        className="rounded-full p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      >
+                        <Trash2Icon className="size-4" />
+                      </button>
+                    )}
+                  </div>}
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
 
             <Separator className="my-4 bg-accent/20" />
 
             <form
-              className="flex gap-2"
+              className="flex gap-2 pb-2"
               onSubmit={(e) => {
                 e.preventDefault();
                 addPlayer();
               }}
             >
               <Input
+                aria-label="New player name"
                 value={newPlayer}
                 onChange={(e) => setNewPlayer(e.target.value)}
                 placeholder="Add a player…"
                 maxLength={24}
-                className="h-11 rounded-xl border-border/80 bg-background/60"
+                className="h-12 rounded-2xl border-border/60 bg-background/60 text-base"
               />
               <Button
                 type="submit"
                 variant="secondary"
                 size="icon"
-                className="size-11 rounded-xl border border-accent/25"
+                className="size-12 rounded-2xl"
                 aria-label="Add player"
+                disabled={!newPlayer.trim()}
               >
                 <PlusIcon />
               </Button>
@@ -520,7 +630,7 @@ export function TeaPoster() {
       {phase === "deal" && round && (
         <Card
           className={`tea-card tea-round-card flex min-h-[31rem] flex-col ${
-            isImposter ? "tea-imposter-card" : ""
+            isImposter && revealed ? "tea-imposter-card" : ""
           }`}
         >
           <CardHeader className="items-center text-center">
@@ -543,7 +653,7 @@ export function TeaPoster() {
             </CardTitle>
             <CardDescription className="max-w-[18rem] leading-relaxed">
               {revealed
-                ? "Lock it in. One more tap passes the phone on."
+                ? "Remember your card."
                 : "Take the phone. No one else looks."}
             </CardDescription>
           </CardHeader>
@@ -558,7 +668,7 @@ export function TeaPoster() {
                   setRevealed(true);
                 }
               }}
-              className="tea-reveal-card flex min-h-60 w-full touch-manipulation flex-col items-center justify-center gap-3 rounded-[1.75rem] border border-dashed border-accent/45 px-6 text-center transition-all active:scale-[0.985] hover:border-accent"
+              className="tea-reveal-card flex min-h-60 w-full touch-manipulation flex-col items-center justify-center gap-3 rounded-[1.75rem] border border-border/40 px-6 text-center transition-all active:scale-[0.985] hover:border-primary/40"
             >
               {revealed ? (
                 <>
@@ -574,7 +684,7 @@ export function TeaPoster() {
                     </Badge>
                   )}
                   <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
-                    Tap to pass on <ArrowRightIcon className="size-3.5" />
+                    {dealIndex === round.players.length - 1 ? "Tap to start talking" : "Tap for the next player"} <ArrowRightIcon className="size-3.5" />
                   </span>
                 </>
               ) : (
@@ -583,11 +693,8 @@ export function TeaPoster() {
                   <span className="tea-display text-2xl font-bold text-primary">
                     Private card
                   </span>
-                  <span className="max-w-48 text-sm leading-relaxed text-muted-foreground">
-                    Tap once to reveal your secret word.
-                  </span>
-                  <span className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1.5 text-xs font-bold text-primary">
-                    <EyeIcon className="size-3.5" /> Peek now
+                  <span className="text-sm text-muted-foreground">
+                    Tap to reveal
                   </span>
                 </>
               )}
@@ -597,7 +704,7 @@ export function TeaPoster() {
       )}
 
       {/* DISCUSS */}
-      {phase === "discuss" && round && (
+      {phase === "discuss" && round && !imposterShown && (
         <Card className="tea-card">
           <CardHeader className="items-center text-center">
             <div className="mb-1 flex items-center justify-center gap-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-accent">
@@ -605,7 +712,7 @@ export function TeaPoster() {
             </div>
             <CardTitle className="tea-display text-3xl font-bold">Time to talk</CardTitle>
             <CardDescription>
-              Everyone saw a word. One of you only saw its category.
+              One of you only knows the category.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-4 text-center">
@@ -620,34 +727,53 @@ export function TeaPoster() {
               the imposter.
             </p>
 
-            {imposterShown ? (
-              <div className="w-full rounded-2xl border border-destructive/40 bg-destructive/10 px-6 py-4">
-                <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                  the imposter was
-                </p>
-                <p className="tea-display text-3xl font-bold text-destructive">
-                  {round.players[round.imposterIndex]}
-                </p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  The word was <span className="font-medium">{round.pair.word}</span> ·
-                  their category was <span className="font-medium">{round.pair.category}</span>
-                </p>
-              </div>
-            ) : (
+          </CardContent>
+          <CardFooter className="flex-col gap-2">
               <Button
-                variant="outline"
-                className="min-h-11 rounded-2xl px-5"
+                className="min-h-14 w-full rounded-2xl text-base"
                 onClick={() => setImposterShown(true)}
               >
                 <EyeIcon />
                 Reveal the imposter
               </Button>
-            )}
+              <p className="text-xs text-muted-foreground">Make your votes first.</p>
+          </CardFooter>
+        </Card>
+      )}
+
+      {phase === "discuss" && round && imposterShown && (
+        <Card className="tea-card">
+          <CardHeader className="justify-items-center gap-3 pb-3 pt-5 text-center">
+            <span className="grid size-14 place-items-center rounded-full bg-destructive/10 text-destructive" aria-hidden="true">
+              <EyeIcon className="size-6" />
+            </span>
+            <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+              The imposter was
+            </p>
+            <h2
+              tabIndex={-1}
+              ref={(element) => { element?.focus({ preventScroll: true }); }}
+              className="tea-display max-w-full break-words text-4xl font-bold text-destructive outline-none"
+            >
+              {round.players[round.imposterIndex]}
+            </h2>
+          </CardHeader>
+          <CardContent>
+            <dl className="divide-y divide-border/50 rounded-2xl bg-muted/40 px-4">
+              <div className="py-4">
+                <dt className="text-xs text-muted-foreground">The secret word</dt>
+                <dd className="mt-1 break-words text-2xl font-semibold">{round.pair.word}</dd>
+              </div>
+              <div className="py-4">
+                <dt className="text-xs text-muted-foreground">Their category hint</dt>
+                <dd className="mt-1 font-medium">{round.pair.category}</dd>
+              </div>
+            </dl>
           </CardContent>
           <CardFooter className="flex-col gap-2">
             <Button className="min-h-12 w-full rounded-2xl" size="lg" onClick={startRound}>
               <ShuffleIcon />
-              Same players, new round
+              Play another round
             </Button>
             <Button variant="ghost" className="min-h-11 w-full rounded-2xl" onClick={backToSetup}>
               <CheckIcon />
@@ -659,24 +785,21 @@ export function TeaPoster() {
 
       {phase === "setup" && (
         <div className="mobile-dock pointer-events-none sticky bottom-4 z-20 mt-4">
-          <div className="pointer-events-auto rounded-[1.5rem] border border-primary/15 bg-background/85 p-2 shadow-2xl shadow-primary/15 backdrop-blur-xl">
+          <div className="pointer-events-auto rounded-[1.5rem] bg-background/95 p-2 shadow-lg backdrop-blur-xl">
             <Button
-              className="min-h-12 w-full rounded-[1.15rem] border border-primary/20 bg-primary font-semibold shadow-lg shadow-primary/20 hover:bg-primary/90 dark:text-primary-foreground"
+              className="min-h-14 w-full rounded-2xl bg-primary text-base font-semibold hover:bg-primary/90"
               size="lg"
               onClick={startRound}
               disabled={activePlayers.length < 3}
             >
               <ShuffleIcon />
-              Start round · {activePlayers.length} players
+              {activePlayers.length < 3 ? "Select at least 3 players" : `Start round · ${activePlayers.length} players`}
             </Button>
           </div>
         </div>
       )}
       </div>
 
-      <footer className="mt-6 pt-4 text-center text-[0.62rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-        works offline · word list cached · claims sync when online
-      </footer>
       </div>
     </main>
   );

@@ -14,13 +14,10 @@ export function TeaPosterSplash() {
             priority
           />
         </div>
-        <p className="tea-display mt-7 text-3xl font-bold text-primary">
-          tea<span className="text-accent">-</span>poster
-        </p>
-        <p className="mt-2 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+        <p className="mt-7 text-xs font-medium tracking-wide text-muted-foreground">
           steeping the tea
         </p>
-        <div className="mt-5 flex items-center gap-1.5" aria-label="Loading">
+        <div className="mt-5 flex items-center gap-1.5" role="status" aria-label="Loading Tea-Poster">
           <span className="size-1.5 animate-pulse rounded-full bg-accent" />
           <span className="size-1.5 animate-pulse rounded-full bg-accent [animation-delay:150ms]" />
           <span className="size-1.5 animate-pulse rounded-full bg-accent [animation-delay:300ms]" />
