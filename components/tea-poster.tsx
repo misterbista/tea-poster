@@ -24,7 +24,6 @@ import {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
 } from "react";
 import { toast } from "sonner";
 
@@ -44,20 +43,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { TeaPosterSplash } from "@/components/tea-poster-splash";
 
-import {
-    cacheWordPairs,
-    claimOfflineWord,
-    getCachedWordPairs,
-    getCachedWordsVersion,
-    getPendingWordIds,
-    saveTrackerSnapshot,
-} from "@/lib/store";
-import {
-    claimServerWord,
-    getServerWordTracker,
-    syncServerWordTracker,
-} from "@/lib/word-tracker-client";
-import { WORD_PAIRS, WORDS_VERSION, type WordPair } from "@/lib/words";
+import { claimLocalWord } from "@/lib/store";
+import { WORD_PAIRS, type WordPair } from "@/lib/words";
 
 const DEFAULT_PLAYERS = [
   "Sannish",
@@ -147,7 +134,7 @@ function PhaseSteps({ phase }: { phase: Phase }) {
               className={`tea-progress-step ${current ? "is-current" : ""} ${complete ? "is-complete" : ""}`}
             >
               <span className="tea-progress-dot">
-                {complete ? <CheckIcon className="size-3" /> : `0${index + 1}`}
+                {complete && <CheckIcon className="size-3" />}
               </span>
               <span className="tea-progress-label">{step.label}</span>
             </li>
@@ -162,93 +149,13 @@ function randomIndex(length: number) {
   return Math.floor(Math.random() * length);
 }
 
-function subscribeOnline(callback: () => void) {
-  window.addEventListener("online", callback);
-  window.addEventListener("offline", callback);
-  return () => {
-    window.removeEventListener("online", callback);
-    window.removeEventListener("offline", callback);
-  };
-}
-
-function useOnlineStatus() {
-  return useSyncExternalStore(
-    subscribeOnline,
-    () => navigator.onLine,
-    () => true
-  );
-}
-
 export function TeaPoster() {
-  const online = useOnlineStatus();
   const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setShowSplash(false), 2000);
     return () => window.clearTimeout(timer);
   }, []);
-
-  // Word list actually in play: synced from the online source when possible,
-  // otherwise the list bundled with the app.
-  const [wordList, setWordList] = useState<WordPair[]>(WORD_PAIRS);
-  const syncingRef = useRef(false);
-
-  // On mount: load whatever was synced previously (works offline).
-  useEffect(() => {
-    Promise.all([getCachedWordPairs(), getCachedWordsVersion()])
-      .then(([pairs, version]) => {
-        if (pairs.length > 0 && version >= WORDS_VERSION) setWordList(pairs);
-        else return cacheWordPairs(WORD_PAIRS, WORDS_VERSION);
-      })
-      .catch(() => {});
-  }, []);
-
-  // Whenever we're online, pull the latest word list from the source.
-  useEffect(() => {
-    if (!online) {
-      return;
-    }
-    if (syncingRef.current) return;
-    syncingRef.current = true;
-    (async () => {
-      try {
-        try {
-          const res = await fetch("/api/words", { cache: "no-store" });
-          if (res.ok) {
-            const data = (await res.json()) as {
-              version: number;
-              pairs: WordPair[];
-            };
-            if (Array.isArray(data.pairs) && data.pairs.length > 0) {
-              const cachedVersion = await getCachedWordsVersion();
-              if (data.version > cachedVersion) {
-                await cacheWordPairs(data.pairs, data.version);
-                toast.success(
-                  `Word list synced — ${data.pairs.length} words ready for offline play.`
-                );
-              }
-              setWordList(data.pairs);
-            }
-          }
-        } catch {
-          // Cached/bundled word list stays in play if this request fails.
-        }
-
-        try {
-          const pendingWordIds = await getPendingWordIds();
-          const tracker =
-            pendingWordIds.length > 0
-              ? await syncServerWordTracker(pendingWordIds)
-              : await getServerWordTracker();
-          await saveTrackerSnapshot(tracker);
-        } catch {
-          // Keep the offline outbox until the backend is reachable.
-        }
-      } finally {
-        syncingRef.current = false;
-      }
-    })();
-  }, [online]);
 
   const [players, setPlayers] = useState<string[]>(DEFAULT_PLAYERS);
   const [checked, setChecked] = useState<Record<string, boolean>>(() =>
@@ -322,28 +229,12 @@ export function TeaPoster() {
     playerRowPositions.current.clear();
   }, [players, showSplash]);
 
-  const startRound = useCallback(async () => {
+  const startRound = useCallback(() => {
     if (activePlayers.length < 3) {
       toast.error("Pick at least 3 players to start.");
       return;
     }
-    let pair: WordPair;
-    try {
-      const pendingWordIds = await getPendingWordIds();
-      const result = await claimServerWord(pendingWordIds);
-      pair = result.pair;
-      try {
-        await saveTrackerSnapshot(result.tracker);
-      } catch {
-        // The round is already claimed on the backend; local cache can retry later.
-      }
-      if (result.cycleReset) {
-        toast.info("Fresh word cycle started — no repeats until this deck is used.");
-      }
-    } catch {
-      pair = await claimOfflineWord(wordList);
-      toast.warning("Offline mode — this word will sync when you reconnect.");
-    }
+    const pair = claimLocalWord(WORD_PAIRS);
     setRound({
       pair,
       players: [...activePlayers],
@@ -354,7 +245,7 @@ export function TeaPoster() {
     setRevealed(false);
     setImposterShown(false);
     setPhase("deal");
-  }, [activePlayers, wordList]);
+  }, [activePlayers]);
 
   const addPlayer = useCallback(() => {
     const name = newPlayer.trim();
@@ -521,13 +412,13 @@ export function TeaPoster() {
       {/* Mobile app header */}
       <header className="mb-5 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
-          <div className="tea-logo-frame relative size-11 shrink-0 overflow-hidden rounded-[0.9rem] border border-accent/45 bg-[#fffaf0]">
+          <div className="tea-logo-frame relative size-13 shrink-0 overflow-hidden rounded-[0.9rem]">
             <Image
-              src="/ChatGPT Image Sep 22, 2026 at 11_38_07 AM.png"
+              src="/ChatGPT Image Sep 22, 2026 at 06_55_47 PM.png"
               alt="tea-posters logo"
               fill
-              sizes="44px"
-              className="object-cover object-[50%_18%]"
+              sizes="52px"
+              className="scale-[1.1] object-contain"
               priority
             />
           </div>
@@ -539,13 +430,6 @@ export function TeaPoster() {
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
-          <span
-            className="tea-status hidden min-[390px]:inline-flex"
-            data-connection={online ? "online" : "offline"}
-            aria-live="polite"
-          >
-            <span className="tea-status-dot" /> {online ? "online" : "offline"}
-          </span>
           <Button
             type="button"
             variant="ghost"
@@ -826,7 +710,7 @@ export function TeaPoster() {
           </CardContent>
           <CardFooter className="flex-col gap-2">
               <Button
-                className="min-h-14 w-full rounded-xl text-base"
+                className="min-h-14 w-full rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 text-base"
                 onClick={() => setImposterShown(true)}
               >
                 <EyeIcon />
@@ -867,7 +751,7 @@ export function TeaPoster() {
             </dl>
           </CardContent>
           <CardFooter className="flex-col gap-2">
-            <Button className="min-h-12 w-full rounded-xl" size="lg" onClick={startRound}>
+            <Button className="min-h-12 w-full rounded-xl bg-accent text-accent-foreground hover:bg-accent/90" size="lg" onClick={startRound}>
               <ShuffleIcon />
               Play another round
             </Button>
@@ -883,7 +767,7 @@ export function TeaPoster() {
         <div className="mobile-dock pointer-events-none sticky bottom-4 z-20 mt-4">
           <div className="pointer-events-auto">
             <Button
-              className="min-h-14 w-full rounded-xl bg-primary text-base font-semibold hover:bg-primary/90"
+              className="min-h-14 w-full rounded-xl bg-accent text-accent-foreground text-base font-semibold hover:bg-accent/90"
               size="lg"
               onClick={startRound}
               disabled={activePlayers.length < 3}

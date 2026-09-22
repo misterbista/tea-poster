@@ -4,9 +4,9 @@ export function TeaPosterSplash() {
   return (
     <main className="tea-shell flex min-h-dvh items-center justify-center px-6">
       <div className="flex w-full max-w-sm flex-col items-center text-center">
-        <div className="tea-logo-frame relative aspect-square w-[min(78vw,19rem)] overflow-hidden rounded-[2rem] border border-accent/35 bg-[#fffaf0] shadow-2xl shadow-primary/15">
+        <div className="tea-logo-frame relative aspect-square w-[min(78vw,19rem)] overflow-hidden rounded-[2rem]">
           <Image
-            src="/ChatGPT Image Sep 22, 2026 at 11_38_07 AM.png"
+            src="/ChatGPT Image Sep 22, 2026 at 06_55_47 PM.png"
             alt="tea-posters logo"
             fill
             sizes="(max-width: 640px) 78vw, 304px"
@@ -15,7 +15,7 @@ export function TeaPosterSplash() {
           />
         </div>
         <p className="tea-brand-subline mt-7 text-xs text-muted-foreground">
-          online / offline
+          pass &amp; play
         </p>
         <div className="mt-5 flex items-center gap-1.5" role="status" aria-label="Loading tea-posters">
           <span className="size-1.5 animate-pulse rounded-full bg-accent" />

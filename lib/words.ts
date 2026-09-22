@@ -8,8 +8,6 @@ export type WordPair = {
   imposterHint: string;
 };
 
-export const WORDS_VERSION = deck.version;
-
 // Derive stable IDs from the word, so moving it to another category preserves history.
 export const WORD_PAIRS: WordPair[] = deck.categories.flatMap(({ category, words }) =>
   words.map(({ word, citizenHint, imposterHint }) => ({

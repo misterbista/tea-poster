@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 /* Simple offline-first service worker for tea-posters */
 
-const CACHE = "tea-posters-v3";
+const CACHE = "tea-posters-v5";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -24,11 +24,6 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET" || !request.url.startsWith(self.location.origin)) {
-    return;
-  }
-
-  // Never cache API responses — the word source must always be fresh when online.
-  if (new URL(request.url).pathname.startsWith("/api/")) {
     return;
   }
 

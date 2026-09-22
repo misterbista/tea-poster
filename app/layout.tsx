@@ -18,11 +18,11 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-const logoIcon = "/ChatGPT%20Image%20Sep%2022%2C%202026%20at%2011_38_07%20AM.png?v=3";
+const logoIcon = "/ChatGPT%20Image%20Sep%2022%2C%202026%20at%2006_55_47%20PM.png?v=4";
 
 export const metadata: Metadata = {
   title: "tea-posters | Spot the imposter. Spill the tea.",
-  description: "A pass-and-play imposter game for tea breaks, online or offline.",
+  description: "A local pass-and-play imposter game for tea breaks.",
   applicationName: "tea-posters",
   icons: {
     icon: [{ url: logoIcon, type: "image/png", sizes: "1254x1254" }],
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f7f1e7",
+  themeColor: "#ff6500",
   width: "device-width",
   initialScale: 1,
 };
