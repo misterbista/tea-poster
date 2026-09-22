@@ -7,7 +7,8 @@ import {
   ChevronUpIcon,
   EyeIcon,
   GripVerticalIcon,
-  LockKeyholeIcon,
+    LockKeyholeIcon,
+    Loader2Icon,
     MoonIcon,
     PlusIcon,
     RotateCcwIcon,
@@ -24,6 +25,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 import { toast } from "sonner";
 
@@ -44,7 +46,12 @@ import { Separator } from "@/components/ui/separator";
 import { TeaPosterSplash } from "@/components/tea-poster-splash";
 
 import { randomIndex } from "@/lib/random";
-import { claimLocalWord } from "@/lib/store";
+import {
+  claimLocalWord,
+  getLocalWordPairs,
+  mergeWordPairs,
+  refreshLocalWordPairs,
+} from "@/lib/store";
 import { WORD_PAIRS, type WordPair } from "@/lib/words";
 
 const DEFAULT_PLAYERS = [
@@ -69,6 +76,23 @@ type Round = {
   imposterIndex: number;
   starterIndex: number;
 };
+
+function subscribeOnline(callback: () => void) {
+  window.addEventListener("online", callback);
+  window.addEventListener("offline", callback);
+  return () => {
+    window.removeEventListener("online", callback);
+    window.removeEventListener("offline", callback);
+  };
+}
+
+function getOnlineSnapshot() {
+  return navigator.onLine;
+}
+
+function getServerOnlineSnapshot() {
+  return true;
+}
 
 function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
@@ -148,11 +172,67 @@ function PhaseSteps({ phase }: { phase: Phase }) {
 
 export function TeaPoster() {
   const [showSplash, setShowSplash] = useState(true);
+  const isOnline = useSyncExternalStore(
+    subscribeOnline,
+    getOnlineSnapshot,
+    getServerOnlineSnapshot
+  );
+  const wordListRef = useRef<WordPair[]>(WORD_PAIRS);
+  const [isRefreshingWords, setIsRefreshingWords] = useState(false);
+  const refreshingWordsRef = useRef(false);
+  const mountedRef = useRef(true);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setShowSplash(false), 2000);
     return () => window.clearTimeout(timer);
   }, []);
+
+  const refreshWords = useCallback(async (force = false) => {
+    if (!navigator.onLine || refreshingWordsRef.current) return;
+
+    refreshingWordsRef.current = true;
+    setIsRefreshingWords(true);
+    try {
+      const result = await refreshLocalWordPairs(
+        [...WORD_PAIRS, ...getLocalWordPairs()],
+        { force }
+      );
+      if (!mountedRef.current) return;
+
+      wordListRef.current = mergeWordPairs(WORD_PAIRS, result.pairs);
+      if (result.added > 0) {
+        toast.success(
+          `${result.added} new word${result.added === 1 ? "" : "s"} added for today's rounds.`
+        );
+      } else if (force) {
+        toast.message("No new words were added this time.");
+      }
+    } catch (error) {
+      console.error("Daily word refresh failed.", error);
+      if (force && mountedRef.current) {
+        toast.error("Couldn’t get new words right now.");
+      }
+    } finally {
+      refreshingWordsRef.current = false;
+      if (mountedRef.current) setIsRefreshingWords(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    const handleOnline = () => {
+      void refreshWords();
+    };
+
+    wordListRef.current = mergeWordPairs(WORD_PAIRS, getLocalWordPairs());
+    const refreshTimer = window.setTimeout(() => void refreshWords(), 0);
+    window.addEventListener("online", handleOnline);
+    return () => {
+      mountedRef.current = false;
+      window.clearTimeout(refreshTimer);
+      window.removeEventListener("online", handleOnline);
+    };
+  }, [refreshWords]);
 
   const [players, setPlayers] = useState<string[]>(DEFAULT_PLAYERS);
   const [checked, setChecked] = useState<Record<string, boolean>>(() =>
@@ -231,7 +311,7 @@ export function TeaPoster() {
       toast.error("Pick at least 3 players to start.");
       return;
     }
-    const pair = claimLocalWord(WORD_PAIRS);
+    const pair = claimLocalWord(wordListRef.current);
     setRound({
       pair,
       players: [...activePlayers],
@@ -464,6 +544,23 @@ export function TeaPoster() {
                 <p className="tea-section-kicker">Players</p>
                 <p className="tea-list-meta"><span>{activePlayers.length}</span> in this round</p>
               </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-9 rounded-full border-accent/30 px-3 text-xs text-primary hover:border-accent/60 hover:bg-accent/10"
+                onClick={() => void refreshWords(true)}
+                disabled={!isOnline || isRefreshingWords}
+                aria-busy={isRefreshingWords}
+                title={isOnline ? "Get new words" : "Connect to the internet to get new words"}
+              >
+                {isRefreshingWords ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <SparklesIcon />
+                )}
+                <span>{isRefreshingWords ? "Getting…" : "Get new words"}</span>
+              </Button>
             </div>
             <p className="tea-drag-help"><GripVerticalIcon className="size-3.5" /> Hold a grip and slide to set the pass order.</p>
             <div role="list" aria-label="Pass order" className="tea-player-list">
