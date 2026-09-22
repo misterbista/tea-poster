@@ -1,19 +1,19 @@
 "use client";
 
 import {
-  ArrowRightIcon,
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  EyeIcon,
-  LockKeyholeIcon,
-  MoonIcon,
-  PlusIcon,
-  RotateCcwIcon,
-  SparklesIcon,
-  ShuffleIcon,
-  SunIcon,
-  Trash2Icon,
+    ArrowRightIcon,
+    CheckIcon,
+    ChevronDownIcon,
+    ChevronUpIcon,
+    EyeIcon,
+    LockKeyholeIcon,
+    MoonIcon,
+    PlusIcon,
+    RotateCcwIcon,
+    ShuffleIcon,
+    SparklesIcon,
+    SunIcon,
+    Trash2Icon,
 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
@@ -22,12 +22,12 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -35,17 +35,17 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
 import {
-  cacheWordPairs,
-  claimOfflineWord,
-  getCachedWordPairs,
-  getCachedWordsVersion,
-  getPendingWordIds,
-  saveTrackerSnapshot,
+    cacheWordPairs,
+    claimOfflineWord,
+    getCachedWordPairs,
+    getCachedWordsVersion,
+    getPendingWordIds,
+    saveTrackerSnapshot,
 } from "@/lib/store";
 import {
-  claimServerWord,
-  getServerWordTracker,
-  syncServerWordTracker,
+    claimServerWord,
+    getServerWordTracker,
+    syncServerWordTracker,
 } from "@/lib/word-tracker-client";
 import { WORD_PAIRS, type WordPair } from "@/lib/words";
 
