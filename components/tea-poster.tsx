@@ -89,9 +89,15 @@ function ThemeToggle() {
   const toggleTheme = () => {
     const nextIsDark = !isDark;
     const root = document.documentElement;
+    const currentSurface = getComputedStyle(root)
+      .getPropertyValue("--background")
+      .trim();
     if (transitionTimeoutRef.current !== null) {
       window.clearTimeout(transitionTimeoutRef.current);
     }
+    root.style.setProperty("--theme-transition-surface", currentSurface);
+    root.classList.remove("theme-transition");
+    void root.offsetWidth;
     root.classList.add("theme-transition");
     setIsDark(nextIsDark);
     window.requestAnimationFrame(() => {
@@ -532,8 +538,12 @@ export function TeaPoster() {
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
-          <span className="tea-status hidden min-[390px]:inline-flex">
-            <span className="tea-status-dot" /> ready
+          <span
+            className="tea-status hidden min-[390px]:inline-flex"
+            data-connection={online ? "online" : "offline"}
+            aria-live="polite"
+          >
+            <span className="tea-status-dot" /> {online ? "online" : "offline"}
           </span>
           <Button
             type="button"

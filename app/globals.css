@@ -148,6 +148,27 @@
     transition-duration: 240ms;
     transition-timing-function: var(--ease-out);
   }
+
+  @keyframes tea-theme-cover {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+    }
+  }
+
+  html.theme-transition::after {
+    position: fixed;
+    z-index: 9999;
+    inset: 0;
+    background: var(--theme-transition-surface);
+    content: "";
+    pointer-events: none;
+    animation: tea-theme-cover 280ms var(--ease-out) both;
+    will-change: opacity;
+  }
 }
 
 @layer components {
@@ -218,6 +239,11 @@
     box-shadow: 0 0 0 0.2rem color-mix(in oklch, #62a873 15%, transparent);
   }
 
+  .tea-status[data-connection="offline"] .tea-status-dot {
+    background: var(--accent);
+    box-shadow: 0 0 0 0.2rem color-mix(in oklch, var(--accent) 15%, transparent);
+  }
+
   .tea-flat-card {
     overflow: visible !important;
     border: 0 !important;
@@ -279,6 +305,7 @@
 
   .tea-progress-line {
     position: absolute;
+    z-index: 0;
     top: 1rem;
     right: 16.66%;
     left: 16.66%;
@@ -288,10 +315,13 @@
 
   .tea-progress-step {
     position: relative;
+    z-index: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.45rem;
     color: var(--muted-foreground);
+    text-align: center;
   }
 
   .tea-progress-dot {
@@ -588,6 +618,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html.theme-transition::after {
+    display: none;
+    animation: none !important;
+  }
+
   .tea-shell *,
   .tea-shell *::before,
   .tea-shell *::after {
