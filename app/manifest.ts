@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const logoIcon = "/ChatGPT%20Image%20Sep%2022%2C%202026%20at%2011_38_07%20AM.png";
+const logoIcon = "/ChatGPT%20Image%20Sep%2022%2C%202026%20at%2011_38_07%20AM.png?v=3";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -16,7 +16,7 @@ export default function manifest(): MetadataRoute.Manifest {
         src: logoIcon,
         sizes: "1254x1254",
         type: "image/png",
-        purpose: "maskable",
+        purpose: "any",
       },
     ],
   };

@@ -18,7 +18,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-const logoIcon = "/ChatGPT%20Image%20Sep%2022%2C%202026%20at%2011_38_07%20AM.png";
+const logoIcon = "/ChatGPT%20Image%20Sep%2022%2C%202026%20at%2011_38_07%20AM.png?v=3";
 
 export const metadata: Metadata = {
   title: "tea-posters | Spot the imposter. Spill the tea.",
