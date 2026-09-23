@@ -296,7 +296,11 @@ export function TeaPoster() {
     } catch (error) {
       console.error("Daily word refresh failed.", error);
       if (force && mountedRef.current) {
-        toast.error("Couldn’t get new words right now.");
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Couldn’t get new words right now."
+        );
       }
     } finally {
       refreshingWordsRef.current = false;
