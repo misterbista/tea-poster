@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { createGateway, generateText, jsonSchema, Output } from "ai";
+import type { JSONSchema7 } from "@ai-sdk/provider";
 
 import { isSingleWord, type WordPair } from "@/lib/words";
 import {
@@ -9,11 +11,10 @@ import {
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const MODEL =
-  process.env.OPENROUTER_MODEL?.trim() || "nex-agi/nex-n2.5-pro:free";
+const MODEL = process.env.AI_GATEWAY_MODEL?.trim() || "openai/gpt-5.4";
 const FALLBACK_MODELS = (
-  process.env.OPENROUTER_FALLBACK_MODELS ||
-  "openrouter/free"
+  process.env.AI_GATEWAY_FALLBACK_MODELS ||
+  "anthropic/claude-haiku-4.5"
 )
   .split(",")
   .map((model) => model.trim())
@@ -22,21 +23,23 @@ const WORDS_TO_GENERATE = 6;
 const MAX_KNOWN_WORD_IDS = 500;
 const MODEL_TIMEOUT_MS = 45_000;
 
-const responseSchema = {
-  type: "array",
-  minItems: WORDS_TO_GENERATE,
-  maxItems: WORDS_TO_GENERATE,
-  items: {
-    type: "object",
-    properties: {
-      category: { type: "string" },
-      word: { type: "string", pattern: "^\\S+$" },
-      citizenHint: { type: "string" },
-      imposterHint: { type: "string" },
-    },
-    required: ["category", "word", "citizenHint", "imposterHint"],
-    additionalProperties: false,
+type GeneratedPair = {
+  category: string;
+  word: string;
+  citizenHint: string;
+  imposterHint: string;
+};
+
+const generatedPairSchema: JSONSchema7 = {
+  type: "object",
+  properties: {
+    category: { type: "string" },
+    word: { type: "string", pattern: "^\\S+$" },
+    citizenHint: { type: "string" },
+    imposterHint: { type: "string" },
   },
+  required: ["category", "word", "citizenHint", "imposterHint"],
+  additionalProperties: false,
 };
 
 type RequestBody = {
@@ -119,26 +122,18 @@ function buildPrompt(knownWordIds: string[], existingPairs: WordPair[]) {
   ].join("\n\n");
 }
 
-function parseGeneratedText(text: string) {
-  const normalizedText = text
-    .trim()
-    .replace(/^```(?:json)?\s*/i, "")
-    .replace(/\s*```$/, "")
-    .trim();
-
-  return JSON.parse(normalizedText) as unknown;
-}
-
 function getErrorStatus(error: unknown) {
   if (!error || typeof error !== "object") return null;
 
   const candidate = error as {
     status?: unknown;
+    statusCode?: unknown;
     code?: unknown;
     error?: { status?: unknown; code?: unknown };
   };
   const values = [
     candidate.status,
+    candidate.statusCode,
     candidate.error?.status,
     candidate.code,
     candidate.error?.code,
@@ -165,10 +160,10 @@ function shouldTryAnotherModel(error: unknown) {
 }
 
 async function generateDailyWords(request: Request) {
-  const apiKey = process.env.OPENROUTER_API_KEY?.trim();
+  const apiKey = process.env.AI_GATEWAY_API_KEY?.trim();
   if (!apiKey) {
     return NextResponse.json(
-      { error: "Daily word generation is not configured. Set OPENROUTER_API_KEY." },
+      { error: "Daily word generation is not configured. Set AI_GATEWAY_API_KEY." },
       { status: 503 }
     );
   }
@@ -215,6 +210,7 @@ async function generateDailyWords(request: Request) {
     ...requestedKnownIds,
   ]);
   const knownWords = new Set(sharedDeck.pairs.map((pair) => normalize(pair.word)));
+  const aiGateway = createGateway({ apiKey });
 
   const models = Array.from(new Set([MODEL, ...FALLBACK_MODELS]));
   for (const model of models) {
@@ -222,67 +218,27 @@ async function generateDailyWords(request: Request) {
     const timeout = setTimeout(() => controller.abort(), MODEL_TIMEOUT_MS);
 
     try {
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${apiKey}`,
-          "content-type": "application/json",
-          "http-referer": "https://tea-posters.local",
-          "x-title": "TeaPosters",
-        },
-        body: JSON.stringify({
-          model,
-          messages: [
-            {
-              role: "system",
-              content:
-                "You generate safe, concise content for a casual pass-and-play game. Follow the requested JSON schema exactly.",
-            },
-            {
-              role: "user",
-              content: buildPrompt(
-                Array.from(knownIds).slice(0, MAX_KNOWN_WORD_IDS),
-                sharedDeck.pairs
-              ),
-            },
-          ],
-          temperature: 0.9,
-          max_tokens: 1400,
-          reasoning: { effort: "low" },
-          response_format: {
-            type: "json_schema",
-            json_schema: {
-              name: "tea_poster_word_pairs",
-              strict: true,
-              schema: responseSchema,
-            },
-          },
+      const { output } = await generateText({
+        model: aiGateway(model),
+        system:
+          "You generate safe, concise content for a casual pass-and-play game. Follow the requested JSON schema exactly.",
+        prompt: buildPrompt(
+          Array.from(knownIds).slice(0, MAX_KNOWN_WORD_IDS),
+          sharedDeck.pairs
+        ),
+        temperature: 0.9,
+        maxOutputTokens: 1400,
+        abortSignal: controller.signal,
+        output: Output.array({
+          name: "tea_poster_word_pairs",
+          element: jsonSchema<GeneratedPair>(generatedPairSchema),
+          minItems: WORDS_TO_GENERATE,
+          maxItems: WORDS_TO_GENERATE,
         }),
-        cache: "no-store",
-        signal: controller.signal,
       });
-      const payload = (await response.json()) as {
-        choices?: Array<{ message?: { content?: unknown } }>;
-        error?: { message?: string; code?: string | number };
-      };
-
-      if (!response.ok) {
-        console.error(`OpenRouter word generation failed for ${model}.`, payload.error);
-        if (response.status === 408 || response.status === 429 || response.status >= 500) {
-          continue;
-        }
-        break;
-      }
-
-      const text = payload.choices?.[0]?.message?.content;
-      if (typeof text !== "string" || !text.trim()) continue;
-
-      const parsed = parseGeneratedText(text);
-      const generated = Array.isArray(parsed)
-        ? parsed
-            .map((value) => makeGeneratedPair(value, knownIds, knownWords))
-            .filter((pair): pair is WordPair => pair !== null)
-        : [];
+      const generated = output
+        .map((value) => makeGeneratedPair(value, knownIds, knownWords))
+        .filter((pair): pair is WordPair => pair !== null);
 
       if (generated.length >= 3) {
         let savedWords;
@@ -302,7 +258,7 @@ async function generateDailyWords(request: Request) {
         });
       }
     } catch (error) {
-      console.error(`OpenRouter word generation failed for ${model}.`, error);
+      console.error(`AI Gateway word generation failed for ${model}.`, error);
       if (shouldTryAnotherModel(error)) continue;
       break;
     } finally {
