@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 /* Simple offline-first service worker for TeaPosters */
 
-const CACHE = "teaposters-v6";
+const CACHE = "teaposters-v7";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -34,6 +34,8 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET" || !request.url.startsWith(self.location.origin)) {
     return;
   }
+
+  if (new URL(request.url).pathname.startsWith("/api/")) return;
 
   // Navigations: network first, fall back to cached shell when offline.
   if (request.mode === "navigate") {

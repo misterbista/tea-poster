@@ -1,18 +1,18 @@
 {
-  "version": 11,
+  "version": 12,
   "categories": [
     {
       "category": "Food and drinks",
       "words": [
         {
-          "word": "Boba",
-          "citizenHint": "A sweet drink usually served with chewy pearls",
-          "imposterHint": "A popular drink"
+          "word": "Rice",
+          "citizenHint": "A small grain cooked and served with many meals",
+          "imposterHint": "A common food at home"
         },
         {
-          "word": "Frappe",
-          "citizenHint": "A chilled caffeinated drink",
-          "imposterHint": "A common cafe drink"
+          "word": "Egg",
+          "citizenHint": "A food with a shell that can be boiled or fried",
+          "imposterHint": "A common food at home"
         },
         {
           "word": "Biryani",
@@ -20,13 +20,13 @@
           "imposterHint": "A popular South Asian meal"
         },
         {
-          "word": "Cheesecake",
-          "citizenHint": "A rich dessert with a creamy filling",
-          "imposterHint": "A popular dessert"
+          "word": "Banana",
+          "citizenHint": "A long yellow fruit with a soft inside",
+          "imposterHint": "A fruit people eat as a snack"
         },
         {
           "word": "Chicken",
-          "citizenHint": "Chicken cooked with a crispy coating",
+          "citizenHint": "Often ordered in pieces with a crispy golden coating",
           "imposterHint": "A popular fast food"
         },
         {
@@ -60,14 +60,14 @@
           "imposterHint": "A familiar meal"
         },
         {
-          "word": "Smoothie",
-          "citizenHint": "A thick blended drink made from fruit or other ingredients",
-          "imposterHint": "A cold drink"
+          "word": "Milk",
+          "citizenHint": "A white drink that comes from cows or buffaloes",
+          "imposterHint": "A common drink at home"
         },
         {
-          "word": "Brownie",
-          "citizenHint": "A dense square chocolate dessert",
-          "imposterHint": "A baked treat"
+          "word": "Dal",
+          "citizenHint": "Lentils cooked into a soft dish, often eaten with rice",
+          "imposterHint": "A common food at home"
         },
         {
           "word": "Pickle",
@@ -148,6 +148,186 @@
           "word": "Chowk",
           "citizenHint": "A public square or busy junction in a town",
           "imposterHint": "A familiar local place"
+        },
+        {
+          "word": "Kathmandu",
+          "citizenHint": "Nepal's capital city in a busy valley",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Lalitpur",
+          "citizenHint": "A city just south of Kathmandu, also called Patan",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Bhaktapur",
+          "citizenHint": "An old city in the Kathmandu Valley known for its square",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Janakpur",
+          "citizenHint": "A city in the south known for a large white temple",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Chitwan",
+          "citizenHint": "A southern district with a well-known national park",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Lumbini",
+          "citizenHint": "A town linked to the birth of the Buddha",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Biratnagar",
+          "citizenHint": "A large city in eastern Nepal near the Indian border",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Butwal",
+          "citizenHint": "A busy city in western Nepal beside the Tinau River",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Nepalgunj",
+          "citizenHint": "A warm city in western Nepal close to India",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Nagarkot",
+          "citizenHint": "A hill town near Kathmandu where people watch the sunrise",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Boudha",
+          "citizenHint": "A Kathmandu neighborhood with a huge white stupa",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Swayambhu",
+          "citizenHint": "A hilltop temple in Kathmandu with a long flight of steps",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Basantapur",
+          "citizenHint": "A historic square beside the old palace in Kathmandu",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Ratnapark",
+          "citizenHint": "A central Kathmandu stop where many buses pick up passengers",
+          "imposterHint": "A place in Nepal"
+        },
+        {
+          "word": "Bagmati",
+          "citizenHint": "A river that flows through the Kathmandu Valley",
+          "imposterHint": "Something found in Nepal"
+        },
+        {
+          "word": "Koshi",
+          "citizenHint": "A large river system in eastern Nepal",
+          "imposterHint": "Something found in Nepal"
+        },
+        {
+          "word": "Everest",
+          "citizenHint": "The world's highest mountain, on Nepal's northern border",
+          "imposterHint": "Something found in Nepal"
+        },
+        {
+          "word": "Topi",
+          "citizenHint": "A cap often worn with Nepali formal clothes",
+          "imposterHint": "Something people wear"
+        },
+        {
+          "word": "Tika",
+          "citizenHint": "A colored mark placed on the forehead during festivals",
+          "imposterHint": "A festival detail"
+        },
+        {
+          "word": "Namaste",
+          "citizenHint": "A greeting said with palms pressed together",
+          "imposterHint": "Something people say"
+        },
+        {
+          "word": "Aama",
+          "citizenHint": "The Nepali word children use for their mother",
+          "imposterHint": "A family word"
+        },
+        {
+          "word": "Buwa",
+          "citizenHint": "The Nepali word children use for their father",
+          "imposterHint": "A family word"
+        },
+        {
+          "word": "Dai",
+          "citizenHint": "The Nepali word for an older brother",
+          "imposterHint": "A family word"
+        },
+        {
+          "word": "Didi",
+          "citizenHint": "The Nepali word for an older sister",
+          "imposterHint": "A family word"
+        },
+        {
+          "word": "Bhai",
+          "citizenHint": "The Nepali word for a younger brother",
+          "imposterHint": "A family word"
+        },
+        {
+          "word": "Chiya",
+          "citizenHint": "A hot drink many people make with milk and sugar",
+          "imposterHint": "A common drink"
+        },
+        {
+          "word": "Bhat",
+          "citizenHint": "Cooked rice served as the main part of a Nepali meal",
+          "imposterHint": "A common food at home"
+        },
+        {
+          "word": "Tarkari",
+          "citizenHint": "A cooked vegetable dish served with rice or bread",
+          "imposterHint": "A common food at home"
+        },
+        {
+          "word": "Selroti",
+          "citizenHint": "A ring-shaped rice bread made for festivals",
+          "imposterHint": "A festive food"
+        },
+        {
+          "word": "Gundruk",
+          "citizenHint": "A sour dish made from dried leafy greens",
+          "imposterHint": "A local food"
+        },
+        {
+          "word": "Dhido",
+          "citizenHint": "A thick meal made by stirring flour into boiling water",
+          "imposterHint": "A local food"
+        },
+        {
+          "word": "Chura",
+          "citizenHint": "Flattened rice often eaten with yogurt or curry",
+          "imposterHint": "A common food at home"
+        },
+        {
+          "word": "Tempo",
+          "citizenHint": "A small three-wheeled vehicle used for short city rides",
+          "imposterHint": "A way to get around"
+        },
+        {
+          "word": "Sajha",
+          "citizenHint": "A familiar name painted on some green Kathmandu buses",
+          "imposterHint": "Something seen around town"
+        },
+        {
+          "word": "Tole",
+          "citizenHint": "A small neighborhood area where nearby families live",
+          "imposterHint": "A local place"
+        },
+        {
+          "word": "Jatra",
+          "citizenHint": "A local festival with a public procession through town",
+          "imposterHint": "A public celebration"
         }
       ]
     },
@@ -266,7 +446,7 @@
         },
         {
           "word": "Audio",
-          "citizenHint": "A recorded audio message sent through chat",
+          "citizenHint": "A voice note or sound clip sent through chat",
           "imposterHint": "A type of digital message"
         },
         {
@@ -330,19 +510,19 @@
           "imposterHint": "A romantic feeling"
         },
         {
-          "word": "Warning",
-          "citizenHint": "A warning sign about someone's behavior",
-          "imposterHint": "Something people notice in relationships"
+          "word": "Secret",
+          "citizenHint": "Something you know but have not told another person",
+          "imposterHint": "A private matter"
         },
         {
-          "word": "Situationship",
-          "citizenHint": "A romantic connection without a clearly defined relationship",
-          "imposterHint": "A modern relationship situation"
+          "word": "Texting",
+          "citizenHint": "Sending short written messages back and forth on a phone",
+          "imposterHint": "A way people keep in touch"
         },
         {
-          "word": "Couples",
-          "citizenHint": "Two couples going out together",
-          "imposterHint": "A social dating activity"
+          "word": "Friends",
+          "citizenHint": "People you choose to spend time with and trust",
+          "imposterHint": "A social connection"
         },
         {
           "word": "Friendship",
@@ -381,7 +561,7 @@
       "words": [
         {
           "word": "Journey",
-          "citizenHint": "A long journey mainly made by road",
+          "citizenHint": "A long trip mainly made by road",
           "imposterHint": "A type of trip"
         },
         {
@@ -415,9 +595,9 @@
           "imposterHint": "Something associated with travel"
         },
         {
-          "word": "Window",
-          "citizenHint": "A seat beside the window while traveling",
-          "imposterHint": "Something related to transportation"
+          "word": "Seat",
+          "citizenHint": "The place a passenger sits during a trip",
+          "imposterHint": "Something found in transport"
         },
         {
           "word": "Backpack",
@@ -460,9 +640,9 @@
           "imposterHint": "Something found in movies or stories"
         },
         {
-          "word": "Cliffhanger",
-          "citizenHint": "An ending that leaves an important question unresolved",
-          "imposterHint": "A storytelling technique"
+          "word": "Cartoon",
+          "citizenHint": "An animated show or film with drawn characters",
+          "imposterHint": "Something people watch"
         },
         {
           "word": "Spoiler",
@@ -475,9 +655,9 @@
           "imposterHint": "A movie genre"
         },
         {
-          "word": "Rom-Com",
-          "citizenHint": "A movie combining romance and comedy",
-          "imposterHint": "A movie genre"
+          "word": "Drama",
+          "citizenHint": "A serious story shown on screen or stage",
+          "imposterHint": "Something people watch"
         },
         {
           "word": "Marathon",
@@ -490,9 +670,9 @@
           "imposterHint": "Promotional entertainment content"
         },
         {
-          "word": "Stinger",
-          "citizenHint": "An extra scene shown after the credits",
-          "imposterHint": "Something connected to movies"
+          "word": "Actor",
+          "citizenHint": "A person who plays a part in a film",
+          "imposterHint": "Someone in entertainment"
         },
         {
           "word": "Sequel",
@@ -515,14 +695,14 @@
           "imposterHint": "A viewing aid"
         },
         {
-          "word": "Premiere",
-          "citizenHint": "The first public showing of a film",
-          "imposterHint": "A film event"
+          "word": "Song",
+          "citizenHint": "Music with words that people can sing along to",
+          "imposterHint": "Something people enjoy"
         },
         {
-          "word": "Finale",
-          "citizenHint": "The concluding part of a show or story",
-          "imposterHint": "An ending in entertainment"
+          "word": "Dance",
+          "citizenHint": "Moving your body in time with music",
+          "imposterHint": "Something people do for fun"
         }
       ]
     },
@@ -530,34 +710,34 @@
       "category": "Technology and apps",
       "words": [
         {
-          "word": "Incognito",
-          "citizenHint": "A browser mode that doesn't keep normal browsing history",
-          "imposterHint": "A browser feature"
+          "word": "Wifi",
+          "citizenHint": "A wireless connection that lets a phone use the internet",
+          "imposterHint": "Something used with a phone"
         },
         {
-          "word": "AirDrop",
-          "citizenHint": "An Apple feature for sending files to nearby devices",
-          "imposterHint": "A file-sharing feature"
+          "word": "Video",
+          "citizenHint": "A moving picture recorded or watched on a screen",
+          "imposterHint": "Something shared on a phone"
         },
         {
-          "word": "Biometric",
-          "citizenHint": "Unlocking a device by recognizing your face",
-          "imposterHint": "A security feature"
+          "word": "Camera",
+          "citizenHint": "A phone feature used to take pictures",
+          "imposterHint": "Something used with a phone"
         },
         {
-          "word": "2FA",
-          "citizenHint": "Logging in using an additional verification step",
-          "imposterHint": "An account security feature"
+          "word": "Pin",
+          "citizenHint": "A short number used to unlock a phone or bank account",
+          "imposterHint": "Something used for access"
         },
         {
-          "word": "Barcode",
-          "citizenHint": "A square pattern scanned using a camera",
-          "imposterHint": "Something you scan with a phone"
+          "word": "Photo",
+          "citizenHint": "A still picture saved on a phone or camera",
+          "imposterHint": "Something saved on a phone"
         },
         {
-          "word": "Night",
-          "citizenHint": "A darker interface theme used by apps and devices",
-          "imposterHint": "A display setting"
+          "word": "Brightness",
+          "citizenHint": "A screen setting that controls how light the display looks",
+          "imposterHint": "A phone setting"
         },
         {
           "word": "Hotspot",
@@ -605,23 +785,23 @@
       "category": "Common situations",
       "words": [
         {
-          "word": "Gridlock",
-          "citizenHint": "Vehicles moving very slowly because the road is crowded",
-          "imposterHint": "A road problem"
+          "word": "Jam",
+          "citizenHint": "Vehicles stuck close together on a crowded road",
+          "imposterHint": "A travel problem"
         },
         {
-          "word": "Outage",
-          "citizenHint": "Electricity suddenly becoming unavailable",
-          "imposterHint": "A household inconvenience"
+          "word": "Powercut",
+          "citizenHint": "When electricity stops coming to homes and shops",
+          "imposterHint": "A household problem"
         },
         {
-          "word": "Callback",
-          "citizenHint": "Someone called but you didn't answer",
+          "word": "Missedcall",
+          "citizenHint": "A phone call that ends before you pick up",
           "imposterHint": "Something involving a phone"
         },
         {
-          "word": "Misdial",
-          "citizenHint": "Calling or messaging someone you didn't intend to contact",
+          "word": "Wrongnumber",
+          "citizenHint": "A call that reaches someone you did not mean to contact",
           "imposterHint": "A communication mistake"
         },
         {
@@ -630,8 +810,8 @@
           "imposterHint": "An uncomfortable social situation"
         },
         {
-          "word": "Tardiness",
-          "citizenHint": "Reaching somewhere after the expected time",
+          "word": "Late",
+          "citizenHint": "Arriving after the time you were expected",
           "imposterHint": "A timing problem"
         },
         {
@@ -765,9 +945,9 @@
           "imposterHint": "A sweet food"
         },
         {
-          "word": "Jam",
-          "citizenHint": "A sweet fruit spread used on bread",
-          "imposterHint": "A breakfast spread"
+          "word": "Candy",
+          "citizenHint": "A small sweet made mostly from sugar",
+          "imposterHint": "A treat or snack"
         },
         {
           "word": "Butter",

@@ -135,6 +135,7 @@
   body {
     @apply bg-background text-foreground;
     min-width: 320px;
+    overscroll-behavior-y: contain;
     background-image:
       radial-gradient(circle at 8% 0%, color-mix(in oklch, var(--accent) 11%, transparent), transparent 24rem),
       linear-gradient(180deg, color-mix(in oklch, var(--background) 76%, var(--card)), var(--background) 22rem);
@@ -176,7 +177,17 @@
     position: relative;
     isolation: isolate;
     overflow-x: clip;
+    min-height: 100svh;
+    -webkit-tap-highlight-color: transparent;
     background: linear-gradient(180deg, color-mix(in oklch, var(--background) 82%, var(--card)), var(--background) 34rem);
+  }
+
+  .tea-app-header {
+    margin-inline: -1.25rem;
+    padding: 0.55rem 1.25rem 0.75rem;
+    background: color-mix(in oklch, var(--background) 82%, transparent);
+    backdrop-filter: blur(18px) saturate(1.25);
+    -webkit-backdrop-filter: blur(18px) saturate(1.25);
   }
 
   .tea-shell::before,
@@ -369,6 +380,24 @@
     font-weight: 700;
   }
 
+  .tea-local-deck {
+    display: inline-flex;
+    min-height: 2.25rem;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 999px;
+    background: color-mix(in oklch, var(--accent) 10%, var(--card));
+    padding: 0.4rem 0.7rem;
+    color: var(--muted-foreground);
+    font-size: 0.7rem;
+    font-weight: 650;
+    white-space: nowrap;
+  }
+
+  .tea-local-deck svg {
+    color: var(--accent);
+  }
+
   .tea-drag-help {
     display: flex;
     align-items: center;
@@ -404,6 +433,10 @@
 
   .tea-order-grip:active {
     cursor: grabbing;
+    transform: scale(0.94);
+  }
+
+  .tea-player-row button:not(.tea-order-grip):active {
     transform: scale(0.94);
   }
 
@@ -511,6 +544,8 @@
       radial-gradient(circle at 50% -20%, color-mix(in oklch, var(--accent) 22%, transparent), transparent 58%),
       color-mix(in oklch, var(--muted) 56%, transparent);
     border-radius: 0.9rem;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
     box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--background) 36%, transparent);
     transition: border-color 180ms ease, box-shadow 220ms var(--ease-out), transform 220ms var(--ease-out), background 180ms ease;
   }
@@ -556,10 +591,20 @@
   }
 
   .mobile-dock {
+    position: sticky;
     margin-left: -0.25rem;
     margin-right: -0.25rem;
     bottom: max(1rem, env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .mobile-dock::before {
+    position: absolute;
+    z-index: -1;
+    inset: -1.25rem -0.75rem -0.5rem;
+    background: linear-gradient(to top, var(--background) 58%, color-mix(in oklch, var(--background) 76%, transparent) 78%, transparent);
+    content: "";
+    pointer-events: none;
   }
 
   .mobile-dock > div {
@@ -571,6 +616,10 @@
   }
 
   @media (max-width: 420px) {
+    .tea-app-header {
+      margin-inline: -1.25rem;
+    }
+
     .tea-display {
       letter-spacing: -0.05em;
     }

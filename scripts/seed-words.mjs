@@ -4,6 +4,14 @@ import { readFile } from "node:fs/promises";
 const deck = JSON.parse(await readFile(new URL("../lib/words.json", import.meta.url), "utf8"));
 if (!Number.isInteger(deck.version) || !Array.isArray(deck.categories)) throw new Error("Invalid deck format");
 const seen = new Set();
+const tokens = (value) => value.normalize("NFC").toLocaleLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [];
+const containsWord = (hint, word) => {
+  const hintTokens = tokens(hint);
+  const wordTokens = tokens(word);
+  return hintTokens.some((_, index) =>
+    wordTokens.every((token, offset) => hintTokens[index + offset] === token)
+  );
+};
 for (const { category, words } of deck.categories) {
   if (typeof category !== "string" || !category.trim() || !Array.isArray(words) || !words.length) throw new Error("Invalid category");
   for (const entry of words) {
@@ -16,6 +24,8 @@ for (const { category, words } of deck.categories) {
     }
     const key = word.trim().normalize("NFC").toLowerCase();
     if (seen.has(key)) throw new Error("Duplicate word: " + word);
+    if (containsWord(citizenHint, word)) throw new Error("Citizen hint gives away: " + word);
+    if (containsWord(imposterHint, word)) throw new Error("Imposter hint gives away: " + word);
     seen.add(key);
   }
 }

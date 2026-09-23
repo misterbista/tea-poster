@@ -1,22 +1,21 @@
 "use client";
 
 import {
-    ArrowRightIcon,
-    CheckIcon,
-    ChevronDownIcon,
+  ArrowRightIcon,
+  CheckIcon,
+  ChevronDownIcon,
   ChevronUpIcon,
   DownloadIcon,
   EyeIcon,
   GripVerticalIcon,
-    LockKeyholeIcon,
-    Loader2Icon,
-    MoonIcon,
-    PlusIcon,
-    RotateCcwIcon,
-    ShuffleIcon,
-    SparklesIcon,
-    SunIcon,
-    Trash2Icon,
+  LockKeyholeIcon,
+  MoonIcon,
+  PlusIcon,
+  RotateCcwIcon,
+  ShuffleIcon,
+  SparklesIcon,
+  SunIcon,
+  Trash2Icon,
 } from "lucide-react";
 import Image from "next/image";
 import {
@@ -26,19 +25,18 @@ import {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
 } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -47,12 +45,7 @@ import { Separator } from "@/components/ui/separator";
 import { TeaPosterSplash } from "@/components/tea-poster-splash";
 
 import { randomIndex } from "@/lib/random";
-import {
-  claimLocalWord,
-  getLocalWordPairs,
-  mergeWordPairs,
-  refreshLocalWordPairs,
-} from "@/lib/store";
+import { claimLocalWord } from "@/lib/store";
 import { WORD_PAIRS, type WordPair } from "@/lib/words";
 
 const DEFAULT_PLAYERS = [
@@ -78,26 +71,33 @@ type Round = {
   starterIndex: number;
 };
 
-function subscribeOnline(callback: () => void) {
-  window.addEventListener("online", callback);
-  window.addEventListener("offline", callback);
-  return () => {
-    window.removeEventListener("online", callback);
-    window.removeEventListener("offline", callback);
-  };
-}
-
-function getOnlineSnapshot() {
-  return navigator.onLine;
-}
-
-function getServerOnlineSnapshot() {
-  return true;
+function tapFeedback() {
+  if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+    navigator.vibrate(8);
+  }
 }
 
 function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
   const transitionTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    let savedTheme: string | null = null;
+    try {
+      savedTheme = window.localStorage.getItem("tea-posters-theme");
+    } catch {
+      // The system preference remains available when storage is disabled.
+    }
+
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const nextIsDark = savedTheme === "dark" || (savedTheme === null && prefersDark);
+    const frame = window.requestAnimationFrame(() => {
+      document.documentElement.classList.toggle("dark", nextIsDark);
+      document.documentElement.style.colorScheme = nextIsDark ? "dark" : "light";
+      setIsDark(nextIsDark);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   const toggleTheme = () => {
     const nextIsDark = !isDark;
@@ -112,6 +112,11 @@ function ThemeToggle() {
     root.classList.remove("theme-transition");
     void root.offsetWidth;
     root.classList.add("theme-transition");
+    try {
+      window.localStorage.setItem("tea-posters-theme", nextIsDark ? "dark" : "light");
+    } catch {
+      // The current session still changes theme when storage is disabled.
+    }
     setIsDark(nextIsDark);
     window.requestAnimationFrame(() => {
       root.classList.toggle("dark", nextIsDark);
@@ -258,76 +263,17 @@ function PhaseSteps({ phase }: { phase: Phase }) {
 
 export function TeaPoster() {
   const [showSplash, setShowSplash] = useState(true);
-  const isOnline = useSyncExternalStore(
-    subscribeOnline,
-    getOnlineSnapshot,
-    getServerOnlineSnapshot
-  );
-  const wordListRef = useRef<WordPair[]>(WORD_PAIRS);
-  const [isRefreshingWords, setIsRefreshingWords] = useState(false);
-  const refreshingWordsRef = useRef(false);
-  const mountedRef = useRef(true);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setShowSplash(false), 2000);
     return () => window.clearTimeout(timer);
   }, []);
 
-  const refreshWords = useCallback(async (force = false) => {
-    if (!navigator.onLine || refreshingWordsRef.current) return;
-
-    refreshingWordsRef.current = true;
-    setIsRefreshingWords(true);
-    try {
-      const result = await refreshLocalWordPairs(
-        [...WORD_PAIRS, ...getLocalWordPairs()],
-        { force }
-      );
-      if (!mountedRef.current) return;
-
-      wordListRef.current = mergeWordPairs(WORD_PAIRS, result.pairs);
-      if (result.added > 0) {
-        toast.success(
-          `${result.added} new word${result.added === 1 ? "" : "s"} added for today's rounds.`
-        );
-      } else if (force) {
-        toast.message("No new words were added this time.");
-      }
-    } catch (error) {
-      console.error("Daily word refresh failed.", error);
-      if (force && mountedRef.current) {
-        toast.error(
-          error instanceof Error
-            ? error.message
-            : "Couldn’t get new words right now."
-        );
-      }
-    } finally {
-      refreshingWordsRef.current = false;
-      if (mountedRef.current) setIsRefreshingWords(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    mountedRef.current = true;
-    const handleOnline = () => {
-      void refreshWords();
-    };
-
-    wordListRef.current = mergeWordPairs(WORD_PAIRS, getLocalWordPairs());
-    const refreshTimer = window.setTimeout(() => void refreshWords(), 0);
-    window.addEventListener("online", handleOnline);
-    return () => {
-      mountedRef.current = false;
-      window.clearTimeout(refreshTimer);
-      window.removeEventListener("online", handleOnline);
-    };
-  }, [refreshWords]);
-
   const [players, setPlayers] = useState<string[]>(DEFAULT_PLAYERS);
   const [checked, setChecked] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(DEFAULT_PLAYERS.map((p) => [p, true]))
   );
+  const [playerSetupLoaded, setPlayerSetupLoaded] = useState(false);
   const [newPlayer, setNewPlayer] = useState("");
   const [draggedPlayer, setDraggedPlayer] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<{ name: string; after: boolean } | null>(null);
@@ -351,6 +297,47 @@ export function TeaPoster() {
   const [dealIndex, setDealIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [imposterShown, setImposterShown] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("tea-posters-players");
+      if (saved) {
+        const parsed = JSON.parse(saved) as {
+          players?: unknown;
+          checked?: unknown;
+        };
+        const savedPlayers = Array.isArray(parsed.players)
+          ? parsed.players.filter(
+              (name): name is string =>
+                typeof name === "string" && name.trim().length > 0 && name.length <= 24
+            )
+          : [];
+        const uniquePlayers = Array.from(
+          new Map(savedPlayers.map((name) => [name.toLocaleLowerCase(), name.trim()])).values()
+        );
+        if (uniquePlayers.length > 0) setPlayers(uniquePlayers);
+        if (parsed.checked && typeof parsed.checked === "object") {
+          setChecked(parsed.checked as Record<string, boolean>);
+        }
+      }
+    } catch {
+      // A damaged preference should never prevent a new round.
+    }
+    const frame = window.requestAnimationFrame(() => setPlayerSetupLoaded(true));
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    if (!playerSetupLoaded) return;
+    try {
+      window.localStorage.setItem(
+        "tea-posters-players",
+        JSON.stringify({ players, checked })
+      );
+    } catch {
+      // Player setup remains usable for this session when storage is disabled.
+    }
+  }, [checked, playerSetupLoaded, players]);
 
   const activePlayers = useMemo(
     () => players.filter((p) => checked[p]),
@@ -401,7 +388,7 @@ export function TeaPoster() {
       toast.error("Pick at least 3 players to start.");
       return;
     }
-    const pair = claimLocalWord(wordListRef.current);
+    const pair = claimLocalWord();
     setRound({
       pair,
       players: [...activePlayers],
@@ -417,6 +404,10 @@ export function TeaPoster() {
   const addPlayer = useCallback(() => {
     const name = newPlayer.trim();
     if (!name) return;
+    if (players.length >= 24) {
+      toast.error("A round can have up to 24 players.");
+      return;
+    }
     if (players.some((p) => p.toLowerCase() === name.toLowerCase())) {
       toast.error(`${name} is already on the list.`);
       return;
@@ -577,7 +568,7 @@ export function TeaPoster() {
     <main className="tea-shell min-h-dvh">
       <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] pt-[calc(env(safe-area-inset-top)+1rem)] sm:px-4 sm:py-12">
       {/* Mobile app header */}
-      <header className="mb-5 flex items-center justify-between gap-3">
+      <header className="tea-app-header sticky top-0 z-30 mb-5 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
           <div className="tea-logo-frame relative size-13 shrink-0 overflow-hidden rounded-[0.9rem]">
             <Image
@@ -635,23 +626,10 @@ export function TeaPoster() {
                 <p className="tea-section-kicker">Players</p>
                 <p className="tea-list-meta"><span>{activePlayers.length}</span> in this round</p>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="h-9 rounded-full border-accent/30 px-3 text-xs text-primary hover:border-accent/60 hover:bg-accent/10"
-                onClick={() => void refreshWords(true)}
-                disabled={!isOnline || isRefreshingWords}
-                aria-busy={isRefreshingWords}
-                title={isOnline ? "Get new words" : "Connect to the internet to get new words"}
-              >
-                {isRefreshingWords ? (
-                  <Loader2Icon className="animate-spin" />
-                ) : (
-                  <SparklesIcon />
-                )}
-                <span>{isRefreshingWords ? "Getting…" : "Get new words"}</span>
-              </Button>
+              <span className="tea-local-deck" aria-label={`${WORD_PAIRS.length} words available offline`}>
+                <CheckIcon className="size-3.5" />
+                <span>{WORD_PAIRS.length} words · offline</span>
+              </span>
             </div>
             <p className="tea-drag-help"><GripVerticalIcon className="size-3.5" /> Hold a grip and slide to set the pass order.</p>
             <div role="list" aria-label="Pass order" className="tea-player-list">
@@ -770,6 +748,9 @@ export function TeaPoster() {
                 placeholder="Add a player…"
                 maxLength={24}
                 className="h-12 rounded-xl border-border/60 bg-background/60 text-base"
+                autoComplete="off"
+                autoCapitalize="words"
+                enterKeyHint="done"
               />
               <Button
                 type="submit"
@@ -804,7 +785,7 @@ export function TeaPoster() {
                 style={{ width: `${((dealIndex + 1) / round.players.length) * 100}%` }}
               />
             </div>
-            <CardTitle className="tea-display mt-4 text-4xl font-bold">
+            <CardTitle aria-live="polite" className="tea-display mt-4 text-4xl font-bold">
               {round.players[dealIndex]}
             </CardTitle>
             <CardDescription className="max-w-[18rem] leading-relaxed">
@@ -818,12 +799,16 @@ export function TeaPoster() {
               type="button"
               data-revealed={revealed}
               onClick={() => {
+                tapFeedback();
                 if (revealed) {
                   nextCard();
                 } else {
                   setRevealed(true);
                 }
               }}
+              aria-label={revealed
+                ? `${isImposter ? "You are the imposter" : round.pair.word}. ${isImposter ? round.pair.imposterHint : round.pair.citizenHint}. Tap to continue.`
+                : `Reveal ${round.players[dealIndex]}'s private card`}
               className="tea-reveal-card flex min-h-60 w-full touch-manipulation flex-col items-center justify-center gap-3 rounded-xl border border-border/40 px-6 text-center active:scale-[0.985] hover:border-primary/40"
             >
               {revealed ? (

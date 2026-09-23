@@ -1,34 +1,21 @@
 import { NextResponse } from "next/server";
 
-import { isSingleWord, type WordPair } from "@/lib/words";
 import {
-  appendSharedWordPairs,
-  readSharedWordDeck,
+    appendSharedWordPairs,
+    readSharedWordDeck,
 } from "@/lib/server-word-deck";
+import type { WordPair } from "@/lib/words";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
 
-const FREE_MODEL_IDS = [
-  "nex-agi/nex-n2.5-pro:free",
-  "openrouter/free",
-  "inclusionai/ling-3.0-flash-fin:free",
-] as const;
-
-function isFreeModel(value: string): value is (typeof FREE_MODEL_IDS)[number] {
-  return FREE_MODEL_IDS.includes(value as (typeof FREE_MODEL_IDS)[number]);
-}
-
-const configuredModel = process.env.OPENROUTER_MODEL?.trim();
-const MODEL = configuredModel && isFreeModel(configuredModel)
-  ? configuredModel
-  : FREE_MODEL_IDS[0];
+const MODEL =
+  process.env.OPENROUTER_MODEL?.trim() || "nex-agi/nex-n2.5-pro:free";
 const FALLBACK_MODELS = (
-  process.env.OPENROUTER_FALLBACK_MODELS || FREE_MODEL_IDS[1]
+  process.env.OPENROUTER_FALLBACK_MODELS ||
+  "openrouter/free"
 )
   .split(",")
   .map((model) => model.trim())
-  .filter(isFreeModel)
   .filter(Boolean);
 const WORDS_TO_GENERATE = 6;
 const MAX_KNOWN_WORD_IDS = 500;
@@ -84,7 +71,6 @@ function makeGeneratedPair(
   const wordKey = normalize(word);
 
   if (
-    !isSingleWord(word) ||
     word.length < 2 ||
     word.length > 64 ||
     category.length < 2 ||
@@ -119,11 +105,10 @@ function buildPrompt(knownWordIds: string[], existingPairs: WordPair[]) {
   }));
 
   return [
-    `Generate exactly ${WORDS_TO_GENERATE} original word pairs for the TeaPosters pass-and-play imposter game.`,
-    "Every word field must be exactly one word with no spaces: use \"bottle\", never \"water bottle\". Do not use multi-word phrases.",
+    `Generate exactly ${WORDS_TO_GENERATE} original word pairs for the tea-posters pass-and-play imposter game.`,
     "The players are mostly Nepali friends and coworkers, so use familiar South Asian, Nepali, workplace, internet, relationship, travel, food, entertainment, technology, or everyday-life topics.",
-    "Keep the tone playful, recognizable, and safe for a casual group game.",
-    "For each pair, citizenHint should identify the exact word without saying it. imposterHint should be one level broader: describe only a loose category or context that helps the imposter blend in. Do not use a synonym, defining trait, direct use, near-answer, or wording that makes the citizen word easy to guess, and never reveal or repeat the exact word.",
+    "Keep the tone playful, recognizable, and safe for a casual group game. Only give one word per pair. never include ",
+    "For each pair, citizenHint should identify the exact word without saying it. imposterHint should be a broader clue that helps the imposter blend in, but must not reveal or repeat the exact word.",
     `Use categories similar to: ${categories.join(", ")}.`,
     `Do not repeat any existing word IDs: ${knownWordIds.join(", ") || "none"}.`,
     `Style examples only; do not copy them: ${JSON.stringify(examples)}.`,
@@ -146,13 +131,11 @@ function getErrorStatus(error: unknown) {
 
   const candidate = error as {
     status?: unknown;
-    statusCode?: unknown;
     code?: unknown;
     error?: { status?: unknown; code?: unknown };
   };
   const values = [
     candidate.status,
-    candidate.statusCode,
     candidate.error?.status,
     candidate.code,
     candidate.error?.code,
@@ -178,7 +161,7 @@ function shouldTryAnotherModel(error: unknown) {
   );
 }
 
-async function generateDailyWords(request: Request) {
+export async function POST(request: Request) {
   const apiKey = process.env.OPENROUTER_API_KEY?.trim();
   if (!apiKey) {
     return NextResponse.json(
@@ -200,16 +183,7 @@ async function generateDailyWords(request: Request) {
         .slice(0, MAX_KNOWN_WORD_IDS)
     : [];
   const force = body.force === true;
-  let sharedDeck;
-  try {
-    sharedDeck = await readSharedWordDeck();
-  } catch (error) {
-    console.error("Shared word deck could not be loaded for generation.", error);
-    return NextResponse.json(
-      { error: "The shared word deck is temporarily unavailable." },
-      { status: 503 }
-    );
-  }
+  const sharedDeck = await readSharedWordDeck();
   const now = Date.now();
   const needsDailyGeneration =
     force ||
@@ -242,7 +216,7 @@ async function generateDailyWords(request: Request) {
           authorization: `Bearer ${apiKey}`,
           "content-type": "application/json",
           "http-referer": "https://tea-posters.local",
-          "x-title": "TeaPosters",
+          "x-title": "tea-posters",
         },
         body: JSON.stringify({
           model,
@@ -275,7 +249,6 @@ async function generateDailyWords(request: Request) {
         cache: "no-store",
         signal: controller.signal,
       });
-
       const payload = (await response.json()) as {
         choices?: Array<{ message?: { content?: unknown } }>;
         error?: { message?: string; code?: string | number };
@@ -300,20 +273,11 @@ async function generateDailyWords(request: Request) {
         : [];
 
       if (generated.length >= 3) {
-        let savedWords;
-        try {
-          savedWords = await appendSharedWordPairs(generated, now);
-        } catch (error) {
-          console.error("Generated words could not be saved.", error);
-          return NextResponse.json(
-            { error: "The generated words could not be saved." },
-            { status: 503 }
-          );
-        }
+        const savedDeck = await appendSharedWordPairs(generated, now);
         return NextResponse.json({
-          pairs: savedWords.addedPairs,
-          allPairs: savedWords.deck.pairs,
-          generatedAt: savedWords.deck.generatedAt,
+          pairs: generated,
+          allPairs: savedDeck.pairs,
+          generatedAt: savedDeck.generatedAt,
         });
       }
     } catch (error) {
@@ -328,26 +292,5 @@ async function generateDailyWords(request: Request) {
   return NextResponse.json(
     { error: "The daily word generator could not create new words." },
     { status: 502 }
-  );
-}
-
-export async function POST(request: Request) {
-  return generateDailyWords(request);
-}
-
-export async function GET(request: Request) {
-  const cronSecret = process.env.CRON_SECRET?.trim();
-  const authorization = request.headers.get("authorization");
-
-  if (!cronSecret || authorization !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
-  return generateDailyWords(
-    new Request(request.url, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: "{}",
-    })
   );
 }

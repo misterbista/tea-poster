@@ -1,9 +1,12 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TeaPosters
+
+TeaPosters is an offline-first, pass-and-play imposter game. The word deck and
+game logic run locally in the app; playing never calls a model or a word API.
 
 ## Editing the game words
 
-Edit `lib/words.json`. This is the single source for both server and offline
-words; the game no longer downloads random word lists.
+Edit `lib/words.json`. This is the only word source used by the game, including
+when the app is offline.
 
 Each category has a `category` label and a `words` array. Add a word object
 to an existing array, or add a category object:
@@ -21,17 +24,16 @@ to an existing array, or add a category object:
 }
 ```
 
-Imposters see only `imposterHint`. Citizens see `word` with `citizenHint`
-underneath. Category labels organize the deck.
-Romanized names and Devanagari are both supported. Avoid duplicate words
-across categories. IDs are generated automatically from the word.
-The caste/community category includes both caste and ethnic community names.
+Imposters see only `imposterHint`. Citizens see the word with `citizenHint`
+underneath. Keep words familiar and easy to explain. Citizen hints should point
+to the word without repeating it; imposter hints should stay broad enough that
+they do not give the word away. Include everyday Nepal references alongside
+common topics, and avoid duplicate words across categories. IDs are generated
+automatically from the word.
 
-Increment the top-level `version` after changing the deck (currently 8).
-Restart or rebuild/redeploy the app to distribute production updates.
-Connected clients sync the updated deck; offline clients retain their last copy.
-Run `node scripts/seed-words.mjs` to validate edits. Despite its legacy name,
-this command only validates the local JSON and never downloads or overwrites it.
+Increment the top-level `version` after changing the deck. Rebuild/redeploy the
+app to distribute updates. Run `node scripts/seed-words.mjs` to validate edits;
+it checks the local JSON and never downloads or overwrites it.
 
 ## Getting Started
 
