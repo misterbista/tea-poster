@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { createGateway, generateText, jsonSchema, Output } from "ai";
-import type { JSONSchema7 } from "@ai-sdk/provider";
+import { createGateway, generateText } from "ai";
 
 import { isSingleWord, type WordPair } from "@/lib/words";
 import {
@@ -11,10 +10,12 @@ import {
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const MODEL = process.env.AI_GATEWAY_MODEL?.trim() || "openai/gpt-5.4";
+const MODEL =
+  process.env.AI_GATEWAY_MODEL?.trim() ||
+  "inclusionai/ling-3.0-flash-vl-free";
 const FALLBACK_MODELS = (
   process.env.AI_GATEWAY_FALLBACK_MODELS ||
-  "anthropic/claude-haiku-4.5"
+  "inclusionai/ling-3.0-flash-fin-free"
 )
   .split(",")
   .map((model) => model.trim())
@@ -22,25 +23,6 @@ const FALLBACK_MODELS = (
 const WORDS_TO_GENERATE = 6;
 const MAX_KNOWN_WORD_IDS = 500;
 const MODEL_TIMEOUT_MS = 45_000;
-
-type GeneratedPair = {
-  category: string;
-  word: string;
-  citizenHint: string;
-  imposterHint: string;
-};
-
-const generatedPairSchema: JSONSchema7 = {
-  type: "object",
-  properties: {
-    category: { type: "string" },
-    word: { type: "string", pattern: "^\\S+$" },
-    citizenHint: { type: "string" },
-    imposterHint: { type: "string" },
-  },
-  required: ["category", "word", "citizenHint", "imposterHint"],
-  additionalProperties: false,
-};
 
 type RequestBody = {
   knownWordIds?: unknown;
@@ -120,6 +102,16 @@ function buildPrompt(knownWordIds: string[], existingPairs: WordPair[]) {
     `Style examples only; do not copy them: ${JSON.stringify(examples)}.`,
     "Return only the requested JSON array. Do not include markdown, commentary, URLs, or extra fields.",
   ].join("\n\n");
+}
+
+function parseGeneratedText(text: string) {
+  const normalizedText = text
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/, "")
+    .trim();
+
+  return JSON.parse(normalizedText) as unknown;
 }
 
 function getErrorStatus(error: unknown) {
@@ -218,7 +210,7 @@ async function generateDailyWords(request: Request) {
     const timeout = setTimeout(() => controller.abort(), MODEL_TIMEOUT_MS);
 
     try {
-      const { output } = await generateText({
+      const { text } = await generateText({
         model: aiGateway(model),
         system:
           "You generate safe, concise content for a casual pass-and-play game. Follow the requested JSON schema exactly.",
@@ -229,14 +221,9 @@ async function generateDailyWords(request: Request) {
         temperature: 0.9,
         maxOutputTokens: 1400,
         abortSignal: controller.signal,
-        output: Output.array({
-          name: "tea_poster_word_pairs",
-          element: jsonSchema<GeneratedPair>(generatedPairSchema),
-          minItems: WORDS_TO_GENERATE,
-          maxItems: WORDS_TO_GENERATE,
-        }),
       });
-      const generated = output
+      const parsed = parseGeneratedText(text);
+      const generated = (Array.isArray(parsed) ? parsed : [])
         .map((value) => makeGeneratedPair(value, knownIds, knownWords))
         .filter((pair): pair is WordPair => pair !== null);
 
