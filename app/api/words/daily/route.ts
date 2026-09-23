@@ -10,15 +10,25 @@ import {
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const MODEL =
-  process.env.AI_GATEWAY_MODEL?.trim() ||
-  "inclusionai/ling-3.0-flash-vl-free";
+const FREE_MODEL_IDS = [
+  "inclusionai/ling-3.0-flash-vl-free",
+  "inclusionai/ling-3.0-flash-fin-free",
+] as const;
+
+function isFreeModel(value: string): value is (typeof FREE_MODEL_IDS)[number] {
+  return FREE_MODEL_IDS.includes(value as (typeof FREE_MODEL_IDS)[number]);
+}
+
+const configuredModel = process.env.AI_GATEWAY_MODEL?.trim();
+const MODEL = configuredModel && isFreeModel(configuredModel)
+  ? configuredModel
+  : FREE_MODEL_IDS[0];
 const FALLBACK_MODELS = (
-  process.env.AI_GATEWAY_FALLBACK_MODELS ||
-  "inclusionai/ling-3.0-flash-fin-free"
+  process.env.AI_GATEWAY_FALLBACK_MODELS || FREE_MODEL_IDS[1]
 )
   .split(",")
   .map((model) => model.trim())
+  .filter(isFreeModel)
   .filter(Boolean);
 const WORDS_TO_GENERATE = 6;
 const MAX_KNOWN_WORD_IDS = 500;
