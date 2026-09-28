@@ -159,10 +159,36 @@
   ::view-transition-new(root) {
     mix-blend-mode: normal;
   }
+
+  html.theme-sweeping::view-transition-group(root) {
+    animation: none;
+  }
+
+  html.theme-sweeping::view-transition-old(root) {
+    animation: none;
+    z-index: 1;
+  }
+
+  html.theme-sweeping::view-transition-new(root) {
+    z-index: 2;
+    animation: theme-sweep 450ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes theme-sweep {
+    from {
+      clip-path: circle(0 at var(--theme-sweep-x) var(--theme-sweep-y));
+    }
+    to {
+      clip-path: circle(var(--theme-sweep-radius) at var(--theme-sweep-x) var(--theme-sweep-y));
+    }
+  }
 }
 
 @layer components {
   .tea-shell {
+    --header-height: calc(4.25rem + env(safe-area-inset-top));
+    --page-gutter: 1.5rem;
+    --control-radius: 0.85rem;
     position: relative;
     isolation: isolate;
     overflow-x: clip;
@@ -171,9 +197,26 @@
     background: linear-gradient(180deg, color-mix(in oklch, var(--background) 82%, var(--card)), var(--background) 34rem);
   }
 
+  .tea-page-frame {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 28rem;
+    margin-inline: auto;
+    padding-inline: var(--page-gutter);
+  }
+
+  .tea-header-space {
+    height: var(--header-height);
+    flex-shrink: 0;
+    margin-bottom: 1.25rem;
+  }
+
   .tea-app-header {
-    margin-inline: -1.25rem;
-    padding: 0.55rem 1.25rem 0.75rem;
+    position: fixed;
+    top: 0;
+    inset-inline: 0;
+    height: var(--header-height);
+    padding-block: calc(0.5rem + env(safe-area-inset-top)) 0.5rem;
     background: color-mix(in oklch, var(--background) 82%, transparent);
     backdrop-filter: blur(18px) saturate(1.25);
     -webkit-backdrop-filter: blur(18px) saturate(1.25);
@@ -611,10 +654,6 @@
   }
 
   @media (max-width: 420px) {
-    .tea-app-header {
-      margin-inline: -1.25rem;
-    }
-
     .tea-display {
       letter-spacing: -0.05em;
     }
@@ -641,6 +680,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html.theme-sweeping::view-transition-new(root) {
+    animation: none;
+  }
+
   ::view-transition-group(root) {
     animation-duration: 1ms;
   }
@@ -687,14 +730,12 @@ body:has(.tea-shell[data-phase="setup"]) {
 .tea-shell[data-phase="setup"] .tea-viewport {
   height: 100%;
   min-height: 0;
-  padding-top: max(0.25rem, env(safe-area-inset-top));
+  padding-top: 0;
   padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
 }
 
-.tea-shell[data-phase="setup"] .tea-app-header {
-  flex-shrink: 0;
-  margin-bottom: 0.25rem;
-  padding-block: 0.25rem;
+.tea-shell[data-phase="setup"] .tea-header-space {
+  margin-bottom: 0.5rem;
 }
 
 .tea-shell[data-phase="setup"] .tea-progress {
@@ -717,7 +758,8 @@ body:has(.tea-shell[data-phase="setup"]) {
 }
 
 .tea-shell[data-phase="setup"] .tea-setup > [data-slot="card-content"] {
-  gap: 0.5rem;
+  padding-inline: 0;
+  gap: 0.75rem;
 }
 
 .tea-shell[data-phase="setup"] .tea-setup > [data-slot="card-content"] > :not(.tea-player-list) {
@@ -725,8 +767,8 @@ body:has(.tea-shell[data-phase="setup"]) {
 }
 
 .tea-shell[data-phase="setup"] .tea-player-list {
-  width: calc(100% + 1rem);
-  margin-inline: -0.5rem;
+  width: 100%;
+  margin-inline: 0;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
@@ -748,7 +790,7 @@ body:has(.tea-shell[data-phase="setup"]) {
   position: relative;
   bottom: auto;
   flex-shrink: 0;
-  margin-top: 0.5rem;
+  margin: 0.75rem 0 0;
   padding-bottom: 0;
 }
 
@@ -758,6 +800,10 @@ body:has(.tea-shell[data-phase="setup"]) {
 
 /* The roster stays the only scrolling region, including on short screens. */
 @media (max-height: 500px) {
+  .tea-shell[data-phase="setup"] {
+    --header-height: calc(3.75rem + env(safe-area-inset-top));
+  }
+
   .tea-shell[data-phase="setup"] .tea-logo-frame {
     width: 2rem;
     height: 2rem;
@@ -766,4 +812,81 @@ body:has(.tea-shell[data-phase="setup"]) {
   .tea-shell[data-phase="setup"] .tea-brand-subline {
     display: none;
   }
+}
+
+/* One alignment and shape system for setup controls and the roster. */
+.tea-shell[data-phase="setup"] :is(.tea-player-row, .tea-group-picker select, .tea-group-picker input, .tea-add-player input, .tea-add-player button, .mobile-dock button) {
+  border-radius: var(--control-radius);
+}
+
+.tea-shell[data-phase="setup"] .tea-group-picker [aria-haspopup="menu"] {
+  width: 3rem;
+  height: 3rem;
+}
+
+.tea-shell[data-phase="setup"] .tea-list-heading {
+  margin-top: 0.25rem;
+}
+
+.tea-shell[data-phase="setup"] .tea-drag-help {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Keep the selector and its separate action aligned to the page edges. */
+.tea-group-control {
+  width: 100%;
+  min-width: 0;
+}
+
+.tea-app-header button,
+.tea-shell[data-phase="setup"] .tea-player-row [aria-haspopup="menu"] {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Discussion uses the same edges and enclosed surface as the player roster. */
+.tea-discussion > [data-slot="card-header"],
+.tea-discussion > [data-slot="card-content"],
+.tea-discussion > [data-slot="card-footer"] {
+  padding-inline: 0;
+}
+
+.tea-clue-box {
+  border: 1px solid color-mix(in oklch, var(--border) 54%, transparent);
+  border-radius: var(--control-radius);
+  background: color-mix(in oklch, var(--card) 54%, transparent);
+}
+
+.tea-discussion > [data-slot="card-footer"] {
+  border: 0;
+  background: transparent;
+  padding-block: 0.5rem 0;
+}
+
+.tea-discussion [data-slot="card-footer"] button {
+  border-radius: var(--control-radius);
+}
+
+.tea-result-card {
+  border: 1px solid color-mix(in oklch, var(--border) 54%, transparent) !important;
+  border-radius: var(--control-radius) !important;
+  background: color-mix(in oklch, var(--card) 54%, transparent) !important;
+  box-shadow: none !important;
+}
+
+.tea-result-card > [data-slot="card-header"],
+.tea-result-card > [data-slot="card-content"],
+.tea-result-card > [data-slot="card-footer"] {
+  padding-inline: 1.25rem;
+}
+
+.tea-result-card > [data-slot="card-footer"] {
+  border: 0;
+  background: transparent;
+  padding-block: 1rem 1.25rem;
+}
+
+.tea-result-card .tea-result-details {
+  border-color: color-mix(in oklch, var(--border) 54%, transparent);
 }

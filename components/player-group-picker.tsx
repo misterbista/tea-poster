@@ -23,7 +23,7 @@ export function PlayerGroupPicker({ groups, activeId, onSelect, onSave, onDelete
     <div className="tea-group-picker flex flex-col gap-2">
       {!mode && <>
       <Label className="sr-only" htmlFor="player-group">Player group</Label>
-      <div className="flex items-center gap-2">
+      <div className="tea-group-control flex items-center gap-2">
       <div className="relative min-w-0 flex-1">
         <select
           id="player-group"
