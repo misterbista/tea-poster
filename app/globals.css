@@ -141,34 +141,23 @@
       linear-gradient(180deg, color-mix(in oklch, var(--background) 76%, var(--card)), var(--background) 22rem);
   }
 
-  html.theme-transition,
-  html.theme-transition body,
-  html.theme-transition .tea-shell,
-  html.theme-transition .tea-shell * {
-    transition-property: background, background-color, border-color, color, fill, stroke, box-shadow;
-    transition-duration: 240ms;
-    transition-timing-function: var(--ease-out);
+  html.theme-transition-fallback,
+  html.theme-transition-fallback body,
+  html.theme-transition-fallback .tea-shell,
+  html.theme-transition-fallback .tea-shell * {
+    transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+    transition-duration: 220ms;
+    transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  @keyframes tea-theme-cover {
-    from {
-      opacity: 1;
-    }
-
-    to {
-      opacity: 0;
-    }
+  ::view-transition-group(root) {
+    animation-duration: 220ms;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  html.theme-transition::after {
-    position: fixed;
-    z-index: 9999;
-    inset: 0;
-    background: var(--theme-transition-surface);
-    content: "";
-    pointer-events: none;
-    animation: tea-theme-cover 280ms var(--ease-out) both;
-    will-change: opacity;
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    mix-blend-mode: normal;
   }
 }
 
@@ -646,9 +635,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.theme-transition::after {
-    display: none;
-    animation: none !important;
+  ::view-transition-group(root) {
+    animation-duration: 1ms;
   }
 
   .tea-shell *,

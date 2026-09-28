@@ -52,6 +52,7 @@ import { TeaPosterSplash } from "@/components/tea-poster-splash";
 
 import { randomIndex } from "@/lib/random";
 import { claimLocalWord } from "@/lib/store";
+import { useScreenWakeLock } from "@/lib/use-screen-wake-lock";
 import { WORD_PAIRS, type WordPair } from "@/lib/words";
 
 const DEFAULT_PLAYERS = [
@@ -108,30 +109,38 @@ function ThemeToggle() {
   const toggleTheme = () => {
     const nextIsDark = !isDark;
     const root = document.documentElement;
-    const currentSurface = getComputedStyle(root)
-      .getPropertyValue("--background")
-      .trim();
-    if (transitionTimeoutRef.current !== null) {
-      window.clearTimeout(transitionTimeoutRef.current);
-    }
-    root.style.setProperty("--theme-transition-surface", currentSurface);
-    root.classList.remove("theme-transition");
-    void root.offsetWidth;
-    root.classList.add("theme-transition");
+    const updateTheme = () => {
+      root.classList.toggle("dark", nextIsDark);
+      root.style.colorScheme = nextIsDark ? "dark" : "light";
+      setIsDark(nextIsDark);
+    };
+
     try {
       window.localStorage.setItem("tea-posters-theme", nextIsDark ? "dark" : "light");
     } catch {
       // The current session still changes theme when storage is disabled.
     }
-    setIsDark(nextIsDark);
-    window.requestAnimationFrame(() => {
-      root.classList.toggle("dark", nextIsDark);
-      root.style.colorScheme = nextIsDark ? "dark" : "light";
-    });
-    transitionTimeoutRef.current = window.setTimeout(() => {
-      root.classList.remove("theme-transition");
+
+    if (transitionTimeoutRef.current !== null) {
+      window.clearTimeout(transitionTimeoutRef.current);
       transitionTimeoutRef.current = null;
-    }, 240);
+    }
+
+    const shouldAnimate = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (document.startViewTransition && shouldAnimate) {
+      document.startViewTransition(updateTheme);
+      return;
+    }
+
+    const fallbackTransition = shouldAnimate;
+    if (fallbackTransition) root.classList.add("theme-transition-fallback");
+    updateTheme();
+    if (fallbackTransition) {
+      transitionTimeoutRef.current = window.setTimeout(() => {
+        root.classList.remove("theme-transition-fallback");
+        transitionTimeoutRef.current = null;
+      }, 220);
+    }
   };
 
   return (
@@ -421,13 +430,35 @@ export function TeaPoster() {
   }, [newPlayer, players, setPlayers, setChecked]);
 
   const removePlayer = useCallback((name: string) => {
-    setPlayers((prev) => prev.filter((p) => p !== name));
-    setChecked((prev) => {
-      const next = { ...prev };
+    const groupId = playerGroups.activeId;
+    const previousIndex = players.indexOf(name);
+    const wasSelected = checked[name] === true;
+    setPlayers((current) => current.filter((player) => player !== name));
+    setChecked((current) => {
+      const next = { ...current };
       delete next[name];
       return next;
     });
-  }, [setPlayers, setChecked]);
+    toast(`Removed ${name}`, {
+      duration: 5000,
+      action: {
+        label: "Undo",
+        onClick: () => setPlayerGroups((current) => ({
+          ...current,
+          groups: current.groups.map((group) => {
+            if (group.id !== groupId || group.players.includes(name)) return group;
+            const nextPlayers = [...group.players];
+            nextPlayers.splice(Math.min(previousIndex, nextPlayers.length), 0, name);
+            return {
+              ...group,
+              players: nextPlayers,
+              checked: { ...group.checked, [name]: wasSelected },
+            };
+          }),
+        })),
+      },
+    });
+  }, [checked, playerGroups.activeId, players, setPlayers, setChecked]);
 
   const movePlayer = useCallback((name: string, direction: -1 | 1, animate: boolean) => {
     const fromIndex = players.indexOf(name);
@@ -593,6 +624,8 @@ export function TeaPoster() {
     toast.success("Game reset — choose your players to start again.");
   }, [backToSetup]);
 
+  useScreenWakeLock(phase === "deal");
+
   const isImposter = round !== null && dealIndex === round.imposterIndex;
   const starterName = round ? round.players[round.starterIndex] : "";
 
@@ -629,8 +662,25 @@ export function TeaPoster() {
             variant="ghost"
             size="icon"
             className="size-11 rounded-full text-muted-foreground hover:bg-muted hover:text-primary"
-            onClick={resetGame}
-            aria-label="Reset game"
+            onClick={() => {
+              if (phase === "setup") {
+                resetGame();
+                return;
+              }
+              toast.warning("End this round?", {
+                description: "Your current deal will be cleared.",
+                duration: Infinity,
+                action: {
+                  label: "Reset round",
+                  onClick: () => resetGame(),
+                },
+                cancel: {
+                  label: "Keep playing",
+                  onClick: () => {},
+                },
+              });
+            }}
+            aria-label={phase === "setup" ? "Reset game" : "Reset round"}
             title="Reset game"
           >
             <RotateCcwIcon />
@@ -843,9 +893,7 @@ export function TeaPoster() {
               <span className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                 Pass to
               </span>
-              <Badge variant="outline" className="border-accent/40 bg-accent/10 text-primary">
-                {dealIndex + 1} / {round.players.length}
-              </Badge>
+
             </div>
             <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
               <div
@@ -853,8 +901,13 @@ export function TeaPoster() {
                 style={{ width: `${((dealIndex + 1) / round.players.length) * 100}%` }}
               />
             </div>
-            <CardTitle aria-live="polite" className="tea-display mt-4 text-4xl font-bold">
-              {round.players[dealIndex]}
+            <CardTitle aria-live="polite" className="mt-4 flex w-full items-center justify-between gap-3">
+              <span className="tea-display min-w-0 break-words text-left text-4xl font-bold">
+                {round.players[dealIndex]}
+              </span>
+              <Badge variant="outline" className="shrink-0 border-accent/40 bg-accent/10 text-primary">
+                {dealIndex + 1} / {round.players.length}
+              </Badge>
             </CardTitle>
             <CardDescription className="max-w-[18rem] leading-relaxed">
               {revealed
