@@ -1,6 +1,6 @@
 "use client";
 
-import { isSingleWord, WORD_PAIRS, type WordPair } from "./words";
+import { WORD_PAIRS, type WordPair } from "./words";
 import { randomIndex } from "./random";
 
 const STORAGE_KEY = "tea-poster-store";

@@ -299,31 +299,33 @@ export function TeaPoster() {
   const [imposterShown, setImposterShown] = useState(false);
 
   useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem("tea-posters-players");
-      if (saved) {
-        const parsed = JSON.parse(saved) as {
-          players?: unknown;
-          checked?: unknown;
-        };
-        const savedPlayers = Array.isArray(parsed.players)
-          ? parsed.players.filter(
-              (name): name is string =>
-                typeof name === "string" && name.trim().length > 0 && name.length <= 24
-            )
-          : [];
-        const uniquePlayers = Array.from(
-          new Map(savedPlayers.map((name) => [name.toLocaleLowerCase(), name.trim()])).values()
-        );
-        if (uniquePlayers.length > 0) setPlayers(uniquePlayers);
-        if (parsed.checked && typeof parsed.checked === "object") {
-          setChecked(parsed.checked as Record<string, boolean>);
+    const frame = window.requestAnimationFrame(() => {
+      try {
+        const saved = window.localStorage.getItem("tea-posters-players");
+        if (saved) {
+          const parsed = JSON.parse(saved) as {
+            players?: unknown;
+            checked?: unknown;
+          };
+          const savedPlayers = Array.isArray(parsed.players)
+            ? parsed.players.filter(
+                (name): name is string =>
+                  typeof name === "string" && name.trim().length > 0 && name.length <= 24
+              )
+            : [];
+          const uniquePlayers = Array.from(
+            new Map(savedPlayers.map((name) => [name.toLocaleLowerCase(), name.trim()])).values()
+          );
+          if (uniquePlayers.length > 0) setPlayers(uniquePlayers);
+          if (parsed.checked && typeof parsed.checked === "object") {
+            setChecked(parsed.checked as Record<string, boolean>);
+          }
         }
+      } catch {
+        // A damaged preference should never prevent a new round.
       }
-    } catch {
-      // A damaged preference should never prevent a new round.
-    }
-    const frame = window.requestAnimationFrame(() => setPlayerSetupLoaded(true));
+      setPlayerSetupLoaded(true);
+    });
     return () => window.cancelAnimationFrame(frame);
   }, []);
 
