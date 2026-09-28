@@ -663,3 +663,122 @@
   background: color-mix(in oklch, var(--accent) 42%, transparent);
   color: var(--foreground);
 }
+
+/* Lock the document too: constraining the panel alone leaves the browser's
+   root scroller (and mobile overscroll) available outside the player list. */
+html:has(.tea-shell[data-phase="setup"]) {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body:has(.tea-shell[data-phase="setup"]) {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* Keep setup controls in view; only the roster consumes scrolling space. */
+.tea-shell[data-phase="setup"] {
+  height: 100%;
+  min-height: 0;
+  flex: 1 1 0%;
+  overflow: hidden;
+}
+
+.tea-shell[data-phase="setup"] .tea-viewport {
+  height: 100%;
+  min-height: 0;
+  padding-top: max(0.25rem, env(safe-area-inset-top));
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+.tea-shell[data-phase="setup"] .tea-app-header {
+  flex-shrink: 0;
+  margin-bottom: 0.25rem;
+  padding-block: 0.25rem;
+}
+
+.tea-shell[data-phase="setup"] .tea-progress {
+  flex-shrink: 0;
+  margin-bottom: 0.5rem;
+}
+
+.tea-shell[data-phase="setup"] .tea-content,
+.tea-shell[data-phase="setup"] .tea-setup,
+.tea-shell[data-phase="setup"] .tea-setup > [data-slot="card-content"] {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.tea-shell[data-phase="setup"] .tea-setup {
+  gap: 0.5rem;
+  padding-block: 0;
+}
+
+.tea-shell[data-phase="setup"] .tea-setup-header {
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.tea-shell[data-phase="setup"] .tea-setup-header [data-slot="card-title"] {
+  font-size: 1.5rem;
+}
+
+.tea-shell[data-phase="setup"] .tea-setup-header [data-slot="card-description"],
+.tea-shell[data-phase="setup"] .tea-group-help,
+.tea-shell[data-phase="setup"] .tea-setup [data-slot="separator"] {
+  display: none;
+}
+
+.tea-shell[data-phase="setup"] .tea-setup > [data-slot="card-content"] {
+  gap: 0.5rem;
+}
+
+.tea-shell[data-phase="setup"] .tea-setup > [data-slot="card-content"] > :not(.tea-player-list) {
+  flex-shrink: 0;
+}
+
+.tea-shell[data-phase="setup"] .tea-player-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+  scroll-padding-block: 0.5rem;
+}
+
+.tea-shell[data-phase="setup"] .tea-player-row {
+  flex-shrink: 0;
+}
+
+.tea-shell[data-phase="setup"] .tea-add-player {
+  padding-bottom: 0;
+}
+
+.tea-shell[data-phase="setup"] .mobile-dock {
+  position: relative;
+  bottom: auto;
+  flex-shrink: 0;
+  margin-top: 0.5rem;
+  padding-bottom: 0;
+}
+
+.tea-shell[data-phase="setup"] .mobile-dock::before {
+  display: none;
+}
+
+@media (max-height: 700px) {
+  .tea-shell[data-phase="setup"] .tea-progress,
+  .tea-shell[data-phase="setup"] .tea-setup-header,
+  .tea-shell[data-phase="setup"] .tea-drag-help {
+    display: none;
+  }
+}

@@ -3,6 +3,17 @@
 TeaPosters is an offline-first, pass-and-play imposter game. The word deck and
 game logic run locally in the app; playing never calls a model or a word API.
 
+## Player groups
+
+Use **Player group** on the setup screen to switch between saved groups. Choose
+**New group**, give it a name, and add its players. Each group remembers the
+player list, who is selected, and the pass order. Groups can be renamed or
+deleted; at least one group is always kept. Your previous player list is migrated
+to **My group** automatically.
+
+Groups are saved locally on this device and work offline. They do not sync
+between devices or browsers. Switching groups is available before a round.
+
 ## Editing the game words
 
 Edit `lib/words.json`. This is the only word source used by the game, including
@@ -34,6 +45,26 @@ automatically from the word.
 Increment the top-level `version` after changing the deck. Rebuild/redeploy the
 app to distribute updates. Run `node scripts/seed-words.mjs` to validate edits;
 it checks the local JSON and never downloads or overwrites it.
+
+## Releasing PWA updates
+
+Deploy with `npm run build` to the same production domain. The `prebuild` step
+creates `public/sw.js` from `scripts/pwa/sw.js` with a fresh cache version; no
+manual cache bump is needed. Do not bypass it with a direct `next build` command.
+The generated worker is ignored by Git.
+
+The installed app checks for updates on launch, when brought to the foreground,
+and when connectivity returns. Updates wait for the user to tap **Refresh**.
+The **Update available** notification appears on the setup screen and stays
+hidden while dealing cards or discussing a round. Other open tabs do not reload
+automatically when one tab accepts an update.
+
+Existing installations need one online reload to pick up this update interface.
+Service workers are registered only in production. To verify a release locally,
+use `npm run build` and `npm start`, install/load the app, deploy another build,
+and return to it. Check that the update appears in setup, stays hidden during a
+round, and refreshes successfully after returning to setup. Repeat offline and
+with two tabs open. Worker lifecycle checks: `node --test scripts/pwa/sw.test.mjs`.
 
 ## Getting Started
 

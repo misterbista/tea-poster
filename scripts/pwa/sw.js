@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 /* Simple offline-first service worker for TeaPosters */
 
-const CACHE = "teaposters-v7";
+const CACHE = "teaposters-__BUILD_VERSION__";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -15,7 +15,12 @@ self.addEventListener("install", (event) => {
       ])
     )
   );
-  self.skipWaiting();
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "SKIP_WAITING") {
+    event.waitUntil(self.skipWaiting());
+  }
 });
 
 self.addEventListener("activate", (event) => {
@@ -23,10 +28,10 @@ self.addEventListener("activate", (event) => {
     caches
       .keys()
       .then((keys) =>
-        Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
+        Promise.all(keys.filter((k) => k.startsWith("teaposters-") && k !== CACHE).map((k) => caches.delete(k)))
       )
+      .then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {

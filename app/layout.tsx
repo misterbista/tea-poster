@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/sonner";
-import { ServiceWorkerRegister } from "./sw-register";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -53,7 +52,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         {children}
         <Toaster position="top-center" />
-        <ServiceWorkerRegister />
       </body>
     </html>
   );

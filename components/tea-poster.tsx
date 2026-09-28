@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import {
+  type SetStateAction,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -27,6 +28,11 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
+
+import { ServiceWorkerRegister } from "@/app/sw-register";
+
+import { PlayerGroupPicker } from "@/components/player-group-picker";
+import { loadPlayerGroups, PLAYER_GROUPS_KEY, type PlayerGroup } from "@/lib/player-groups";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -269,14 +275,24 @@ export function TeaPoster() {
     return () => window.clearTimeout(timer);
   }, []);
 
-  const [players, setPlayers] = useState<string[]>(DEFAULT_PLAYERS);
-  const [checked, setChecked] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(DEFAULT_PLAYERS.map((p) => [p, true]))
-  );
+  const [playerGroups, setPlayerGroups] = useState(() => loadPlayerGroups(null, null, DEFAULT_PLAYERS));
+  const currentGroup = playerGroups.groups.find((group) => group.id === playerGroups.activeId)!;
+  const { players, checked } = currentGroup;
+  const updateCurrentGroup = useCallback((update: (group: PlayerGroup) => PlayerGroup) => {
+    setPlayerGroups((current) => ({ ...current, groups: current.groups.map((group) => group.id === current.activeId ? update(group) : group) }));
+  }, []);
+  const setPlayers = useCallback((value: SetStateAction<string[]>) => {
+    updateCurrentGroup((group) => ({ ...group, players: typeof value === "function" ? value(group.players) : value }));
+  }, [updateCurrentGroup]);
+  const setChecked = useCallback((value: SetStateAction<Record<string, boolean>>) => {
+    updateCurrentGroup((group) => ({ ...group, checked: typeof value === "function" ? value(group.checked) : value }));
+  }, [updateCurrentGroup]);
   const [playerSetupLoaded, setPlayerSetupLoaded] = useState(false);
   const [newPlayer, setNewPlayer] = useState("");
   const [draggedPlayer, setDraggedPlayer] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<{ name: string; after: boolean } | null>(null);
+  const playerListRef = useRef<HTMLDivElement>(null);
+  const dragClientYRef = useRef(0);
   const draggedPlayerRef = useRef<string | null>(null);
   const dropTargetRef = useRef<{ name: string; after: boolean } | null>(null);
   const dragPointerIdRef = useRef<number | null>(null);
@@ -301,26 +317,11 @@ export function TeaPoster() {
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
       try {
-        const saved = window.localStorage.getItem("tea-posters-players");
-        if (saved) {
-          const parsed = JSON.parse(saved) as {
-            players?: unknown;
-            checked?: unknown;
-          };
-          const savedPlayers = Array.isArray(parsed.players)
-            ? parsed.players.filter(
-                (name): name is string =>
-                  typeof name === "string" && name.trim().length > 0 && name.length <= 24
-              )
-            : [];
-          const uniquePlayers = Array.from(
-            new Map(savedPlayers.map((name) => [name.toLocaleLowerCase(), name.trim()])).values()
-          );
-          if (uniquePlayers.length > 0) setPlayers(uniquePlayers);
-          if (parsed.checked && typeof parsed.checked === "object") {
-            setChecked(parsed.checked as Record<string, boolean>);
-          }
-        }
+        setPlayerGroups(loadPlayerGroups(
+          window.localStorage.getItem(PLAYER_GROUPS_KEY),
+          window.localStorage.getItem("tea-posters-players"),
+          DEFAULT_PLAYERS,
+        ));
       } catch {
         // A damaged preference should never prevent a new round.
       }
@@ -333,13 +334,13 @@ export function TeaPoster() {
     if (!playerSetupLoaded) return;
     try {
       window.localStorage.setItem(
-        "tea-posters-players",
-        JSON.stringify({ players, checked })
+        PLAYER_GROUPS_KEY,
+        JSON.stringify(playerGroups)
       );
     } catch {
       // Player setup remains usable for this session when storage is disabled.
     }
-  }, [checked, playerSetupLoaded, players]);
+  }, [playerGroups, playerSetupLoaded]);
 
   const activePlayers = useMemo(
     () => players.filter((p) => checked[p]),
@@ -417,7 +418,7 @@ export function TeaPoster() {
     setPlayers((prev) => [...prev, name]);
     setChecked((prev) => ({ ...prev, [name]: true }));
     setNewPlayer("");
-  }, [newPlayer, players]);
+  }, [newPlayer, players, setPlayers, setChecked]);
 
   const removePlayer = useCallback((name: string) => {
     setPlayers((prev) => prev.filter((p) => p !== name));
@@ -426,7 +427,7 @@ export function TeaPoster() {
       delete next[name];
       return next;
     });
-  }, []);
+  }, [setPlayers, setChecked]);
 
   const movePlayer = useCallback((name: string, direction: -1 | 1, animate: boolean) => {
     const fromIndex = players.indexOf(name);
@@ -446,7 +447,7 @@ export function TeaPoster() {
       [next[currentFromIndex], next[currentToIndex]] = [next[currentToIndex], next[currentFromIndex]];
       return next;
     });
-  }, [capturePlayerPositions, players]);
+  }, [capturePlayerPositions, players, setPlayers]);
 
   const setCurrentDropTarget = useCallback(
     (next: { name: string; after: boolean } | null) => {
@@ -483,6 +484,32 @@ export function TeaPoster() {
     [players]
   );
 
+  useEffect(() => {
+    if (!draggedPlayer) return;
+    let frame = 0;
+    let previousTime = 0;
+    const scrollWhileDragging = (time: number) => {
+      const list = playerListRef.current;
+      if (list) {
+        const bounds = list.getBoundingClientRect();
+        const edge = Math.min(48, bounds.height / 3);
+        const y = dragClientYRef.current;
+        const speed = y < bounds.top + edge
+          ? -Math.min(1, (bounds.top + edge - y) / edge)
+          : y > bounds.bottom - edge ? Math.min(1, (y - bounds.bottom + edge) / edge) : 0;
+        const elapsed = previousTime ? Math.min(time - previousTime, 32) : 0;
+        if (speed && edge > 0) {
+          list.scrollTop += speed * elapsed * 0.45;
+          setCurrentDropTarget(getDropTargetAt(y, draggedPlayer));
+        }
+      }
+      previousTime = time;
+      frame = requestAnimationFrame(scrollWhileDragging);
+    };
+    frame = requestAnimationFrame(scrollWhileDragging);
+    return () => cancelAnimationFrame(frame);
+  }, [draggedPlayer, getDropTargetAt, setCurrentDropTarget]);
+
   const moveDraggedPlayer = useCallback(
     (name: string, targetName: string, insertAfter: boolean) => {
       if (name === targetName) return;
@@ -513,7 +540,7 @@ export function TeaPoster() {
         return next;
       });
     },
-    [capturePlayerPositions, players]
+    [capturePlayerPositions, players, setPlayers]
   );
 
   const endPlayerDrag = useCallback(
@@ -567,8 +594,9 @@ export function TeaPoster() {
   if (showSplash) return <TeaPosterSplash />;
 
   return (
-    <main className="tea-shell min-h-dvh">
-      <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] pt-[calc(env(safe-area-inset-top)+1rem)] sm:px-4 sm:py-12">
+    <main className="tea-shell min-h-dvh" data-phase={phase}>
+      <ServiceWorkerRegister gameActive={phase !== "setup"} />
+      <div className="tea-viewport mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] pt-[calc(env(safe-area-inset-top)+1rem)] sm:px-4 sm:py-12">
       {/* Mobile app header */}
       <header className="tea-app-header sticky top-0 z-30 mb-5 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
@@ -612,7 +640,7 @@ export function TeaPoster() {
         <PhaseSteps phase={phase} />
       )}
 
-      <div className="flex-1">
+      <div className="tea-content flex-1">
       {/* SETUP */}
       {phase === "setup" && (
         <Card className="tea-flat-card tea-setup tea-scene">
@@ -623,6 +651,39 @@ export function TeaPoster() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
+            {playerSetupLoaded && <PlayerGroupPicker
+              groups={playerGroups.groups}
+              activeId={playerGroups.activeId}
+              onSelect={(activeId) => {
+                setPlayerGroups((current) => ({ ...current, activeId }));
+                setNewPlayer("");
+              }}
+              onSave={(value, create) => {
+                const name = value.trim();
+                if (!name) return false;
+                if (playerGroups.groups.some((group) => (create || group.id !== playerGroups.activeId) && group.name.toLowerCase() === name.toLowerCase())) {
+                  toast.error("A group with that name already exists.");
+                  return false;
+                }
+                if (create) {
+                  const group: PlayerGroup = { id: crypto.randomUUID(), name, players: [], checked: {} };
+                  setPlayerGroups((current) => ({ groups: [...current.groups, group], activeId: group.id }));
+                  setNewPlayer("");
+                } else {
+                  updateCurrentGroup((group) => ({ ...group, name }));
+                }
+                return true;
+              }}
+              onDelete={() => {
+                setPlayerGroups((current) => {
+                  if (current.groups.length < 2) return current;
+                  const groups = current.groups.filter((group) => group.id !== current.activeId);
+                  return { groups, activeId: groups[0].id };
+                });
+                setNewPlayer("");
+              }}
+            />}
+            {players.length === 0 && <p className="py-3 text-sm text-muted-foreground">Add players below to start this group. You need at least 3 to play.</p>}
             <div className="tea-list-heading">
               <div>
                 <p className="tea-section-kicker">Players</p>
@@ -634,7 +695,7 @@ export function TeaPoster() {
               </span>
             </div>
             <p className="tea-drag-help"><GripVerticalIcon className="size-3.5" /> Hold a grip and slide to set the pass order.</p>
-            <div role="list" aria-label="Pass order" className="tea-player-list">
+            <div key={playerGroups.activeId} ref={playerListRef} role="list" aria-label="Pass order" tabIndex={0} className="tea-player-list">
               {players.map((name) => (
                 <div
                   key={name}
@@ -662,6 +723,7 @@ export function TeaPoster() {
                       ) return;
                       event.preventDefault();
                       event.currentTarget.setPointerCapture(event.pointerId);
+                      dragClientYRef.current = event.clientY;
                       dragPointerIdRef.current = event.pointerId;
                       draggedPlayerRef.current = name;
                       capturePlayerPositions();
@@ -671,6 +733,7 @@ export function TeaPoster() {
                     onPointerMove={(event) => {
                       if (dragPointerIdRef.current !== event.pointerId || !draggedPlayerRef.current) return;
                       event.preventDefault();
+                      dragClientYRef.current = event.clientY;
                       setCurrentDropTarget(getDropTargetAt(event.clientY, draggedPlayerRef.current));
                     }}
                     onPointerUp={(event) => endPlayerDrag(event, true)}
@@ -717,16 +780,14 @@ export function TeaPoster() {
                     >
                       <ChevronDownIcon className="size-4" />
                     </button>
-                    {!DEFAULT_PLAYERS.includes(name) && (
-                      <button
-                        type="button"
-                        aria-label={`Remove ${name}`}
-                        onClick={() => removePlayer(name)}
-                        className="rounded-xl p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      >
-                        <Trash2Icon className="size-4" />
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      aria-label={`Remove ${name}`}
+                      onClick={() => removePlayer(name)}
+                      className="rounded-xl p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      <Trash2Icon className="size-4" />
+                    </button>
                   </div>
                 </div>
               ))}
