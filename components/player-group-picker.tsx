@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,14 +22,17 @@ export function PlayerGroupPicker({ groups, activeId, onSelect, onSave, onDelete
     <div className="tea-group-picker flex flex-col gap-2 border-b border-border/40 pb-2">
       {!mode && <>
       <Label htmlFor="player-group">Player group</Label>
-      <select
-        id="player-group"
-        value={activeId}
-        onChange={(event) => { onSelect(event.target.value); setMode(null); }}
-        className="h-12 w-full min-w-0 rounded-xl border border-border/60 bg-background px-3 text-base text-foreground"
-      >
-        {groups.map((group) => <option key={group.id} value={group.id}>{group.name}</option>)}
-      </select>
+      <div className="relative w-full">
+        <select
+          id="player-group"
+          value={activeId}
+          onChange={(event) => { onSelect(event.target.value); setMode(null); }}
+          className="h-12 w-full min-w-0 appearance-none rounded-xl border border-border/60 bg-background py-2 pl-3 pr-12 text-base text-foreground"
+        >
+          {groups.map((group) => <option key={group.id} value={group.id}>{group.name}</option>)}
+        </select>
+        <ChevronDownIcon aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+      </div>
       <div className="flex flex-wrap gap-2">
         <Button className="min-h-11" variant="secondary" onClick={() => { setMode("create"); setName(""); }}>New group</Button>
         <Button className="min-h-11" variant="ghost" onClick={() => { setMode("rename"); setName(active.name); }}>Rename</Button>
