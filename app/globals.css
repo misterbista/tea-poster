@@ -746,6 +746,8 @@ body:has(.tea-shell[data-phase="setup"]) {
 }
 
 .tea-shell[data-phase="setup"] .tea-player-list {
+  width: calc(100% + 1rem);
+  margin-inline: -0.5rem;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
