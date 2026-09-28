@@ -2,6 +2,7 @@
 
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
+import { ActionMenu } from "@/components/ui/action-menu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,10 +20,11 @@ export function PlayerGroupPicker({ groups, activeId, onSelect, onSave, onDelete
   const active = groups.find((group) => group.id === activeId)!;
 
   return (
-    <div className="tea-group-picker flex flex-col gap-2 border-b border-border/40 pb-2">
+    <div className="tea-group-picker flex flex-col gap-2">
       {!mode && <>
-      <Label htmlFor="player-group">Player group</Label>
-      <div className="relative w-full">
+      <Label className="sr-only" htmlFor="player-group">Player group</Label>
+      <div className="flex items-center gap-2">
+      <div className="relative min-w-0 flex-1">
         <select
           id="player-group"
           value={activeId}
@@ -33,10 +35,11 @@ export function PlayerGroupPicker({ groups, activeId, onSelect, onSave, onDelete
         </select>
         <ChevronDownIcon aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
       </div>
-      <div className="flex flex-wrap gap-2">
-        <Button className="min-h-11" variant="secondary" onClick={() => { setMode("create"); setName(""); }}>New group</Button>
-        <Button className="min-h-11" variant="ghost" onClick={() => { setMode("rename"); setName(active.name); }}>Rename</Button>
-        <Button className="min-h-11" variant="ghost" disabled={groups.length < 2} onClick={() => setMode("delete")}>Delete</Button>
+      <ActionMenu label="Manage player groups" actions={[
+        { label: "New group", onClick: () => { setMode("create"); setName(""); } },
+        { label: "Rename group", onClick: () => { setMode("rename"); setName(active.name); } },
+        { label: "Delete group", destructive: true, disabled: groups.length < 2, onClick: () => setMode("delete") },
+      ]} />
       </div>
       </>}
       {(mode === "create" || mode === "rename") && (
@@ -61,7 +64,6 @@ export function PlayerGroupPicker({ groups, activeId, onSelect, onSave, onDelete
           </div>
         </div>
       )}
-      <p className="tea-group-help text-xs text-muted-foreground">Each group remembers its players, selection and pass order on this device.</p>
     </div>
   );
 }

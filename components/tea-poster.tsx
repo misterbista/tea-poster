@@ -34,6 +34,7 @@ import { ServiceWorkerRegister } from "@/app/sw-register";
 import { PlayerGroupPicker } from "@/components/player-group-picker";
 import { loadPlayerGroups, PLAYER_GROUPS_KEY, type PlayerGroup } from "@/lib/player-groups";
 
+import { ActionMenu } from "@/components/ui/action-menu";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -47,13 +48,12 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { TeaPosterSplash } from "@/components/tea-poster-splash";
 
 import { randomIndex } from "@/lib/random";
 import { claimLocalWord } from "@/lib/store";
 import { useScreenWakeLock } from "@/lib/use-screen-wake-lock";
-import { WORD_PAIRS, type WordPair } from "@/lib/words";
+import { type WordPair } from "@/lib/words";
 
 const DEFAULT_PLAYERS = [
   "Sannish",
@@ -322,6 +322,15 @@ export function TeaPoster() {
   const [dealIndex, setDealIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [imposterShown, setImposterShown] = useState(false);
+  const revealButtonRef = useRef<HTMLButtonElement>(null);
+  const handoffButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (phase !== "deal") return;
+    const target = revealed ? handoffButtonRef.current : revealButtonRef.current;
+    target?.focus({ preventScroll: true });
+  }, [phase, revealed, dealIndex]);
+
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -691,7 +700,7 @@ export function TeaPoster() {
 
       {imposterShown ? (
         <p className="mb-5 text-center text-xs font-medium text-muted-foreground">Round complete</p>
-      ) : (
+      ) : phase !== "setup" && (
         <PhaseSteps phase={phase} />
       )}
 
@@ -699,12 +708,6 @@ export function TeaPoster() {
       {/* SETUP */}
       {phase === "setup" && (
         <Card className="tea-flat-card tea-setup tea-scene">
-          <CardHeader className="tea-setup-header">
-            <CardTitle className="tea-display text-[2.4rem] font-bold leading-[0.98] tracking-tight">Build your round.</CardTitle>
-            <CardDescription className="leading-relaxed">
-              Choose who is playing, then hold the grip to set the pass order.
-            </CardDescription>
-          </CardHeader>
           <CardContent className="flex flex-col gap-3">
             {playerSetupLoaded && <PlayerGroupPicker
               groups={playerGroups.groups}
@@ -744,12 +747,8 @@ export function TeaPoster() {
                 <p className="tea-section-kicker">Players</p>
                 <p className="tea-list-meta"><span>{activePlayers.length}</span> in this round</p>
               </div>
-              <span className="tea-local-deck" aria-label={`${WORD_PAIRS.length} words available offline`}>
-                <CheckIcon className="size-3.5" />
-                <span>{WORD_PAIRS.length} words · offline</span>
-              </span>
             </div>
-            <p className="tea-drag-help"><GripVerticalIcon className="size-3.5" /> Hold a grip and slide to set the pass order.</p>
+            <p className="tea-drag-help">Select players. Drag the grips to set pass order.</p>
             <div key={playerGroups.activeId} ref={playerListRef} role="list" aria-label="Pass order" tabIndex={0} className="tea-player-list">
               {players.map((name) => (
                 <div
@@ -764,12 +763,13 @@ export function TeaPoster() {
                   role="listitem"
                   data-drop-position={dropTarget?.name === name ? (dropTarget.after ? "after" : "before") : undefined}
                   data-dragging={draggedPlayer === name ? "true" : undefined}
-                  className="tea-player-row group flex min-h-[4.25rem] items-center gap-2.5 border-b border-border/30 px-3 py-2.5 transition-colors hover:border-primary/30"
+                  className="tea-player-row group flex min-h-16 items-center gap-2 border-b border-border/30 px-1 py-1.5"
+                  data-selected={!!checked[name]}
                 >
                   <button
                     type="button"
                     aria-label={`Drag ${name} to reorder`}
-                    className="tea-order-grip grid size-10 shrink-0 place-items-center rounded-xl disabled:pointer-events-none disabled:opacity-35"
+                    className="tea-order-grip grid size-11 shrink-0 place-items-center rounded-xl disabled:pointer-events-none disabled:opacity-35"
                     onPointerDown={(event) => {
                       if (
                         !event.isPrimary ||
@@ -807,48 +807,21 @@ export function TeaPoster() {
                   <div className="min-w-0 flex-1">
                     <Label
                       htmlFor={`player-${name}`}
-                      className="block cursor-pointer break-words text-[0.95rem] font-medium"
+                      className="flex min-h-11 cursor-pointer items-center break-words text-[0.95rem] font-medium"
                     >
                       {name}
                     </Label>
-                    {!checked[name] && <p className="mt-0.5 text-xs text-muted-foreground">Sitting this one out</p>}
                   </div>
                   {checked[name] && <span className="pr-2 text-xs tabular-nums text-muted-foreground">{String(activePlayers.indexOf(name) + 1).padStart(2, "0")}</span>}
-                  <div className="flex shrink-0 items-center">
-                    <button
-                      type="button"
-                      aria-label={`Move ${name} up`}
-                      title={`Move ${name} up`}
-                      onClick={(event) => movePlayer(name, -1, event.detail > 0)}
-                      disabled={players.indexOf(name) === 0}
-                      className="rounded-xl p-1.5 text-muted-foreground hover:bg-accent/10 hover:text-primary disabled:pointer-events-none disabled:opacity-25"
-                    >
-                      <ChevronUpIcon className="size-4" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label={`Move ${name} down`}
-                      title={`Move ${name} down`}
-                      onClick={(event) => movePlayer(name, 1, event.detail > 0)}
-                      disabled={players.indexOf(name) === players.length - 1}
-                      className="rounded-xl p-1.5 text-muted-foreground hover:bg-accent/10 hover:text-primary disabled:pointer-events-none disabled:opacity-25"
-                    >
-                      <ChevronDownIcon className="size-4" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label={`Remove ${name}`}
-                      onClick={() => removePlayer(name)}
-                      className="rounded-xl p-1.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                    >
-                      <Trash2Icon className="size-4" />
-                    </button>
-                  </div>
+                  <ActionMenu label={`Actions for ${name}`} actions={[
+                    { label: "Move up", icon: <ChevronUpIcon />, disabled: players.indexOf(name) === 0, onClick: () => movePlayer(name, -1, false) },
+                    { label: "Move down", icon: <ChevronDownIcon />, disabled: players.indexOf(name) === players.length - 1, onClick: () => movePlayer(name, 1, false) },
+                    { label: "Remove player", icon: <Trash2Icon />, destructive: true, onClick: () => removePlayer(name) },
+                  ]} />
                 </div>
               ))}
             </div>
 
-            <Separator className="my-4 bg-accent/20" />
 
             <form
               className="tea-add-player flex gap-2 pb-2"
@@ -916,49 +889,34 @@ export function TeaPoster() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-1 flex-col items-center justify-center py-3">
-            <button
-              type="button"
-              data-revealed={revealed}
-              onClick={() => {
-                tapFeedback();
-                if (revealed) {
-                  nextCard();
-                } else {
-                  setRevealed(true);
-                }
-              }}
-              aria-label={revealed
-                ? `${isImposter ? "You are the imposter" : round.pair.word}. ${isImposter ? round.pair.imposterHint : round.pair.citizenHint}. Tap to continue.`
-                : `Reveal ${round.players[dealIndex]}'s private card`}
-              className="tea-reveal-card flex min-h-60 w-full touch-manipulation flex-col items-center justify-center gap-3 rounded-xl border border-border/40 px-6 text-center active:scale-[0.985] hover:border-primary/40"
-            >
-              {revealed ? (
-                <>
-                  <span className={`tea-display max-w-[17rem] text-4xl font-bold leading-tight tracking-tight ${
-                    isImposter ? "text-destructive" : ""
-                  }`}>
-                    {isImposter ? "You are the imposter" : round.pair.word}
-                  </span>
-                  <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-                    {isImposter ? round.pair.imposterHint : round.pair.citizenHint}
-                  </p>
-                  <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
-                    {dealIndex === round.players.length - 1 ? "Tap to start talking" : "Tap for the next player"} <ArrowRightIcon className="size-3.5" />
-                  </span>
-                </>
-              ) : (
-                <>
-                  <LockKeyholeIcon className="size-7 text-primary" />
-                  <span className="tea-display text-2xl font-bold text-primary">
-                    Private card
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    Tap to reveal
-                  </span>
-                </>
-              )}
-            </button>
+            {revealed ? (
+              <div className="tea-reveal-card flex min-h-60 w-full flex-col items-center justify-center gap-3 px-6 text-center" data-revealed="true" role="status">
+                <span className={`tea-display max-w-full break-words text-4xl font-bold leading-tight tracking-tight ${isImposter ? "text-destructive" : ""}`}>
+                  {isImposter ? "You are the imposter" : round.pair.word}
+                </span>
+                <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+                  {isImposter ? round.pair.imposterHint : round.pair.citizenHint}
+                </p>
+              </div>
+            ) : (
+              <button ref={revealButtonRef} type="button" onClick={() => { tapFeedback(); setRevealed(true); }}
+                aria-label={`Reveal ${round.players[dealIndex]}'s private card`}
+                className="tea-reveal-card flex min-h-60 w-full touch-manipulation flex-col items-center justify-center gap-3 border border-border/40 px-6 text-center">
+                <LockKeyholeIcon className="size-7 text-primary" />
+                <span className="tea-display text-2xl font-bold text-primary">Private card</span>
+                <span className="text-sm text-muted-foreground">Tap to reveal</span>
+              </button>
+            )}
           </CardContent>
+          <CardFooter className="flex-col gap-2">
+            <Button ref={handoffButtonRef} disabled={!revealed} onClick={() => { tapFeedback(); nextCard(); }} className="min-h-14 w-full rounded-xl bg-accent text-base text-accent-foreground hover:bg-accent/90">
+              {dealIndex === round.players.length - 1 ? "Hide & start discussion" : "Hide & pass"}
+              <ArrowRightIcon />
+            </Button>
+            <p className="text-center text-xs text-muted-foreground">
+              {revealed ? "Hide your card when you’re ready." : "Only you should see your card."}
+            </p>
+          </CardFooter>
         </Card>
       )}
 
@@ -969,7 +927,7 @@ export function TeaPoster() {
             <div className="mb-1 flex items-center justify-center gap-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-accent">
               <SparklesIcon className="size-3.5" /> Discussion
             </div>
-            <CardTitle className="tea-display text-3xl font-bold">Discuss the clue</CardTitle>
+            <CardTitle className="tea-display text-3xl font-bold">Give a clue. Find the imposter.</CardTitle>
             <CardDescription>
               One of you only has a hint.
             </CardDescription>
@@ -977,13 +935,13 @@ export function TeaPoster() {
           <CardContent className="flex flex-col items-center gap-4 text-center">
             <div className="w-full border-y border-accent/30 bg-accent/5 px-1 py-5">
               <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                first question goes to
+                First clue from
               </p>
               <p className="tea-display text-3xl font-bold text-primary">{starterName}</p>
             </div>
             <p className="text-sm text-muted-foreground">
-              Take turns describing the word without saying it. Then vote out
-              the imposter.
+              Take turns giving a clue without saying the word. Discuss who
+              sounds suspicious, then vote before revealing the imposter.
             </p>
 
           </CardContent>
