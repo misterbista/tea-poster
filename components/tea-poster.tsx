@@ -492,15 +492,20 @@ export function TeaPoster() {
       const list = playerListRef.current;
       if (list) {
         const bounds = list.getBoundingClientRect();
-        const edge = Math.min(48, bounds.height / 3);
+        const edge = Math.min(96, Math.max(64, bounds.height * 0.24));
         const y = dragClientYRef.current;
-        const speed = y < bounds.top + edge
-          ? -Math.min(1, (bounds.top + edge - y) / edge)
-          : y > bounds.bottom - edge ? Math.min(1, (y - bounds.bottom + edge) / edge) : 0;
+        const distanceFromTop = bounds.top + edge - y;
+        const distanceFromBottom = y - (bounds.bottom - edge);
+        const speed = distanceFromTop > 0
+          ? -Math.min(1, distanceFromTop / edge)
+          : distanceFromBottom > 0 ? Math.min(1, distanceFromBottom / edge) : 0;
         const elapsed = previousTime ? Math.min(time - previousTime, 32) : 0;
-        if (speed && edge > 0) {
-          list.scrollTop += speed * elapsed * 0.45;
-          setCurrentDropTarget(getDropTargetAt(y, draggedPlayer));
+        if (speed && elapsed > 0) {
+          const previousScrollTop = list.scrollTop;
+          list.scrollTop += speed * elapsed * 0.9;
+          if (list.scrollTop !== previousScrollTop) {
+            setCurrentDropTarget(getDropTargetAt(y, draggedPlayer));
+          }
         }
       }
       previousTime = time;
