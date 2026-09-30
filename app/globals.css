@@ -571,6 +571,40 @@
     min-height: 0;
   }
 
+  .tea-shell[data-phase="deal"] .tea-round-card,
+  .tea-shell[data-phase="discuss"] .tea-scene {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden !important;
+    border: 1px solid color-mix(in oklch, var(--border) 72%, transparent) !important;
+    border-radius: 1.35rem !important;
+    background: color-mix(in oklch, var(--card) 82%, transparent) !important;
+    box-shadow: 0 1.25rem 3rem color-mix(in oklch, var(--primary) 8%, transparent) !important;
+    padding: 1.15rem;
+  }
+
+  .tea-shell[data-phase="deal"] .tea-round-card::before,
+  .tea-shell[data-phase="discuss"] .tea-scene::before {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    right: 1.25rem;
+    left: 1.25rem;
+    height: 0.2rem;
+    border-radius: 0 0 999px 999px;
+    background: var(--accent);
+    content: "";
+    opacity: 0.85;
+  }
+
+  .tea-shell[data-phase="deal"] .tea-round-card > [data-slot="card-header"],
+  .tea-shell[data-phase="deal"] .tea-round-card > [data-slot="card-content"],
+  .tea-shell[data-phase="discuss"] .tea-scene > [data-slot="card-header"],
+  .tea-shell[data-phase="discuss"] .tea-scene > [data-slot="card-content"],
+  .tea-shell[data-phase="discuss"] .tea-scene > [data-slot="card-footer"] {
+    padding-inline: 0;
+  }
+
   .tea-reveal-card {
     position: relative;
     isolation: isolate;
@@ -701,15 +735,15 @@
   color: var(--foreground);
 }
 
-/* Lock the document too: constraining the panel alone leaves the browser's
-   root scroller (and mobile overscroll) available outside the player list. */
-html:has(.tea-shell[data-phase="setup"]) {
+/* Lock the document during play: constraining the panel alone leaves the
+   browser's root scroller available outside the game screen. */
+html:has(.tea-shell[data-phase]) {
   height: 100%;
   overflow: hidden;
   overscroll-behavior: none;
 }
 
-body:has(.tea-shell[data-phase="setup"]) {
+body:has(.tea-shell[data-phase]) {
   position: fixed;
   inset: 0;
   width: 100%;
@@ -717,6 +751,20 @@ body:has(.tea-shell[data-phase="setup"]) {
   min-height: 0;
   overflow: hidden;
   overscroll-behavior: none;
+}
+
+/* Deal and discussion are single-screen views. Keep their content inside the
+   viewport so a short device cannot create a second page scroll. */
+.tea-shell[data-phase]:not([data-phase="setup"]),
+.tea-shell[data-phase]:not([data-phase="setup"]) .tea-viewport {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.tea-shell[data-phase]:not([data-phase="setup"]) .tea-content {
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* Keep setup controls in view; only the roster consumes scrolling space. */

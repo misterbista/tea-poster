@@ -35,7 +35,7 @@ export function DealScreen({ round, dealIndex, revealed, isImposter, revealButto
     <CardContent className="flex flex-1 flex-col items-center justify-center py-3">
       <button ref={revealButtonRef} type="button" onClick={handleCardClick} aria-label={revealed ? "Hide your card and pass the phone" : `Reveal ${round.players[dealIndex]}'s private card`} className="tea-reveal-card flex min-h-60 w-full touch-manipulation flex-col items-center justify-center gap-3 border border-border/40 px-6 text-center" data-revealed={revealed}>
         {revealed ? <>
-          {isImposter && <p className="text-sm font-medium text-destructive">You are the imposter</p>}
+          {isImposter && <p className="text-sm font-bold text-destructive">You are the imposter</p>}
           <span className="tea-display max-w-full break-words text-4xl font-bold leading-tight tracking-tight">{isImposter ? round.pair.imposterHint : round.pair.word}</span>
           {!isImposter && <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">{round.pair.citizenHint}</p>}
           <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">{dealIndex === round.players.length - 1 ? "Tap to hide & start talking" : "Tap again to hide & pass"}<ArrowRightIcon className="size-3.5" /></span>
