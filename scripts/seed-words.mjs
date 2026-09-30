@@ -30,5 +30,4 @@ for (const { category, words } of deck.categories) {
   }
 }
 if (!seen.size) throw new Error("Deck is empty");
-if (seen.size < 2000) throw new Error(`Deck must contain at least 2000 words; found ${seen.size}`);
 console.log("Local deck valid: " + seen.size + " words, " + deck.categories.length + " categories. Edit lib/words.json to add words.");

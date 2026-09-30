@@ -4,6 +4,7 @@ import { MoonIcon, SunIcon } from "lucide-react";
 import { type MouseEvent, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { Button } from "@/components/ui/button";
+import { haptic } from "@/lib/haptics";
 
 export function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
@@ -30,6 +31,7 @@ export function ThemeToggle() {
 
   const toggleTheme = (event: MouseEvent<HTMLButtonElement>) => {
     if (sweepActiveRef.current) return;
+    haptic("tap");
     const nextIsDark = !isDark;
     const root = document.documentElement;
     const updateTheme = () => {
@@ -49,7 +51,7 @@ export function ThemeToggle() {
       transitionTimeoutRef.current = null;
     }
 
-    const shouldAnimate = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const shouldAnimate = event.detail > 0 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (document.startViewTransition && shouldAnimate) {
       const bounds = event.currentTarget.getBoundingClientRect();
       const x = bounds.left + bounds.width / 2;

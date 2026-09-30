@@ -33,6 +33,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
 import { randomIndex } from "@/lib/random";
+import { haptic } from "@/lib/haptics";
 import { claimLocalWord } from "@/lib/store";
 import { useScreenWakeLock } from "@/lib/use-screen-wake-lock";
 
@@ -181,6 +182,7 @@ export function TeaPoster() {
       toast.error("Pick at least 3 players to start.");
       return;
     }
+    haptic("success");
     const pair = claimLocalWord();
     setRound({
       pair,
@@ -197,6 +199,10 @@ export function TeaPoster() {
   const addPlayer = useCallback(() => {
     const name = newPlayer.trim();
     if (!name) return;
+    if (name.length > 24) {
+      toast.error("Player names can have up to 24 characters.");
+      return;
+    }
     if (players.length >= 24) {
       toast.error("A round can have up to 24 players.");
       return;
@@ -205,6 +211,7 @@ export function TeaPoster() {
       toast.error(`${name} is already on the list.`);
       return;
     }
+    haptic("selection");
     setPlayers((prev) => [...prev, name]);
     setChecked((prev) => ({ ...prev, [name]: true }));
     setNewPlayer("");
@@ -212,6 +219,7 @@ export function TeaPoster() {
 
   const removePlayer = useCallback((name: string) => {
     const groupId = playerGroups.activeId;
+    haptic("selection");
     const previousIndex = players.indexOf(name);
     const wasSelected = checked[name] === true;
     setPlayers((current) => current.filter((player) => player !== name));
@@ -227,7 +235,7 @@ export function TeaPoster() {
         onClick: () => setPlayerGroups((current) => ({
           ...current,
           groups: current.groups.map((group) => {
-            if (group.id !== groupId || group.players.includes(name)) return group;
+            if (group.id !== groupId || group.players.length >= 24 || group.players.some((player) => player.toLowerCase() === name.toLowerCase())) return group;
             const nextPlayers = [...group.players];
             nextPlayers.splice(Math.min(previousIndex, nextPlayers.length), 0, name);
             return {
@@ -245,6 +253,7 @@ export function TeaPoster() {
     const fromIndex = players.indexOf(name);
     const toIndex = fromIndex + direction;
     if (fromIndex < 0 || toIndex < 0 || toIndex >= players.length) return;
+    haptic("selection");
 
     if (animate) {
       animateReorderRef.current = true;
@@ -271,6 +280,7 @@ export function TeaPoster() {
         return;
       }
       dropTargetRef.current = next;
+      if (next) haptic("selection");
       setDropTarget(next);
     },
     []
@@ -280,6 +290,7 @@ export function TeaPoster() {
     if (!event.isPrimary || dragPointerIdRef.current !== null || (event.pointerType === "mouse" && event.button !== 0)) return;
     event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
+    haptic("pickup");
     dragClientYRef.current = event.clientY;
     dragPointerIdRef.current = event.pointerId;
     draggedPlayerRef.current = name;
@@ -360,6 +371,7 @@ export function TeaPoster() {
 
       animateReorderRef.current = true;
       capturePlayerPositions();
+      haptic("drop");
 
       setPlayers((current) => {
         const currentFromIndex = current.indexOf(name);
@@ -412,6 +424,7 @@ export function TeaPoster() {
   }, [dealIndex, round]);
 
   const backToSetup = useCallback(() => {
+    haptic("tap");
     setPhase("setup");
     setRound(null);
     setDealIndex(0);
@@ -448,15 +461,14 @@ export function TeaPoster() {
       {phase === "setup" && (
         <Card className="tea-flat-card tea-setup tea-scene">
           <div className="tea-setup-intro">
-            <p className="tea-section-kicker">A little mystery. A lot of tea.</p>
             <h2 className="tea-display">Who’s playing?</h2>
-            <p>Gather your people. One of you has a secret.</p>
           </div>
           <CardContent className="flex flex-col gap-3 px-0">
             {playerSetupLoaded && <PlayerGroupPicker
               groups={playerGroups.groups}
               activeId={playerGroups.activeId}
               onSelect={(activeId) => {
+                haptic("selection");
                 setPlayerGroups((current) => ({ ...current, activeId }));
                 setNewPlayer("");
               }}
@@ -467,6 +479,7 @@ export function TeaPoster() {
                   toast.error("A group with that name already exists.");
                   return false;
                 }
+                haptic("success");
                 if (create) {
                   const group: PlayerGroup = { id: crypto.randomUUID(), name, players: [], checked: {} };
                   setPlayerGroups((current) => ({ groups: [...current.groups, group], activeId: group.id }));
@@ -508,7 +521,10 @@ export function TeaPoster() {
               onDragStart={beginPlayerDrag}
               onDragMove={updatePlayerDrag}
               onDragEnd={endPlayerDrag}
-              onCheckedChange={(name, value) => setChecked((prev) => ({ ...prev, [name]: value }))}
+              onCheckedChange={(name, value) => {
+                haptic("selection");
+                setChecked((prev) => ({ ...prev, [name]: value }));
+              }}
               movePlayer={movePlayer}
               removePlayer={removePlayer}
             />

@@ -6,11 +6,12 @@ export function TeaPosterSplash() {
       <div className="flex w-full max-w-sm flex-col items-center text-center">
         <div className="tea-logo-frame relative aspect-square w-[min(78vw,19rem)] overflow-hidden rounded-[2rem]">
           <Image
-            src="/ChatGPT Image Sep 22, 2026 at 06_55_47 PM.png"
+            src="/icons/icon-512.png"
             alt="TeaPosters logo"
             fill
             sizes="(max-width: 640px) 78vw, 304px"
             className="object-contain"
+            unoptimized
             priority
           />
         </div>

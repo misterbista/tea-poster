@@ -16,7 +16,7 @@ export function isSingleWord(value: string) {
 function containsWord(clue: string, word: string) {
   const clueWords = clue.normalize("NFC").toLocaleLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [];
   const targetWords = word.normalize("NFC").toLocaleLowerCase().match(/[\p{L}\p{N}]+/gu) ?? [];
-  return targetWords.some((_, index) =>
+  return clueWords.some((_, index) =>
     targetWords.every((part, offset) => clueWords[index + offset] === part)
   );
 }

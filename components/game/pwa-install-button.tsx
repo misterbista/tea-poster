@@ -4,6 +4,7 @@ import { DownloadIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { haptic } from "@/lib/haptics";
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -43,14 +44,18 @@ export function PwaInstallButton() {
   if (isStandalone || (!installPrompt && !isIos)) return null;
 
   const install = async () => {
+    haptic("tap");
     if (isIos) {
       toast.message("Install TeaPosters from Safari", { description: "Tap Share, then choose Add to Home Screen." });
       return;
     }
     if (!installPrompt) return;
+    const prompt = installPrompt;
+    // Browser install events are single-use, including when dismissed.
+    setInstallPrompt(null);
     try {
-      await installPrompt.prompt();
-      if ((await installPrompt.userChoice).outcome === "accepted") setInstallPrompt(null);
+      await prompt.prompt();
+      await prompt.userChoice;
     } catch (error) {
       console.error("TeaPosters install prompt failed.", error);
       toast.error("Your browser could not show the install prompt.");

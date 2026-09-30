@@ -51,57 +51,57 @@
 :root {
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
-  --background: oklch(0.995 0 0);
-  --foreground: oklch(0.16 0 0);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.2 0 0);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.012 84);
-  --popover: oklch(0.996 0.006 91);
-  --popover-foreground: oklch(0.18 0.012 84);
+  --card-foreground: oklch(0.18 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0 0);
   --primary: oklch(0.16 0 0);
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.96 0.002 280);
-  --secondary-foreground: oklch(0.22 0.012 84);
-  --muted: oklch(0.965 0.002 280);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.22 0 0);
+  --muted: oklch(0.975 0 0);
   --muted-foreground: oklch(0.5 0 0);
   --accent: oklch(0.74 0.17 52);
   --accent-foreground: oklch(0.18 0.015 45);
   --destructive: oklch(0.63 0.19 32);
-  --border: oklch(0.92 0 0);
+  --border: oklch(0.93 0 0);
   --input: oklch(0.92 0 0);
   --ring: oklch(0.68 0.17 48);
-  --chart-1: oklch(0.2 0.012 84);
+  --chart-1: oklch(0.2 0 0);
   --chart-2: oklch(0.69 0.19 49);
   --chart-3: oklch(0.63 0.19 32);
-  --chart-4: oklch(0.56 0.08 72);
-  --chart-5: oklch(0.42 0.025 84);
+  --chart-4: oklch(0.72 0.02 70);
+  --chart-5: oklch(0.42 0 0);
   --radius: 1.125rem;
-  --sidebar: oklch(0.955 0.018 88);
-  --sidebar-foreground: oklch(0.18 0.012 84);
-  --sidebar-primary: oklch(0.2 0.012 84);
-  --sidebar-primary-foreground: oklch(0.985 0.012 91);
-  --sidebar-accent: oklch(0.93 0.026 82);
-  --sidebar-accent-foreground: oklch(0.22 0.012 84);
-  --sidebar-border: oklch(0.84 0.024 84);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.18 0 0);
+  --sidebar-primary: oklch(0.2 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.96 0 0);
+  --sidebar-accent-foreground: oklch(0.22 0 0);
+  --sidebar-border: oklch(0.93 0 0);
   --sidebar-ring: oklch(0.69 0.19 49);
 }
 
 .dark {
-  --background: oklch(0.14 0 0);
+  --background: oklch(0.16 0.008 65);
   --foreground: oklch(0.95 0 0);
-  --card: oklch(0.19 0 0);
+  --card: oklch(0.205 0.009 65);
   --card-foreground: oklch(0.95 0.012 91);
   --popover: oklch(0.215 0.012 84);
   --popover-foreground: oklch(0.95 0.012 91);
   --primary: oklch(0.95 0.012 91);
   --primary-foreground: oklch(0.15 0.008 84);
-  --secondary: oklch(0.255 0 0);
+  --secondary: oklch(0.265 0.012 65);
   --secondary-foreground: oklch(0.92 0.012 91);
-  --muted: oklch(0.235 0 0);
+  --muted: oklch(0.245 0.011 65);
   --muted-foreground: oklch(0.7 0.012 91);
   --accent: oklch(0.76 0.16 55);
   --accent-foreground: oklch(0.14 0 0);
   --destructive: oklch(0.69 0.18 32);
-  --border: oklch(0.29 0 0);
+  --border: oklch(0.325 0.014 65);
   --input: oklch(0.285 0.01 84);
   --ring: oklch(0.74 0.16 49);
   --chart-1: oklch(0.88 0.012 91);
@@ -193,6 +193,7 @@
     --header-height: calc(4.75rem + env(safe-area-inset-top));
     --page-gutter: clamp(1rem, 4vw, 2rem);
     --control-radius: 1rem;
+    --scroll-thumb: oklch(0.65 0.13 48);
     isolation: isolate;
     min-height: 100svh;
     -webkit-tap-highlight-color: transparent;
@@ -206,7 +207,7 @@
     padding-inline: var(--page-gutter);
   }
 
-  .tea-header-space { height: var(--header-height); flex-shrink: 0; margin-bottom: 1rem; }
+  .tea-header-space { height: var(--header-height); flex-shrink: 0; margin-bottom: 0.5rem; }
   .tea-app-header {
     position: fixed;
     top: 0;
@@ -240,10 +241,9 @@
     @starting-style { opacity: 0; transform: translateY(6px); }
   }
 
-  .tea-setup-intro { flex-shrink: 0; padding-block: 0.25rem 1.25rem; }
-  .tea-setup-intro h2 { margin-top: 0.5rem; font-size: clamp(1.9rem, 6vw, 2.5rem); line-height: 1.15; }
-  .tea-setup-intro > p:last-child { margin-top: 0.5rem; font-size: 0.875rem; color: var(--muted-foreground); }
-  .tea-group-picker { padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+  .tea-setup-intro { flex-shrink: 0; padding-block: 0.125rem 0.5rem; }
+  .tea-setup-intro h2 { margin-top: 0; font-size: clamp(1.9rem, 6vw, 2.5rem); line-height: 1.15; }
+  .tea-group-picker { padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
   .tea-group-picker select { background: var(--muted); border-color: transparent; font-weight: 500; font-size: 0.875rem; padding-left: 1rem; }
   .tea-group-control [aria-haspopup="menu"] { width: 3rem; height: 3rem; border: 1px solid var(--border); border-radius: var(--control-radius); background: var(--card); }
   .tea-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding-top: 0.25rem; }
@@ -252,29 +252,35 @@
   .tea-player-list {
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
     border: 0;
-    border-radius: 1.25rem;
-    background: var(--muted);
-    padding: 0.375rem;
+    border-radius: 0;
+    background: transparent;
+    padding: 0.25rem 0.75rem 0.25rem 0;
+    scrollbar-gutter: stable;
     scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
+    scrollbar-color: var(--scroll-thumb) color-mix(in oklch, var(--muted) 70%, var(--background));
     scroll-padding-block: 0.5rem;
     overscroll-behavior: contain;
   }
+  .tea-player-list::-webkit-scrollbar { width: 8px; }
+  .tea-player-list::-webkit-scrollbar-track { margin-block: 0.25rem; border-radius: 999px; background: var(--muted); }
+  .tea-player-list::-webkit-scrollbar-thumb { min-height: 2rem; border: 2px solid var(--muted); border-radius: 999px; background: var(--scroll-thumb); }
+  .tea-player-list::-webkit-scrollbar-thumb:hover { background: color-mix(in oklch, var(--scroll-thumb) 85%, var(--foreground)); }
   .tea-player-row {
     position: relative;
     flex-shrink: 0;
     flex-wrap: nowrap;
     gap: 0.5rem;
-    padding-inline: 0.125rem;
-    border: 0;
-    border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
-    border-radius: 0.65rem;
+    padding-inline: 0.25rem;
+    border: 1px solid color-mix(in oklch, var(--border) 45%, transparent);
+    border-radius: 1rem;
+    background: var(--muted);
+    box-shadow: inset 0 1px 0 color-mix(in oklch, var(--card) 65%, transparent), 0 1px 2px color-mix(in oklch, var(--foreground) 3%, transparent);
     transition: background-color 150ms ease, opacity 150ms ease;
   }
-  .tea-player-row:last-child { border-bottom: 0; }
-  .tea-player-row[data-selected="false"] { color: var(--muted-foreground); }
-  .tea-player-row [data-slot="checkbox"][data-checked] { background: var(--accent); border-color: var(--accent); color: var(--accent-foreground); }
+  .tea-player-row[data-selected="false"] { color: var(--muted-foreground); background: color-mix(in oklch, var(--muted) 50%, var(--background)); }
+  .tea-player-row [data-slot="checkbox"][data-checked] { background: var(--foreground); border-color: var(--foreground); color: var(--background); }
   .tea-player-count svg { color: oklch(0.6 0.16 45); }
   .tea-player-order { padding-inline: 0.4rem; color: var(--muted-foreground); font-size: 0.65rem; font-variant-numeric: tabular-nums; }
   .tea-order-grip { background: transparent; color: var(--muted-foreground); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
@@ -324,8 +330,8 @@
   }
   .tea-reveal-card:active { transform: scale(0.985); }
   /* Reveal celebrates a tap; hiding remains immediate for the next player. */
-  .tea-reveal-card[data-animate-reveal="true"] { animation: tea-card-reveal 280ms var(--ease-out); }
-  .tea-reveal-card[data-animate-reveal="true"] .tea-reveal-word { animation: tea-word-reveal 240ms var(--ease-out) both; }
+  .tea-reveal-card[data-animate-reveal="true"] { animation: tea-card-reveal 360ms var(--ease-out); }
+  .tea-reveal-card[data-animate-reveal="true"] .tea-reveal-word { animation: tea-word-reveal 320ms var(--ease-out) both; }
   @keyframes tea-card-reveal {
     0% { transform: perspective(900px) rotateY(-8deg) rotateZ(-1deg) scale(0.97); }
     55% { transform: perspective(900px) rotateY(2deg) rotateZ(0.4deg) scale(1.01); }
@@ -352,7 +358,7 @@
   .tea-discussion [data-slot="card-footer"] button, .tea-result-card [data-slot="card-footer"] button { border-radius: 999px; }
 
   @media (hover: hover) and (pointer: fine) {
-    .tea-player-row:hover { background: var(--muted); }
+    .tea-player-row:hover { background: color-mix(in oklch, var(--foreground) 4%, var(--muted)); }
     .tea-order-grip:hover { color: var(--foreground); }
     .tea-reveal-card:hover { transform: translateY(-2px); }
   }
@@ -367,7 +373,7 @@ body:has(.tea-shell[data-phase]) { position: fixed; inset: 0; width: 100%; heigh
 .tea-shell[data-phase="setup"] .tea-setup,
 .tea-shell[data-phase="setup"] .tea-setup > [data-slot="card-content"] { display: flex; flex: 1; min-height: 0; flex-direction: column; }
 .tea-shell[data-phase="setup"] .tea-setup { gap: 0; padding-block: 0; }
-.tea-shell[data-phase="setup"] .tea-setup > [data-slot="card-content"] { gap: 0.875rem; }
+.tea-shell[data-phase="setup"] .tea-setup > [data-slot="card-content"] { gap: 0.625rem; }
 .tea-setup > [data-slot="card-content"] > :not(.tea-player-list) { flex-shrink: 0; }
 .tea-shell[data-phase="setup"] .tea-player-list { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; }
 /* Long hints and small landscape screens remain reachable during play. */
@@ -375,8 +381,8 @@ body:has(.tea-shell[data-phase]) { position: fixed; inset: 0; width: 100%; heigh
 
 @media (min-width: 640px) and (min-height: 700px) {
   .tea-shell[data-phase] .tea-viewport { padding-bottom: 2rem; }
-  .tea-header-space { margin-bottom: 2rem; }
-  .tea-setup-intro { padding-bottom: 1.75rem; }
+  .tea-header-space { margin-bottom: 0.5rem; }
+  .tea-setup-intro { padding-bottom: 0.5rem; }
 }
 @media (max-height: 650px) {
   .tea-shell { --header-height: calc(4rem + env(safe-area-inset-top)); }
@@ -392,6 +398,8 @@ body:has(.tea-shell[data-phase]) { position: fixed; inset: 0; width: 100%; heigh
 }
 @media (max-width: 360px) {
   .tea-app-header { gap: 0.25rem; }
+  .tea-app-header .tea-brand-name { font-size: 1.1rem; }
+  .tea-app-header .tea-logo-frame { width: 2rem; height: 2rem; }
   .tea-app-header button { width: 2.5rem; height: 2.5rem; }
   .tea-brand-subline { font-size: 0.6rem; }
   .tea-progress-step { gap: 0.3rem; }

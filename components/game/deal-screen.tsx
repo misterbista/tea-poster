@@ -5,12 +5,9 @@ import { type MouseEvent, type RefObject, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Round } from "@/components/game/types";
+import { haptic } from "@/lib/haptics";
 
 const CARD_TAP_GUARD_MS = 600;
-
-function tapFeedback() {
-  if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate(8);
-}
 
 export function DealScreen({ round, dealIndex, revealed, isImposter, revealButtonRef, onNext, onReveal }: {
   round: Round;
@@ -29,7 +26,7 @@ export function DealScreen({ round, dealIndex, revealed, isImposter, revealButto
     // Lock synchronously so duplicate taps cannot pass a newly revealed card
     // or expose the next player's card before the phone changes hands.
     nextCardActionAt.current = now + CARD_TAP_GUARD_MS;
-    tapFeedback();
+    haptic("tap");
     if (revealed) onNext();
     else {
       setAnimateReveal(event.detail > 0);
