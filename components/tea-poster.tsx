@@ -1,8 +1,9 @@
 "use client";
 
 import {
+    ArrowRightIcon,
     PlusIcon,
-    ShuffleIcon,
+    UsersIcon,
 } from "lucide-react";
 import {
     type SetStateAction,
@@ -446,6 +447,11 @@ export function TeaPoster() {
       {/* SETUP */}
       {phase === "setup" && (
         <Card className="tea-flat-card tea-setup tea-scene">
+          <div className="tea-setup-intro">
+            <p className="tea-section-kicker">A little mystery. A lot of tea.</p>
+            <h2 className="tea-display">Who’s playing?</h2>
+            <p>Gather your people. One of you has a secret.</p>
+          </div>
           <CardContent className="flex flex-col gap-3 px-0">
             {playerSetupLoaded && <PlayerGroupPicker
               groups={playerGroups.groups}
@@ -482,9 +488,10 @@ export function TeaPoster() {
             {players.length === 0 && <p className="py-3 text-sm text-muted-foreground">Add players below to start this group. You need at least 3 to play.</p>}
             <div className="tea-list-heading">
               <div>
-                <p className="tea-section-kicker">Players</p>
-                <p className="tea-list-meta"><span>{activePlayers.length}</span> in this round</p>
+                <h3 className="text-sm font-semibold">Your players</h3>
+                <p className="tea-list-meta">Select players · drag to set pass order</p>
               </div>
+              <span className="tea-player-count"><UsersIcon className="size-3.5" />{activePlayers.length} / {players.length}</span>
             </div>
             <PlayerRoster
               key={playerGroups.activeId}
@@ -566,7 +573,7 @@ export function TeaPoster() {
       )}
 
       {phase === "setup" && (
-        <div className="mobile-dock pointer-events-none sticky bottom-4 z-20 mt-4">
+        <div className="mobile-dock pointer-events-none z-20">
           <div className="pointer-events-auto">
             <Button
               className="min-h-14 w-full rounded-xl bg-accent text-base font-semibold text-accent-foreground hover:bg-accent/90"
@@ -574,8 +581,8 @@ export function TeaPoster() {
               onClick={startRound}
               disabled={activePlayers.length < 3}
             >
-              <ShuffleIcon />
-              {activePlayers.length < 3 ? "Select at least 3 players" : `Start round · ${activePlayers.length} players`}
+              <span>{activePlayers.length < 3 ? "Select at least 3 players" : "Let’s play"}</span>
+              <span className="tea-start-meta">{activePlayers.length >= 3 && `${activePlayers.length} players`}<ArrowRightIcon className="size-4" /></span>
             </Button>
           </div>
         </div>
